@@ -12,6 +12,12 @@ key_config_option = ConfigOption('Game Hotkey Config', { #全局配置示例
     'Geniemon Key': 'z',
 }, description='In Game Hotkey for Skills')
 
+hint_config_option = ConfigOption('挂机设置', { #全局配置示例
+    '提示音': 2,
+}, description='挂机相关设置', config_description={
+    '提示音': '单次提示响几次',
+})
+
 
 def make_bottom_right_black(frame): #可选. 某些游戏截图时遮挡UID使用
     """
@@ -51,7 +57,7 @@ config = {
     'debug': False,  # Optional, default: False
     'use_gui': True, # 目前只支持True
     'config_folder': 'configs', #最好不要修改
-    'global_configs': [key_config_option],
+    'global_configs': [key_config_option, hint_config_option],
     'screenshot_processor': make_bottom_right_black, # 在截图的时候对frame进行修改, 可选
     'gui_icon': 'icons/icon.png', #窗口图标, 最好不需要修改文件名
     'wait_until_before_delay': 0,

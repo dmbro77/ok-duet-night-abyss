@@ -1,7 +1,7 @@
 from ok import TriggerTask, Logger, og
 from src.tasks.BaseCombatTask import BaseCombatTask, NotInCombatException, CharDeadException
 
-from pynput import mouse
+from pynput import mouse, keyboard
 logger = Logger.get_logger(__name__)
 
 class TriggerDeactivateException(Exception):
@@ -50,6 +50,7 @@ class AutoMoveTask(BaseCombatTask, TriggerTask):
         
         if not self.listener:
             self.listener = mouse.Listener(on_click=self.on_click)
+            # self.listener = keyboard.Listener(on_press=self.on_press)
             self.listener.start()
 
         while self.manual_activate:
@@ -98,6 +99,19 @@ class AutoMoveTask(BaseCombatTask, TriggerTask):
                 logger.info("激活快速移动")
             else:
                 logger.info("关闭快速移动")
+
+    # def on_press(self, key):
+    #     if self._executor.paused:
+    #         return
+    #     if not self.in_team() or not og.device_manager.hwnd_window.is_foreground():
+    #         return
+    #     active_key = getattr(keyboard.Key, self.config.get('激活键').lower())
+    #     if key == active_key:
+    #         self.manual_activate = not self.manual_activate
+    #         if self.manual_activate:
+    #             logger.info("激活快速移动")
+    #         else:
+    #             logger.info("关闭快速移动")
 
 
 

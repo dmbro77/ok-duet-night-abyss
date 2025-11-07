@@ -65,11 +65,15 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          draft: false
           body: |
-            ### 下载zip解压包, 解压后双击ok-duet-night-abyss.exe, 下载后可应用内更新
+            ### 下载包说明
+              * ok-dna-win32-online-setup.exe 在线安装包, 在线白嫖的服务器不一定稳定, 建议优先使用完整包. 
+              * ok-dna-win32-Global-setup.exe full package with dependencies, using GitHub and PyPi as update source 
+              * 不要下载ok-dna-win32.zip,和SourceCode.zip, Do Not Download the SourceCode, ok-dna-win32.zip
           files: pyappify_dist/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
 

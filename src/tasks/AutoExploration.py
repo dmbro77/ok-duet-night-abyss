@@ -65,8 +65,8 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask):
                 self.soundBeep()
                 self.init_param()
             elif _status == Mission.STOP:
-                self.log_info('任务中止，重启中...', notify=True)
                 self.restart_mission()
+                self.log_info('任务中止，已重启', notify=True)
                 self.soundBeep()
                 self.init_param()
             elif _status == Mission.CONTINUE:

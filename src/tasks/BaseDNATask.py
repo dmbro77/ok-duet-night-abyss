@@ -10,6 +10,7 @@ class BaseDNATask(BaseTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.key_config = self.get_global_config('Game Hotkey Config')  # 游戏热键配置
+        self.afk_config = self.get_global_config('挂机设置')
 
     def in_team(self) -> bool:
         if self.find_one('lv_text', threshold=0.8):
@@ -54,10 +55,11 @@ class BaseDNATask(BaseTask):
             return getattr(self, key)
         return default
 
-    def soundBeep(self, times=3):
+    def soundBeep(self):
         if hasattr(self, "config") and not self.config.get('发出声音提醒', True):
             return
-        for _ in range(times):
+        n = self.afk_config['提示音'] if self.afk_config['提示音'] > 0 else 1
+        for _ in range(n):
             winsound.Beep(523, 150)
             self.sleep(0.3)
 

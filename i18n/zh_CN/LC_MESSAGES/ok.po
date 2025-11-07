@@ -83,3 +83,171 @@ msgstr ""
 
 msgid "领任务"
 msgstr ""
+
+msgid "100%"
+msgstr ""
+
+msgid "200%"
+msgstr ""
+
+msgid "2000%"
+msgstr ""
+
+msgid "800%"
+msgstr ""
+
+msgid "Combat Key"
+msgstr "战技"
+
+msgid "Game Hotkey Config"
+msgstr "游戏快捷键设置"
+
+msgid "Geniemon Key"
+msgstr "魔灵支援"
+
+msgid "In Game Hotkey for Skills"
+msgstr "游戏内技能快捷键"
+
+msgid "Ultimate Key"
+msgstr "终结技"
+
+msgid "x1"
+msgstr ""
+
+msgid "x2"
+msgstr ""
+
+msgid "不使用"
+msgstr ""
+
+msgid "主画面侦测"
+msgstr ""
+
+msgid "任务超时时间"
+msgstr ""
+
+msgid "使用技能"
+msgstr ""
+
+msgid "全自动"
+msgstr ""
+
+msgid "刷几次"
+msgstr ""
+
+msgid "半自动"
+msgstr ""
+
+msgid "单次提示响几次"
+msgstr ""
+
+msgid "发出声音提醒"
+msgstr ""
+
+msgid "启用自动穿引共鸣"
+msgstr ""
+
+msgid "在需要时发出声音提醒"
+msgstr ""
+
+msgid "在需要跑图时时启用触发任务的自动穿引共鸣"
+msgstr ""
+
+msgid "如果不在可操控角色的画面则结束任务"
+msgstr ""
+
+msgid "委托手册"
+msgstr ""
+
+msgid "左键按住多久"
+msgstr ""
+
+msgid "左键释放后等待多久"
+msgstr ""
+
+msgid "开局向前走"
+msgstr ""
+
+msgid "开局向前走几秒"
+msgstr ""
+
+msgid "战技"
+msgstr ""
+
+msgid "打几个轮次"
+msgstr ""
+
+msgid "技能释放频率"
+msgstr ""
+
+msgid "挂机相关设置"
+msgstr ""
+
+msgid "挂机设置"
+msgstr ""
+
+msgid "按下时间"
+msgstr ""
+
+msgid "提示音"
+msgstr ""
+
+msgid "放弃任务前等待的秒数"
+msgstr ""
+
+msgid "毎几秒释放一次技能"
+msgstr ""
+
+msgid "波次超时时间"
+msgstr ""
+
+msgid "激活键"
+msgstr ""
+
+msgid "终结技"
+msgstr ""
+
+msgid "自动65级魔之楔本"
+msgstr ""
+
+msgid "自动勘察"
+msgstr ""
+
+msgid "自动战斗"
+msgstr ""
+
+msgid "自动扼守"
+msgstr ""
+
+msgid "自动探险"
+msgstr ""
+
+msgid "自动点击肉鸽对话"
+msgstr ""
+
+msgid "自动穿引共鸣"
+msgstr ""
+
+msgid "自动肉鸽对话"
+msgstr ""
+
+msgid "自动释放技能"
+msgstr ""
+
+msgid "自动驱离"
+msgstr ""
+
+msgid "超时后将发出提示"
+msgstr ""
+
+msgid "轮次"
+msgstr ""
+
+msgid "间隔时间"
+msgstr ""
+
+msgid "需使用鼠标侧键主动激活"
+msgstr ""
+
+msgid "鼠标侧键"
+msgstr ""

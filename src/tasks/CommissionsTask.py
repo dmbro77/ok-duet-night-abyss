@@ -168,14 +168,17 @@ class CommissionsTask(BaseCombatTask):
     def get_round_info(self):
         if self.in_team():
             return
+        self.sleep(0.5)
         round_info_box = self.box_of_screen_scaled(2560, 1440, 531, 517, 618, 602, name="round_info", hcenter=True)
         texts = self.ocr(box=round_info_box)
         if texts:
+            prev_round = self.current_round
             try:
                 self.current_round = int(texts[0].name)
             except:
                 return
-            self.info_set("当前轮次", self.current_round)
+            if prev_round != self.current_round:
+                self.info_set("当前轮次", self.current_round)
 
     def get_wave_info(self):
         if not self.in_team():
@@ -183,12 +186,14 @@ class CommissionsTask(BaseCombatTask):
         mission_info_box = self.box_of_screen_scaled(2560, 1440, 275, 372, 360, 470, name="mission_info", hcenter=True)
         texts = self.ocr(box=mission_info_box, frame_processor=isolate_white_text_to_black, match=re.compile(r'\d/\d'))
         if texts and len(texts) == 1:
+            prev_wave = self.current_wave
             try:
                 if (m := re.match(r'(\d)/\d', texts[0].name)):
                     self.current_wave = int(m.group(1))
             except:
                 return
-            self.info_set("当前波次", self.current_wave)
+            if prev_wave != self.current_wave:
+                self.info_set("当前波次", self.current_wave)
 
     def wait_until_get_wave_info(self):
         self.log_info('等待波次信息...')

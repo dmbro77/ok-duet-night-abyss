@@ -1,7 +1,7 @@
 name: "ok-dna"
 uac: true
 profiles:
-  - name: "Global"
+  - name: "China"
     git_url: "https://cnb.cool/BnanZ0/ok-duet-night-abyss.git"
     admin: true
     main_script: "main.py"

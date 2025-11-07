@@ -209,7 +209,7 @@ class CommissionsTask(BaseCombatTask):
             return Mission.CONTINUE
         elif self.find_esc_menu():
             self.give_up_mission()
-            self.wait_until(self.in_team, time_out=30)
+            self.sleep(2)
             return Mission.GIVE_UP
         elif self.find_start_btn():
             self.choose_drop_rate()

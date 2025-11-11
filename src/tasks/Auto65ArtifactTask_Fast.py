@@ -133,6 +133,8 @@ class Auto65ArtifactTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             # ===== 根据扼守-30or65.json录制的路径 =====
 
             # 0.52s: 开始向前移动
+            self.send_key_down("lalt")
+            
             self.sleep(2)
             self.send_key_down("w")
 
@@ -204,6 +206,7 @@ class Auto65ArtifactTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.sleep(0.10)
             self.send_key_up("a")
 
+            self.send_key_up("lalt")
             # 19.97s: 复位并传送到目标位置
             self.reset_and_transport()
 
@@ -224,3 +227,4 @@ class Auto65ArtifactTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.send_key_up("s")
             self.send_key_up("d")
             self.send_key_up("lshift")
+            self.send_key_up("lalt")

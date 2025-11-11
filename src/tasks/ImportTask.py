@@ -80,6 +80,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         _wait_next_wave = False
         _skill_time = 0
         _wave_start = 0
+        _delay_task_start = 0
         if self.in_team():
             self.open_in_mission_menu()
             self.sleep(0.5)
@@ -95,8 +96,11 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     self.log_info('任务超时')
                     self.open_in_mission_menu()
                     self.sleep(0.5)
-                    _wait_next_wave = True                       
-            
+                    _wait_next_wave = True   
+                if self.delay_index is not None and time.time() > _delay_task_start:
+                    _delay_task_start += 1
+                    if self.match_map(self.delay_index):
+                        self.walk_to_aim(self.delay_index)                            
             _status = self.handle_mission_interface(stop_func=self.stop_func)
             if _status == Mission.START or _status == Mission.STOP:
                 if _status == Mission.STOP:
@@ -110,6 +114,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.sleep(2)
                 self.walk_to_aim()
                 _wave_start = time.time()
+                _delay_task_start = _wave_start + 1
                 self.current_wave = -1 
             elif _status == Mission.CONTINUE:
                 self.log_info('任务继续')
@@ -124,6 +129,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         _to_do_task.do_run()
     
     def init_param(self):
+        self.delay_index = None
         self.stop_mission = False
         self.current_round = -1
         self.current_wave = -1
@@ -167,8 +173,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         png_files = {key: png_files[key] for key in sorted(png_files.keys(), key=lambda x: (len(x), x))}
         return png_files
 
-    def walk_to_aim(self):
-        former_index = None
+    def walk_to_aim(self, former_index = None):        
         while True:
             start = time.time()        
             map_index = None 
@@ -179,15 +184,14 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     return False
             if map_index is not None:            
                 self.log_info(f'执行{map_index}')
-                self.play_macro_actions(self.script[map_index]["actions"], self.script[map_index]["total_time"])
+                self.play_macro_actions(map_index)
                 former_index = map_index
             else:
                 return False
         
-    def match_map(self, index):
+    def match_map(self, index, max_conf = 0):
         box = self.box_of_screen_scaled(2560, 1440, 1, 1, 2559, 1439, name="full_screen", hcenter=True)
         count = 0
-        max_conf = 0
         max_index = None
 
         for i, name in enumerate(self.img):
@@ -226,15 +230,26 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.log_info(f"匹配失败")
         return max_index, count
     
-    def play_macro_actions(self, actions, total_time):
+    def play_macro_actions(self, map_index):
+        actions = self.script[map_index]["actions"]
         start = time.time()
         for i, action in enumerate(actions): 
             while time.time()-start < action['time']:
                 self.next_frame()   
-            self.execute_key_action(action)
+            if action['type'] == "delay":
+                self.delay_index = map_index
+#            if action['type'] == "key_down" and action['key'] == "f4":
+#                self.delay_index = None
+#                time_reset = time.time()
+#                self.reset_and_transport()
+#                start += time.time() - time_reset
+            else:
+                self.delay_index = None
+                self.execute_key_action(action)
         self.sleep(2)
                 
     def execute_key_action(self, action):
+        from ok import GenshinInteraction
         try:
             if action['type'] == "mouse_down":   
                 self.mouse_down(key=action['button'])
@@ -242,10 +257,14 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.mouse_up(key=action['button'])
             elif action['type'] == "key_down":
                 action['key'] = normalize_key(action['key'])
-                self.send_key_down(action['key'])
+                if action['key'] == 'f4':
+                    self.reset_and_transport()
+                else:
+                    self.send_key_down(action['key'])
             elif action['type'] == "key_up":
                 action['key'] = normalize_key(action['key'])
-                self.send_key_up(action['key'])
+                if action['key'] != 'f4':
+                    self.send_key_up(action['key'])
             else:
                 raise
         except:
@@ -259,4 +278,6 @@ def normalize_key(key: str) -> str:
     """
     if isinstance(key, str) and key.lower() == 'shift':
         return 'lshift'
+    if isinstance(key, str) and key.lower() == 'ctrl':
+        return 'lcontrol'
     return key

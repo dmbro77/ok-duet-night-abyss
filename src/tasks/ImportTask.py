@@ -16,6 +16,8 @@ from src.tasks.DNAOneTimeTask import DNAOneTimeTask
 from src.tasks.CommissionsTask import CommissionsTask, Mission, QuickMoveTask
 from src.tasks.BaseCombatTask import BaseCombatTask
 
+from src.tasks.AutoDefence import AutoDefence
+
 logger = Logger.get_logger(__name__)
 
 
@@ -115,6 +117,11 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.current_wave = -1
                 _wave_start = time.time()
             self.sleep(0.2)
+
+    def foo(self):
+        _to_do_task = self.get_task_by_class(AutoDefence)
+        _to_do_task.config_external_movement(lambda: True, self.config)
+        _to_do_task.do_run()
     
     def init_param(self):
         self.stop_mission = False

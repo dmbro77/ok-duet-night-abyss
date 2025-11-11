@@ -17,16 +17,23 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.description = "半自动"
         self.default_config.update({
             '轮次': 3,
-            '波次超时时间': 90,
         })
         self.config_description = {
             "轮次": "打几个轮次",
-            "波次超时时间": "超时后将发出提示",
+            "超时时间": "波次超时后将发出提示",
         }
         self.setup_commission_config()
         self.name = "自动扼守"
         self.action_timeout = 10
         self.quick_move_task = QuickMoveTask(self)
+        self.external_movement = lambda: False
+
+    def config_external_movement(self, func: callable, config: dict):
+        if callable(func):
+            self.external_movement = func
+        else:
+            self.external_movement = lambda: False
+        self.config.update(config)
 
     def run(self):
         DNAOneTimeTask.run(self)
@@ -56,9 +63,7 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         _wait_next_wave = False
                         self.quick_move_task.reset()
 
-                    if (not _wait_next_wave
-                        and time.time() - _wave_start >= self.config.get("波次超时时间", 120)
-                    ):
+                    if not _wait_next_wave and time.time() - _wave_start >= self.config.get("超时时间", 120):
                         self.log_info_notify("任务超时")
                         self.soundBeep()
                         _wait_next_wave = True
@@ -71,8 +76,11 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             _status = self.handle_mission_interface(stop_func=self.stop_func)
             if _status == Mission.START:
                 self.wait_until(self.in_team, time_out=30)
-                self.log_info_notify("任务开始")
-                self.soundBeep()
+                if self.external_movement() != False:
+                    self.log_info_notify("任务开始")
+                    self.soundBeep()
+                else:
+                    self.log_info("任务开始")
                 self.init_param()
             elif _status == Mission.STOP:
                 self.quit_mission()

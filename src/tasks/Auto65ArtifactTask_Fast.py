@@ -109,7 +109,7 @@ class Auto65ArtifactTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
                 # 重置计时器
                 _start_time = time.time()
-
+                
                 # 走到目标位置
                 try:
                     self.walk_to_aim()
@@ -120,7 +120,7 @@ class Auto65ArtifactTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     self.give_up_mission()
                     self.wait_until(lambda: not self.in_team(), time_out=30, settle_time=1)
                     _start_time = 0
-
+                _skill_time = 0
             # 短暂休眠
             self.sleep(0.2)
 

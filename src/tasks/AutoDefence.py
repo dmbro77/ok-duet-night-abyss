@@ -58,8 +58,7 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.init_param()
         self.load_char()
         _wave = -1
-        _wait_next_wave = False
-        _skill_time = 0
+        _wait_next_wave = False       
         _wave_start = 0
         if self.external_movement is not _default_movement and self.in_team():
             self.open_in_mission_menu()
@@ -83,7 +82,7 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                             _wait_next_wave = True
 
                     if not _wait_next_wave:
-                        _skill_time = self.use_skill(_skill_time)
+                        self.skill_time = self.use_skill(self.skill_time)
                 else:
                     self.quick_move_task.run()
 
@@ -119,6 +118,7 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def init_param(self):
         self.current_round = -1
         self.current_wave = -1
+        self.skill_time = 0
 
     def stop_func(self):
         self.get_round_info()

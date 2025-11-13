@@ -88,6 +88,7 @@ class AutoExpulsion(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.log_info("任务开始")
                 self.sleep(2)
                 _start_time = 0
+                _skill_time = 0
             self.sleep(0.2)
 
     def move_on_begin(self):

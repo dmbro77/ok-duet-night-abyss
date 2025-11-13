@@ -58,8 +58,7 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def do_run(self):
         self.init_param()
         self.load_char()
-        _wait_next_round = False
-        _skill_time = 0
+        _wait_next_round = False        
         _start_time = 0
         if self.external_movement is not _default_movement and self.in_team():
             self.open_in_mission_menu()
@@ -71,7 +70,7 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         _start_time = time.time()
                         _wait_next_round = False
                         self.quick_move_task.reset()
-                    _skill_time = self.use_skill(_skill_time)
+                    self.skill_time = self.use_skill(self.skill_time)
                     if not _wait_next_round and time.time() - _start_time >= self.config.get("超时时间", 120):
                         if self.external_movement is not _default_movement:
                             self.log_info("任务超时")
@@ -114,6 +113,7 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
     def init_param(self):
         self.current_round = -1
+        self.skill_time = 0
 
     def stop_func(self):
         self.get_round_info()

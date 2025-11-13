@@ -57,7 +57,6 @@ class Auto70jjbTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.load_char()
         _wave = -1
         _wait_next_wave = False
-        _skill_time = 0
         _wave_start = 0
         if self.in_team():
             self.open_in_mission_menu()
@@ -70,7 +69,7 @@ class Auto70jjbTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         _wave = self.current_wave
                         _wave_start = time.time()
                         _wait_next_wave = False
-                    _skill_time = self.use_skill(_skill_time)
+                    self.skill_time = self.use_skill(self.skill_time)
                     if not _wait_next_wave and time.time() - _wave_start >= self.config.get('超时时间', 120):
                         self.log_info('任务超时')
                         self.open_in_mission_menu()
@@ -87,11 +86,13 @@ class Auto70jjbTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 else:
                     self.log_info('任务完成')
                 self.wait_until(self.in_team, time_out=30)                
-                self.send_key_down("lshift")
+                self.init_param()
+                self.send_key_down("lalt")
                 self.sleep(2)
                 self.walk_to_aim()
-                self.send_key_up("lshift")
+                self.send_key_up("lalt")
                 _wave_start = time.time()
+                
                 self.current_wave = -1
                 while self.current_wave == -1 and time.time() - _wave_start < 2:
                     self.get_wave_info()
@@ -110,7 +111,8 @@ class Auto70jjbTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.stop_mission = False
         self.current_round = -1
         self.current_wave = -1
-
+        self.skill_time = 0
+        
     def stop_func(self):
         self.get_round_info()
         n = self.config.get('轮次', 3)

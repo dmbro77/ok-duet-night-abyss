@@ -100,8 +100,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.init_param()
         self.load_char()
         _wave = -1
-        _wait_next_wave = False
-        _skill_time = 0
+        _wait_next_wave = False        
         _wave_start = 0
         _delay_task_start = 0
         if self.in_team():
@@ -114,7 +113,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     if self.current_wave != _wave:
                         _wave = self.current_wave
                         _wait_next_wave = False
-                _skill_time = self.use_skill(_skill_time)
+                self.skill_time = self.use_skill(self.skill_time)
                 if time.time() - _wave_start >= self.config.get('超时时间', 180):
                     self.log_info('任务超时')
                     self.open_in_mission_menu()
@@ -133,7 +132,8 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     continue
                 else:
                     self.log_info('任务完成')
-                self.wait_until(self.in_team, time_out=30)                  
+                self.wait_until(self.in_team, time_out=30)
+                self.init_param()
                 self.sleep(2)
                 self.walk_to_aim()
                 _wave_start = time.time()
@@ -151,6 +151,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.stop_mission = False
         self.current_round = -1
         self.current_wave = -1
+        self.skill_time = 0
 
     def stop_func(self):
         self.get_round_info()

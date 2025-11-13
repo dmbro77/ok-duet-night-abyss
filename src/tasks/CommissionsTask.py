@@ -245,7 +245,6 @@ class CommissionsTask(BaseDNATask):
                 time_out=action_timeout,
                 raise_if_not_found=True,
             )
-            self.sleep(3)
         else:
             self.log_info_notify("需自行选择密函奖励")
             self.soundBeep()
@@ -254,6 +253,7 @@ class CommissionsTask(BaseDNATask):
                 time_out=300,
                 raise_if_not_found=True,
             )
+        self.sleep(3)
 
     def use_skill(self, skill_time):
         if not hasattr(self, "config"):

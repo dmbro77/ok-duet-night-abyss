@@ -1,7 +1,7 @@
 from qfluentwidgets import FluentIcon
 import time
 
-from ok import Logger, TaskDisabledException, Box
+from ok import Logger, TaskDisabledException
 from src.tasks.DNAOneTimeTask import DNAOneTimeTask
 from src.tasks.BaseCombatTask import BaseCombatTask
 from src.tasks.CommissionsTask import CommissionsTask, Mission, QuickMoveTask, _default_movement
@@ -33,23 +33,26 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.action_timeout = 10
         self.quick_move_task = QuickMoveTask(self)
         self.external_movement = _default_movement
-        self.external_config = None
+        self._external_config = None
+        self._merged_config_cache = None
 
     @property
     def config(self):
         if self.external_movement == _default_movement:
             return super().config
         else:
-            if self.external_config is None:
-                self.external_config = super().config.copy()
-            return self.external_config
+            if self._merged_config_cache is None:
+                self._merged_config_cache = super().config.copy()
+            self._merged_config_cache.update(self._external_config)
+            return self._merged_config_cache
 
     def config_external_movement(self, func: callable, config: dict):
         if callable(func):
             self.external_movement = func
         else:
-            self.external_movement = lambda: False
-        self.config.update(config)
+            self.external_movement = _default_movement
+        self._merged_config_cache = None
+        self._external_config = config
 
     def run(self):
         DNAOneTimeTask.run(self)
@@ -58,7 +61,7 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.external_movement = _default_movement
         try:
             return self.do_run()
-        except TaskDisabledException as e:
+        except TaskDisabledException:
             pass
         except Exception as e:
             logger.error("AutoDefence error", e)
@@ -108,10 +111,10 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     self.log_info(f"外部移动执行完毕，等待战斗开始，{time_out}秒后超时")
                     if not self.wait_until(lambda: self.current_wave != -1, post_action=self.get_wave_info,
                                            time_out=time_out):
-                        self.log_info(f"超时重开")
+                        self.log_info("超时重开")
                         self.open_in_mission_menu()
                     else:
-                        self.log_info(f"战斗开始")
+                        self.log_info("战斗开始")
                 else:
                     self.log_info_notify("任务开始")
                     self.soundBeep()

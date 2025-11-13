@@ -33,23 +33,26 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.action_timeout = 10
         self.quick_move_task = QuickMoveTask(self)
         self.external_movement = _default_movement
-        self.external_config = None
+        self._external_config = None
+        self._merged_config_cache = None
 
     @property
     def config(self):
         if self.external_movement == _default_movement:
             return super().config
         else:
-            if self.external_config is None:
-                self.external_config = super().config.copy()
-            return self.external_config
+            if self._merged_config_cache is None:
+                self._merged_config_cache = super().config.copy()
+            self._merged_config_cache.update(self._external_config)
+            return self._merged_config_cache
 
     def config_external_movement(self, func: callable, config: dict):
         if callable(func):
             self.external_movement = func
         else:
             self.external_movement = _default_movement
-        self.config.update(config)
+        self._merged_config_cache = None
+        self._external_config = config
 
     def run(self):
         DNAOneTimeTask.run(self)
@@ -58,7 +61,7 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.external_movement = _default_movement
         try:
             return self.do_run()
-        except TaskDisabledException as e:
+        except TaskDisabledException:
             pass
         except Exception as e:
             logger.error("AutoExploration error", e)

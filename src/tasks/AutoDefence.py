@@ -101,6 +101,7 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def init_all(self):
         self.init_for_next_round()
         self.current_round = -1
+        self.jiggle_tick.start_next_tick()
 
     def init_for_next_round(self):
         self.init_runtime_state()
@@ -108,7 +109,6 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def init_runtime_state(self):
         self.runtime_state = {"wave_start_time": 0, "wave": -1, "wait_next_wave": False}
         self.skill_tick.reset()
-        self.jiggle_tick.reset()
         self.current_wave = -1
 
     def handle_in_mission(self):
@@ -130,11 +130,11 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     self.log_info_notify("任务超时")
                     self.soundBeep()
                     self.runtime_state["wait_next_wave"] = True
-
+            
+            self.jiggle_tick()
             # 如果未超时，则使用技能
             if not self.runtime_state["wait_next_wave"]:
                 self.skill_tick()
-            self.jiggle_tick()
         else:
             if self.runtime_state["wave"] > 0:
                 self.init_runtime_state()

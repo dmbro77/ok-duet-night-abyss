@@ -103,8 +103,8 @@ class AutoExpulsion(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.give_up_mission()
             self.wait_until(lambda: not self.in_team(), time_out=30, settle_time=1)
 
-        self.skill_tick()
         self.random_walk_tick()
+        self.skill_tick()
 
     def handle_mission_start(self):
         if self.count >= self.config.get("刷几次", 999):

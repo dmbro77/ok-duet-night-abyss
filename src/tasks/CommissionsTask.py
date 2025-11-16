@@ -288,50 +288,25 @@ class CommissionsTask(BaseDNATask):
         return skill_time
     
     def create_skill_ticker(self):
-        last_time = 0
-
-        def tick():
-            nonlocal last_time
+        def action():
             if self.config.get("使用技能", "不使用") == "不使用":
                 return
-            now = time.perf_counter()
-            if now - last_time >= self.config.get("技能释放频率", 5):
-                last_time = now
-                if self.config.get("使用技能") == "战技":
-                    self.get_current_char().send_combat_key()
-                elif self.config.get("使用技能") == "终结技":
-                    self.get_current_char().send_ultimate_key()
-                elif self.config.get("使用技能") == "魔灵支援":
-                    self.get_current_char().send_geniemon_key()
-
-        def reset():
-            nonlocal last_time
-            last_time = 0
-
-        tick.reset = reset
-        return tick
+            if self.config.get("使用技能") == "战技":
+                self.get_current_char().send_combat_key()
+            elif self.config.get("使用技能") == "终结技":
+                self.get_current_char().send_ultimate_key()
+            elif self.config.get("使用技能") == "魔灵支援":
+                self.get_current_char().send_geniemon_key()
+        return self.create_ticker(action, interval=lambda: self.config.get("技能释放频率", 5))
 
     def create_jiggle_ticker(self, interval=1.0):
-        last_time = 0
-
-        def tick():
-            nonlocal last_time
-            now = time.perf_counter()
-            if now - last_time >= interval:
-                last_time = now
-                self.sleep(1)
-                for _ in range(2):
-                    self.send_key("s")
-                    self.sleep(0.4)
-                    self.send_key("w")
-                    self.sleep(0.4)
-
-        def reset():
-            nonlocal last_time
-            last_time = 0
-
-        tick.reset = reset
-        return tick
+        def action():
+            for _ in range(1):
+                self.send_key("s")
+                self.sleep(0.5)
+                self.send_key("w")
+                self.sleep(0.5)
+        return self.create_ticker(action, interval=interval)
 
     def get_round_info(self):
         """获取并更新当前轮次信息。"""

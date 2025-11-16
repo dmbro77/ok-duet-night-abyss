@@ -1,4 +1,5 @@
 import time
+from typing import Union, Callable
 import numpy as np
 import cv2
 import winsound
@@ -208,6 +209,49 @@ class BaseDNATask(BaseTask):
 
         return (win_x <= mouse_x < win_x + hwnd_window.window_width) and \
                (win_y <= mouse_y < win_y + hwnd_window.window_height)
+    
+    def create_ticker(self, action: Callable, interval: Union[float, int, Callable] = 1.0) -> Callable:
+        last_time = 0
+        armed = False
+
+        def get_interval():
+            if callable(interval):
+                return interval()
+            if hasattr(interval, "value"):
+                return interval.value
+            return float(interval)
+
+        def tick():
+            nonlocal last_time, armed
+            now = time.perf_counter()
+
+            if armed:
+                last_time = now
+                armed = False
+                return
+
+            current_interval = get_interval()
+
+            if now - last_time >= current_interval:
+                last_time = now
+                action()
+
+        def reset():
+            nonlocal last_time
+            last_time = 0
+
+        def touch():
+            nonlocal last_time
+            last_time = time.perf_counter()
+
+        def start_next_tick():
+            nonlocal armed
+            armed = True
+
+        tick.reset = reset
+        tick.touch = touch
+        tick.start_next_tick = start_next_tick
+        return tick
 
 
 track_point_color = {

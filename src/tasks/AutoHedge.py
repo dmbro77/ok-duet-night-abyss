@@ -40,6 +40,8 @@ class AutoHedge(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.external_movement_evac = _default_movement
         self._external_config = None
         self._merged_config_cache = None
+        self.jiggle_tick = self.create_jiggle_ticker(10)
+        self.skill_tick = self.create_skill_ticker()
 
         self.track_point_pos = 0
         self.mission_complete = False
@@ -105,6 +107,7 @@ class AutoHedge(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
     def init_all(self):
         self.init_for_next_round()
+        self.jiggle_tick.start_next_tick()
         self.current_round = -1
         self.track_point_pos = 0
         self.mission_complete = False
@@ -118,7 +121,8 @@ class AutoHedge(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.init_runtime_state()
 
     def init_runtime_state(self):
-        self.runtime_state = {"start_time": 0, "in_progress": False, "skill_time": 0, "wait_next_round": False}
+        self.runtime_state = {"start_time": 0, "in_progress": False, "wait_next_round": False}
+        self.skill_tick.reset()
 
     def handle_in_mission(self):
         self.update_mission_status()
@@ -137,10 +141,11 @@ class AutoHedge(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     self.soundBeep()
                     self.runtime_state["wait_next_round"] = True
 
+            self.jiggle_tick()
             if not self.runtime_state["wait_next_round"]:
-                self.runtime_state["skill_time"] = self.use_skill(self.runtime_state["skill_time"])
+                self.skill_tick()
         else:
-            if self.runtime_state["skill_time"] > 0:
+            if self.runtime_state["start_time"] > 0:
                 self.init_runtime_state()
                 if self.external_movement_evac is not _default_movement:
                     self.log_info("任务结束")

@@ -84,6 +84,7 @@ class AutoExcavation(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def init_all(self):
         self.init_for_next_round()
         self.current_round = -1
+        self.jiggle_tick.start_next_tick()
 
     def init_for_next_round(self):
         self.init_runtime_state()
@@ -92,15 +93,14 @@ class AutoExcavation(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def init_runtime_state(self):
         self.runtime_state = {"start_time": 0}
         self.skill_tick.reset()
-        self.jiggle_tick.reset()
 
     def handle_in_mission(self):
         if self.find_target_health_bar():
             if self.runtime_state["start_time"] == 0:
                 self.runtime_state["start_time"] = time.time()
                 self.quick_move_task.reset()
-            self.skill_tick()
             self.jiggle_tick()
+            self.skill_tick()
         else:
             if self.runtime_state["start_time"] > 0:
                 self.init_runtime_state()

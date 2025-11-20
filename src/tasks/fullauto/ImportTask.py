@@ -2,11 +2,12 @@ from qfluentwidgets import FluentIcon
 import re
 import time
 import win32con
-import win32gui
+import win32api
 import cv2
 import os
 import json
 import numpy as np
+from functools import cached_property
 
 from pathlib import Path
 from PIL import Image
@@ -15,6 +16,9 @@ from ok import find_boxes_by_name
 from src.tasks.DNAOneTimeTask import DNAOneTimeTask
 from src.tasks.CommissionsTask import CommissionsTask, Mission, QuickMoveTask
 from src.tasks.BaseCombatTask import BaseCombatTask
+
+from src.tasks.trigger.AutoPuzzleTask import AutoPuzzleTask
+from src.tasks.trigger.AutoWheelTask import AutoWheelTask
 
 from src.tasks.AutoDefence import AutoDefence
 from src.tasks.AutoExpulsion import AutoExpulsion
@@ -41,7 +45,8 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.default_config.update({
             '轮次': 10,
             '外部文件夹': "",
-            '副本类型': "默认"
+            '副本类型': "默认",
+            # '使用内建解密': False,
         })
         self.config_type['外部文件夹'] = {
             "type": "drop_down",
@@ -59,7 +64,8 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
         self.config_description.update({
             '轮次': '如果是无尽关卡，选择打几个轮次',
-            '外部文件夹': '选择mod目录下的外部逻辑'
+            '外部文件夹': '选择mod目录下的外部逻辑',
+            # '使用内建解密': '使用ok内建解密功能',
         })
 
         self.action_timeout = 10
@@ -102,7 +108,6 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.init_param()
         self.load_char()
         _wave = -1
-        _wait_next_wave = False
         _wave_start = 0
         _delay_task_start = 0
         if self.in_team():
@@ -114,13 +119,11 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 if self.current_wave != -1:
                     if self.current_wave != _wave:
                         _wave = self.current_wave
-                        _wait_next_wave = False
                 self.skill_time = self.use_skill(self.skill_time)
                 if time.time() - _wave_start >= self.config.get('超时时间', 180):
                     self.log_info('任务超时')
                     self.open_in_mission_menu()
                     self.sleep(0.5)
-                    _wait_next_wave = True
                 if self.delay_index is not None and time.time() > _delay_task_start:
                     _delay_task_start += 1
                     if self.match_map(self.delay_index):
@@ -178,175 +181,294 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
     def load_png_files(self, folder_path):
         png_files = {}
+
+        if not os.path.exists(folder_path):
+            raise FileNotFoundError(f"文件夹不存在: {folder_path}")
+
         for filename in os.listdir(folder_path):
             if filename.lower().endswith('.png'):
                 file_path = os.path.join(folder_path, filename)
                 try:
                     pil_img = Image.open(file_path)
                     img_array = np.array(pil_img)
-                    template = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
+                    if len(img_array.shape) == 3:
+                        template = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+                    else:
+                        template = img_array
+
                     if template is None:
-                        raise FileNotFoundError(f"无法读取模板图像: {file_path}")
-                    png_files[filename.removesuffix(".png")] = template
-                    self.log_info(f"成功加载: {filename}")
+                        raise ValueError(f"图像转换失败: {file_path}")
+
+                    # 兼容性处理：Python 3.9+ 才支持 removesuffix，低版本用切片
+                    key_name = filename.removesuffix(".png") if hasattr(filename, "removesuffix") else filename[:-4]
+
+                    png_files[key_name] = template
+                    self.log_info(f"成功加载(已转灰度): {filename}")
+
                 except Exception as e:
-                    self.log_info(f"加载失败 {filename}: {e}")
+                    self.log_error(f"加载失败 {filename}", e)
         png_files = {key: png_files[key] for key in sorted(png_files.keys(), key=lambda x: (len(x), x))}
         return png_files
 
     def walk_to_aim(self, former_index=None):
+        """
+        尝试匹配下一个地图节点并执行宏。
+        """
+        # 预编译正则，提高多次调用的效率
+        # 假设逻辑是：如果没有前置点，跳过以字母结尾的名字（通常是 start 点之后的步骤）
+        end_with_letter_pattern = re.compile(r'[a-zA-Z]$')
+        # puzzle_task = self.get_task_by_class(AutoPuzzleTask)
+        # wheel_task = self.get_task_by_class(AutoWheelTask)
+
         while True:
-            start = time.time()
+            start_time = time.perf_counter()
             map_index = None
-            count = 0
-            while map_index is None and time.time() - start < 5:
-                map_index, count = self.match_map(former_index)
+
+            # 尝试在 5 秒内找到匹配的地图
+            while map_index is None and time.perf_counter() - start_time < 5:
+                # if self.config.get('使用内建解密', False):
+                #     puzzle_task.run()
+                #     wheel_task.run()
+                #     if puzzle_task.puzzle_solved or wheel_task.puzzle_solved:
+                #         if not self.wait_until(self.in_team, time_out=2):
+                #             continue
+
+                #         def find_next_child(parent_name):
+                #             parent_name += "-"
+                #             for name in self.img.keys():
+                #                 if name.startswith(parent_name) and len(name) > len(parent_name):
+                #                     return name
+                #             return None
+
+                #         step_1 = find_next_child(former_index)
+                #         if step_1:
+                #             self.log_info(f"索引跳跃: {former_index} -> {step_1}")
+                #             former_index = step_1
+
+                #             # 重置时间并跳过本次匹配
+                #             start_time = time.perf_counter()
+                #             self.sleep(1)
+                #             continue
+                #         else:
+                #             self.log_info(f"无法找到 {former_index} 的后续节点")
+
+                # 传入编译好的正则对象，稍微提升一点性能
+                map_index, count = self.match_map(former_index, pattern=end_with_letter_pattern)
+
                 if count == 0:
+                    self.log_info("无候选地图，导航结束")
                     return True
+
+                if map_index is None:
+                    # 避免 CPU 100% 空转，给系统喘息时间
+                    self.sleep(0.1)
+
             if map_index is not None:
-                self.log_info(f'执行{map_index}')
+                self.log_info(f'开始执行宏: {map_index}')
                 try:
                     self.play_macro_actions(map_index)
+                    # 更新前置节点，用于下一次逻辑判断
+                    former_index = map_index
                 except MacroFailedException:
+                    logger.warning(f"宏执行失败: {map_index}")
                     return False
                 except Exception as e:
-                    logger.error("ImportTask error", e)
+                    logger.error("ImportTask critical error", e)
                     raise
-                former_index = map_index
             else:
+                self.log_info("超时未匹配到任何地图，假定到达目的地或路径丢失")
                 return True
 
-    def match_map(self, index, max_conf=0):
+    def match_map(self, index, max_conf=0.0, pattern=None):  # 建议给 max_conf 一个合理的默认阈值，如 0.6
+        """
+        在当前屏幕中寻找匹配度最高的地图模板。
+        """
+        # 1. 提取图像处理逻辑到循环外 (极大的性能提升)
+        # 假设 box 定义不变，可以提取出来
         box = self.box_of_screen_scaled(2560, 1440, 1, 1, 2559, 1439, name="full_screen", hcenter=True)
+
+        # 只裁剪和转换一次屏幕
+        cropped_screen = box.crop_frame(self.frame)
+        screen_gray = cv2.cvtColor(cropped_screen, cv2.COLOR_BGR2GRAY)
+
         count = 0
         max_index = None
+        best_threshold = max_conf  # 使用传入的阈值作为基准，低于此值不认为是匹配
 
-        for i, name in enumerate(self.img):
-            if index is None and not re.search(r'[a-zA-Z]$', name):
+        # 如果没有传入预编译的正则，则临时编译
+        if pattern is None:
+            pattern = re.compile(r'[a-zA-Z]$')
+
+        for name, template_gray in self.img.items():
+            # --- 过滤逻辑 ---
+            # 逻辑 1: 起始状态(index is None)，跳过以字母结尾的图（假设字母结尾是后续步骤）
+            if index is None and not pattern.search(name):
                 continue
-            if index is not None and not (index in name and len(name) - len(index) <= 3):
-                continue
-            if index is not None and index == name:
-                continue
+
+            if index is not None:
+                # 逻辑 2: 如果有前置节点，只匹配包含前置节点名且长度差异不大的图 (寻找子节点/后继节点)
+                # 例如：former="Map1", current check="Map1_A" (Len diff 2) -> OK
+                if index not in name or (len(name) - len(index) > 4):
+                    continue
+                # 逻辑 3: 不匹配自己
+                if index == name:
+                    continue
+
             count += 1
-            img = self.img[name]
 
-            cropped = box.crop_frame(self.frame)
-            gray = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-            result = cv2.matchTemplate(gray, img, cv2.TM_CCOEFF_NORMED)
+            # 执行匹配
+            result = cv2.matchTemplate(screen_gray, template_gray, cv2.TM_CCOEFF_NORMED)
             _, threshold, _, _, = cv2.minMaxLoc(result)
-            if threshold > max_conf:
-                max_conf = threshold
+
+            # 只记录比当前最佳结果更好的
+            if threshold > best_threshold:
+                best_threshold = threshold
                 max_index = name
-            self.log_info(f"匹配: {name} confidence = {threshold}")
-        #        feature = self.find_one(template=img, box=box, threshold=0.4)
-        #        feature = self.find_one(img, box=self.box_of_screen(0.18, 0.1, 0.82, 0.81),
-        #                              threshold=0.65, frame_processor=binarize_for_matching)
-        #        if feature is None:
-        #            self.log_info(f"匹配: {name} confidence < 0.4")
-        #            continue
-        #        self.log_info(f"匹配: {name} confidence = {feature.confidence}")
-        #        if feature is not None and feature.confidence > max_conf:
-        #            max_conf = feature.confidence
-        #            max_index = name
+                # 只有当发现更好的匹配时才打印 debug 日志，减少刷屏
+                # logger.debug(f"发现潜在匹配: {name} conf={threshold:.4f}")
 
         if max_index is not None:
-            self.log_info(f"成功匹配: {max_index}")
+            self.log_info(f"成功匹配: {max_index} (conf={best_threshold:.4f})")
         else:
-            self.log_info("匹配失败")
+            # 只有在真的找不到时才打印，或者使用 debug 级别
+            # self.log_info("本轮未匹配到有效地图")
+            pass
+
         return max_index, count
+
+    @cached_property
+    def genshin_interaction(self):
+        """
+        缓存 Interaction 实例，避免每次鼠标移动都重新创建对象。
+        需要确保 self.executor.interaction 和 self.hwnd 在此类初始化时可用。
+        """
+        # 确保引用的是正确的类
+        return GenshinInteraction(self.executor.interaction.capture, self.hwnd)
 
     def play_macro_actions(self, map_index):
         actions = self.script[map_index]["actions"]
-        start = time.time()
-        for i, action in enumerate(actions):
-            while time.time() - start < action['time']:
+
+        # 使用 perf_counter 获得更高精度的时间
+        start_time = time.perf_counter()
+
+        for action in actions:
+            target_time = action['time']
+
+            # 等待直到达到动作指定的时间戳
+            while True:
+                current_offset = time.perf_counter() - start_time
+                if current_offset >= target_time:
+                    break
+
+                # 检查中断条件
                 if self.check_for_monthly_card()[0]:
                     raise MacroFailedException
+
+                # 这里的 next_frame 最好包含微小的 sleep，防止 CPU 100% 空转
                 self.next_frame()
+
             if action['type'] == "delay":
                 self.delay_index = map_index
-            #            if action['type'] == "key_down" and action['key'] == "f4":
-            #                self.delay_index = None
-            #                time_reset = time.time()
-            #                self.reset_and_transport()
-            #                start += time.time() - time_reset
             else:
                 self.delay_index = None
-                self.execute_key_action(action)
+                self.execute_action(action)
+
         self.sleep(2)
 
-    def execute_key_action(self, action):
+    def execute_action(self, action):
+        """
+        分发动作执行，替代原有的 execute_key_action
+        """
+        action_type = action['type']
+
         try:
-            if action['type'] == "mouse_down":
-                self.mouse_down(key=action['button'])
-            elif action['type'] == "mouse_up":
-                self.mouse_up(key=action['button'])
-            elif action['type'] == "key_down":
-                action['key'] = normalize_key(action['key'])
-                if action['key'] == 'f4':
-                    self.reset_and_transport()
-                elif action['key'] == 'lshift':
-                    self.send_key_down(self.get_dodge_key())
-                elif action['key'] == 'f':
-                    self.send_key_down(self.get_interact_key())
-                else:
-                    self.send_key_down(action['key'])
-            elif action['type'] == "key_up":
-                action['key'] = normalize_key(action['key'])
-                if action['key'] != 'f4':
-                    self.send_key_up(action['key'])
-            elif action['type'] == "mouse_rotation":
-                self.execute_mouse_rotation(action)
-            elif action['type'] == "mouse_move":
+            if action_type == "mouse_move":
                 self.execute_mouse_move(action['dx'], action['dy'])
+
+            elif action_type == "mouse_rotation":
+                self.execute_mouse_rotation(action)
+
+            elif action_type in ("mouse_down", "mouse_up"):
+                self._handle_mouse_click(action_type, action['button'])
+
+            elif action_type in ("key_down", "key_up"):
+                self._handle_keyboard(action_type, action['key'])
+
             else:
-                raise
-        except:
-            self.log_info(f"不支持的按键-> type: {action['type']} key: {action['key']}")
+                raise ValueError(f"Unknown action type: {action_type}")
+
+        except Exception as e:
+            # 获取 key 信息用于日志，如果不存在则为 None
+            key_info = action.get('key') or action.get('button') or 'N/A'
+            self.log_info(f"执行动作失败 -> type: {action_type}, key/btn: {key_info}, Error: {e}")
             raise
+
+    def _handle_mouse_click(self, action_type, button):
+        if action_type == "mouse_down":
+            self.mouse_down(key=button)
+        else:
+            self.mouse_up(key=button)
+
+    def _handle_keyboard(self, action_type, key):
+        key = normalize_key(key)
+
+        if key == 'f4':
+            if action_type == "key_down":
+                self.reset_and_transport()
+            return
+
+        # 3. 统一应用动态按键映射
+        if key == 'lshift':
+            key = self.get_dodge_key()
+        elif key == 'f':
+            key = self.get_interact_key()
+        elif key == '4':
+            key = self.get_spiral_dive_key()
+
+        # 4. 执行实际按键操作
+        if action_type == "key_down":
+            self.send_key_down(key)
+        elif action_type == "key_up":
+            self.send_key_up(key)
 
     def execute_mouse_rotation(self, action):
         direction = action.get("direction", "up")
         angle = action.get("angle", 0)
         sensitivity = action.get("sensitivity", 10)
 
-        pixels = angle * sensitivity
+        pixels = int(angle * sensitivity)
 
-        if direction == "left":
-            dx, dy = -pixels, 0
-        elif direction == "right":
-            dx, dy = pixels, 0
-        elif direction == "up":
-            dx, dy = 0, -pixels
-        elif direction == "down":
-            dx, dy = 0, pixels
-        else:
+        # 使用字典映射替代 if-elif 链，更简洁
+        direction_map = {"left": (-pixels, 0), "right": (pixels, 0), "up": (0, -pixels), "down": (0, pixels)}
+
+        if direction not in direction_map:
             logger.warning(f"未知的鼠标方向: {direction}")
             return
+
+        dx, dy = direction_map[direction]
         self.execute_mouse_move(dx, dy)
         logger.debug(f"鼠标视角旋转: {direction}, 角度: {angle}, 像素: {pixels}")
-        
-    def execute_mouse_move(self, dx, dy):
-        interaction = self.executor.interaction
-        _genshin_interaction = GenshinInteraction(
-                interaction.capture, self.hwnd
-            )
-            # 确保窗口在前台
-        self.hwnd.bring_to_front()
-        _genshin_interaction.move_mouse_relative(int(dx), int(dy))
 
-        
+    def execute_mouse_move(self, dx, dy):
+        """
+        优化：复用 genshin_interaction 实例，避免频繁创建对象。
+        """
+        self.try_bring_to_front()
+
+        # 使用缓存的实例
+        self.genshin_interaction.move_mouse_relative(int(dx), int(dy))
+
 
 def normalize_key(key: str) -> str:
     """
-    将 'shift' (不区分大小写) 标准化为 'lshift'。
+    标准化按键名称
     """
-    if isinstance(key, str) and key.lower() == 'shift':
+    if not isinstance(key, str):
+        return key
+
+    key_lower = key.lower()
+    if key_lower == 'shift':
         return 'lshift'
-    if isinstance(key, str) and key.lower() == 'ctrl':
+    if key_lower == 'ctrl':
         return 'lcontrol'
     return key
-

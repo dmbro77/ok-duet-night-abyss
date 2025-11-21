@@ -441,6 +441,10 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             key = self.get_interact_key()
         elif key == '4':
             key = self.get_spiral_dive_key()
+        elif key == 'e':
+            key = self.get_combat_key()
+        elif key == 'q':
+            key = self.get_ultimate_key()
 
         # 4. 执行实际按键操作
         if action_type == "key_down":

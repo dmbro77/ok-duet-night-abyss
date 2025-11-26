@@ -551,24 +551,6 @@ class AutoEscortTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         else:
             logger.warning(f"未知的鼠标方向: {direction}")
             return
-
-        # 使用 GenshinInteraction 的 move_mouse_relative 方法
-        interaction = self.executor.interaction
-        if isinstance(interaction, GenshinInteraction):
-            # 直接使用当前的 GenshinInteraction
-            # 确保窗口在前台，move_mouse_relative 需要窗口处于前台
-            self.executor.device_manager.hwnd_window.bring_to_front()
-            interaction.move_mouse_relative(int(dx), int(dy))
-        else:
-            # PostMessageInteraction 不支持相对移动，需要使用 GenshinInteraction
-            # 使用缓存的实例，避免重复创建
-            if self._genshin_interaction is None:
-                logger.debug("创建 GenshinInteraction 实例用于相对鼠标移动")
-                self._genshin_interaction = GenshinInteraction(
-                    interaction.capture, self.executor.device_manager.hwnd_window
-                )
-            # 确保窗口在前台
-            self.executor.device_manager.hwnd_window.bring_to_front()
-            self._genshin_interaction.move_mouse_relative(int(dx), int(dy))
-
+        
+        self.move_mouse_relative(dx, dy)
         logger.debug(f"鼠标视角旋转: {direction}, 角度: {angle}, 像素: {pixels}")

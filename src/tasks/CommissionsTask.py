@@ -249,9 +249,10 @@ class CommissionsTask(BaseDNATask):
             )
 
     def choose_target_letter_reward(self):
+        reward_pattern = re.compile(r'[:：]\s*([0-9]+)')
         def get_rewards():
             box = self.box_of_screen(0.328, 0.643, 0.678, 0.672, hcenter=True, name="letter_reward")
-            return self.ocr(box=box, match=re.compile(r'[:：][0-9]+'))
+            return self.ocr(box=box, match=reward_pattern)
         
         start = time.time()
         while time.time() - start < 10:
@@ -262,19 +263,19 @@ class CommissionsTask(BaseDNATask):
         else:
             self.log_info("超时：未识别到3个奖励选项，使用默认奖励")
             return
-        
+
         self.sleep(0.3)
         rewards = get_rewards()
-        
+
         if len(rewards) != 3:
             self.log_info(f"异常：稳定后识别数量不符 (识别到 {len(rewards)} 个)，使用默认奖励")
             return
 
         rewards.sort(key=lambda reward: reward.x)
-        
+
         parsed_items = []
         for idx, reward in enumerate(rewards):
-            match = re.search(r'[:：]([0-9]+)', reward.name)
+            match = reward_pattern.search(reward.name)
             if not match:
                 self.log_info(f"第 {idx + 1} 个奖励数量识别失败，使用默认奖励")
                 return

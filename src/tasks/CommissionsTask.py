@@ -361,46 +361,6 @@ class CommissionsTask(BaseDNATask):
                 self.get_current_char().send_geniemon_key()
 
         return self.create_ticker(action, interval=lambda: self.config.get("技能释放频率", 5), interval_random_range=(0.8, 1.2))
-    
-    def setup_jitter(self):
-        def _jitter_loop_task():
-            current_drift = [0, 0]
-            if self.executor.current_task:
-                self.log_info("jitter loop task start")
-            while self.executor.current_task is not None and not self.executor.exit_event.is_set():
-                if self.executor.paused:
-                    time.sleep(0.1)
-                    continue
-                if self.afk_config.get("鼠标抖动强制在游戏窗口内", True):
-                    self.set_mouse_in_window()
-
-                dist_sq = current_drift[0]**2 + current_drift[1]**2
-                
-                # 距离原点太近(<2px) -> 往外润 (3~5px)
-                if dist_sq < 4:
-                    target_x = random.choice([-3, -2, 2, 3])
-                    target_y = random.choice([-3, -2, 2, 3])
-                # 距离原点太远 -> 往回拉 (目标是原点附近的 -1~1px)
-                else:
-                    target_x = random.randint(-1, 1)
-                    target_y = random.randint(-1, 1)
-
-                move_x = target_x - current_drift[0]
-                move_y = target_y - current_drift[1]
-
-                if move_x != 0 or move_y != 0:
-                    self.genshin_interaction.do_move_mouse_relative(move_x, move_y)
-                    current_drift[0] += move_x
-                    current_drift[1] += move_y
-
-                deadline = time.time() + random.uniform(3.0, 6.0)
-                while time.time() < deadline:
-                    if self.executor.current_task is None or self.executor.exit_event.is_set():
-                        self.log_info("jitter loop task stopped")
-                        return
-                    time.sleep(0.1)
-
-        self.thread_pool_executor.submit(_jitter_loop_task)
 
     def get_round_info(self):
         """获取并更新当前轮次信息。"""

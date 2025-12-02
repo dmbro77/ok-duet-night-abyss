@@ -427,13 +427,13 @@ class BaseDNATask(BaseTask):
             multiplier = random.uniform(interval_random_range[0], interval_random_range[1])
             current_interval = get_interval() * multiplier
 
-            if now - last_time >= current_interval:
+            if last_time < 0 or now - last_time >= current_interval:
                 last_time = now
                 action()
 
         def reset():
             nonlocal last_time
-            last_time = 0
+            last_time = -1
 
         def touch():
             nonlocal last_time

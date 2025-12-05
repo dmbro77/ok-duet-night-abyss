@@ -136,7 +136,7 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.log_info("任务开始")
             self.external_movement()
             self.log_info(f"外部移动执行完毕，等待战斗开始，{DEFAULT_ACTION_TIMEOUT+10}秒后超时")
-            if not self.wait_until(self.find_serum, time_out=DEFAULT_ACTION_TIMEOUT+10):
+            if not self.wait_until(lambda: self.find_serum() or self.find_esc_menu(), time_out=DEFAULT_ACTION_TIMEOUT+10):
                 self.log_info("超时重开")
                 self.open_in_mission_menu()
             else:

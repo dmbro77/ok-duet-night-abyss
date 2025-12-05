@@ -164,7 +164,7 @@ class AutoHedge(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.log_info("任务开始")
             self.external_movement()
             self.log_info(f"外部移动执行完毕，等待战斗开始，{DEFAULT_ACTION_TIMEOUT+10}秒后超时")
-            if not self.wait_until(self.runtime_state["in_progress"], post_action=self.update_mission_status,
+            if not self.wait_until(lambda: self.runtime_state["in_progress"] or self.find_esc_menu(), post_action=self.update_mission_status,
                                    time_out=DEFAULT_ACTION_TIMEOUT+10):
                 self.log_info("超时重开")
                 self.open_in_mission_menu()

@@ -459,8 +459,8 @@ class AutoEscortTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
             # 等待指定的延迟时间（使用高精度等待）
             target = time.perf_counter() + delay
-            if delay > 0.002:
-                time.sleep(delay - 0.002)
+            if delay > 0.02:
+                time.sleep(delay - 0.02)
 
             while time.perf_counter() < target:
                 pass

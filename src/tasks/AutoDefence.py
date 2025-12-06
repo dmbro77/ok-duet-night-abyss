@@ -84,7 +84,6 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             _status = self.handle_mission_interface(stop_func=self.stop_func)
             if _status == Mission.START:
                 self.wait_until(self.in_team, time_out=30)
-                self.sleep(2)
                 self.init_all()
                 self.handle_mission_start()
             elif _status == Mission.STOP:
@@ -144,15 +143,17 @@ class AutoDefence(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         """处理任务开始的逻辑"""
         if self.external_movement is not _default_movement:
             self.log_info("任务开始，执行外部移动逻辑")
-            self.external_movement()
-            self.log_info(f"外部移动执行完毕，等待战斗开始，{DEFAULT_ACTION_TIMEOUT+10}秒后超时")
+            self.external_movement(delay=2)
+            time_out = DEFAULT_ACTION_TIMEOUT + 10
+            self.log_info(f"外部移动执行完毕，等待战斗开始，{time_out}秒后超时")
             if not self.wait_until(lambda: self.current_wave != -1 or self.find_esc_menu(), post_action=self.get_wave_info,
-                                   time_out=DEFAULT_ACTION_TIMEOUT+10):
+                                   time_out=time_out):
                 self.log_info("等待战斗开始超时，重开任务")
                 self.open_in_mission_menu()
             else:
                 self.log_info("战斗开始")
         else:
+            self.sleep(2)
             self.log_info_notify("任务开始")
             self.soundBeep()
 

@@ -130,8 +130,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.wait_until(self.in_team, time_out=30)
                 self.log_info('任务开始')
                 self.init_all()
-                self.sleep(2)
-                self.walk_to_aim()
+                self.walk_to_aim(delay=2)
                 now = time.time()
                 self.runtime_state.update({"wave_start_time": now, "delay_task_start": now + 1})
             elif _status == Mission.CONTINUE:
@@ -215,10 +214,13 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         png_files = {key: png_files[key] for key in sorted(png_files.keys(), key=lambda x: (len(x), x))}
         return png_files
 
-    def walk_to_aim(self, former_index=None):
-        self.send_key_down("lalt")
-        ret = self._walk_to_aim(former_index)
-        self.send_key_up("lalt")
+    def walk_to_aim(self, former_index=None, delay=0):
+        try:
+            self.hold_lalt = True
+            self.sleep(delay)
+            ret = self._walk_to_aim(former_index)
+        finally:
+            self.hold_lalt = False
         return ret
 
     def _walk_to_aim(self, former_index=None):
@@ -395,18 +397,17 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         for action in actions:
             target_time = action['time']
 
-            # 等待直到达到动作指定的时间戳
-            while True:
-                current_offset = time.perf_counter() - start_time
-                if current_offset >= target_time:
-                    break
+            if self.check_for_monthly_card()[0]:
+                raise MacroFailedException
+            
+            current_offset = time.perf_counter() - start_time
+            delay = target_time - current_offset
+            target = time.perf_counter() + delay
+            if delay > 0.02:
+                time.sleep(delay - 0.02)
 
-                # 检查中断条件
-                if self.check_for_monthly_card()[0]:
-                    raise MacroFailedException
-
-                # 这里的 next_frame 最好包含微小的 sleep，防止 CPU 100% 空转
-                self.next_frame()
+            while time.perf_counter() < target:
+                pass
 
             if action['type'] == "delay":
                 self.delay_index = map_index

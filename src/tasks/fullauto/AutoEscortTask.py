@@ -84,7 +84,8 @@ class AutoEscortTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         except Exception as e:
             logger.error("AutoEscortTask error", e)
             raise
-        self.afk_config.update({"鼠标抖动": mouse_jitter_setting})
+        finally:
+            self.afk_config.update({"鼠标抖动": mouse_jitter_setting})
 
     def do_run(self):
         # 检查是否已阅读注意事项

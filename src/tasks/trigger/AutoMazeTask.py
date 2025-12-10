@@ -16,7 +16,6 @@ class AutoMazeTask(BaseDNATask, TriggerTask):
         self.name = "自动解锁迷宫"
         self.description = "自动识别并进行迷宫解锁"
         self.default_config.update({
-            "启用": True,
             "移动延迟（秒）": 0.1,
         })
         self._unlocked = False

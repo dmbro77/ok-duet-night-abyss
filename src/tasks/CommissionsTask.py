@@ -330,6 +330,7 @@ class CommissionsTask(BaseDNATask):
         skills = []
         def create_ticker(local_n):
             def action():
+                self.log_onetime_info("全局技能设定: " + str(self.commission_skill_config), "全局技能设定")
                 skill = self.commission_skill_config.get(f"技能{local_n}", "不使用")
                 if skill == "不使用":
                     return
@@ -338,11 +339,12 @@ class CommissionsTask(BaseDNATask):
                     self.get_current_char().send_combat_key()
                 elif skill == "终结技":
                     self.get_current_char().send_ultimate_key()
-                    self.sleep(1.5)
                 elif skill == "魔灵支援":
                     self.get_current_char().send_geniemon_key()
                 elif skill == "普攻":
                     self.get_current_char().click()
+                if after_sleep > 10:
+                    self.log_onetime_info(f"检测到长延时：释放技能 {local_n} 后将等待 {after_sleep} 秒，可能影响脚本运行，请确认是否符合预期")
                 self.sleep(after_sleep)
 
             return self.create_ticker(

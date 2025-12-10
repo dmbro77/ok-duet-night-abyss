@@ -43,6 +43,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.default_config.update({
             '外部文件夹': "",
             '副本类型': "默认",
+            '关闭抖动': False,
             # '使用内建机关解锁': False,
         })
         self.config_type['外部文件夹'] = {
@@ -58,6 +59,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.config_description.update({
             '轮次': '如果是无尽关卡，选择打几个轮次',
             '外部文件夹': '选择mod目录下的外部逻辑',
+            '关闭抖动': '使用飞枪等存在视角移动的外部逻辑时可以启用',
             # '使用内建解密': '使用ok内建解密功能',
         })
 
@@ -66,6 +68,9 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.quick_assist_task = QuickAssistTask(self)
 
     def run(self):
+        if self.config.get('关闭抖动', False):
+            mouse_jitter_setting = self.afk_config.get("鼠标抖动")
+            self.afk_config.update({"鼠标抖动": False})
         DNAOneTimeTask.run(self)
         self.move_mouse_to_safe_position(save_current_pos=False)
         self.set_check_monthly_card()
@@ -73,22 +78,29 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             path = Path.cwd()
             self.script = self.process_json_files(f'{path}\mod\{self.config.get("外部文件夹")}\scripts')
             self.img = self.load_png_files(f'{path}\mod\{self.config.get("外部文件夹")}\map')
-            _to_do_task = self
             if self.config.get('副本类型') == '扼守无尽':
                 _to_do_task = self.get_task_by_class(AutoDefence)
-                _to_do_task.config_external_movement(self.walk_to_aim, self.config)
             elif self.config.get('副本类型') == '探险无尽':
                 _to_do_task = self.get_task_by_class(AutoExploration)
-                _to_do_task.config_external_movement(self.walk_to_aim, self.config)
             elif self.config.get('副本类型') == '驱离':
                 _to_do_task = self.get_task_by_class(AutoExpulsion)
+            else:
+                _to_do_task = self
+            if _to_do_task is not self:
                 _to_do_task.config_external_movement(self.walk_to_aim, self.config)
+                original_info_set = _to_do_task.info_set
+                _to_do_task.info_set = self.info_set
             return _to_do_task.do_run()
         except TaskDisabledException:
             pass
         except Exception as e:
             logger.error('AutoDefence error', e)
             raise
+        finally:
+            if self.config.get('关闭抖动', False):
+                self.afk_config.update({"鼠标抖动": mouse_jitter_setting})
+            if _to_do_task is not self:
+                _to_do_task.info_set = original_info_set
 
     def do_run(self):
         self.init_all()

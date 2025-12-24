@@ -216,9 +216,8 @@ class CommissionsTask(BaseDNATask):
                 self.sleep(0.1)
 
                 for _ in range(2):
-                    self.click_relative_random(0.533, 0.444, 0.575, 0.547, use_safe_move=True, safe_move_box=box, down_time=0.02)
-                    self.sleep(0.3)
-                    if not self.find_one(template=letter_snapshot, box=letter_roi, threshold=0.7):
+                    self.click_relative_random(0.533, 0.444, 0.575, 0.547, use_safe_move=True, safe_move_box=box, down_time=0.02, after_sleep=0.1)
+                    if self.wait_until(lambda: not self.find_one(template=letter_snapshot, box=letter_roi, threshold=0.7), time_out=1):
                         break
                 else:
                     self.log_info_notify("密函已耗尽")

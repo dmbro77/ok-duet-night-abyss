@@ -86,10 +86,10 @@ class BaseDNATask(BaseTask):
     @property
     def f_search_box(self) -> Box:
         f_search_box = self.get_box_by_name('pick_up_f')
-        f_search_box = f_search_box.copy(x_offset=f_search_box.width * 3.3,
+        f_search_box = f_search_box.copy(x_offset=f_search_box.width * 3.25,
                                          width_offset=f_search_box.width * 0.65,
-                                         height_offset=f_search_box.height * 8.3,
-                                         y_offset=-f_search_box.height * 1.3,
+                                         height_offset=f_search_box.height * 8.7,
+                                         y_offset=-f_search_box.height * 1.7,
                                          name='search_dialog')
         return f_search_box
 

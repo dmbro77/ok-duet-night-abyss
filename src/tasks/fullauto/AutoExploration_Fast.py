@@ -65,6 +65,8 @@ class AutoExploration_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         }
 
     def run(self):
+        mouse_jitter_setting = self.afk_config.get("鼠标抖动")
+        self.afk_config.update({"鼠标抖动": False})
         DNAOneTimeTask.run(self)
         self.move_mouse_to_safe_position(save_current_pos=False)
         self.set_check_monthly_card()
@@ -85,10 +87,12 @@ class AutoExploration_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             logger.error('AutoDefence error', e)
             raise
         finally:
+            self.afk_config.update({"鼠标抖动": mouse_jitter_setting})
             if _to_do_task is not self:
                 _to_do_task.info_set = original_info_set
 
     def walk_to_aim(self, delay=0):
+        self.afk_config.update({"鼠标抖动": False})
         self.sleep(delay)
         map_selection = self.config.get("地图选择", [])
         
@@ -135,8 +139,7 @@ class AutoExploration_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         """执行探险电梯地图的移动逻辑"""
         self.log_info("执行探险电梯地图移动")
         self.reset_and_transport()
-        self.send_key_down("lalt")
-        self.sleep(0.05)
+        self.sleep(0.1)
         self.send_key_down("a")
         self.sleep(0.1)
         self.send_key_down(self.get_dodge_key())
@@ -167,14 +170,13 @@ class AutoExploration_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         # self.send_key_up(self.get_dodge_key())
         # self.send_key_up("w")
         # self.sleep(0.2)
-        self.send_key_up("lalt")
+        self.afk_config.update({"鼠标抖动": True})
         return True
     
     def execute_platform_map(self):
         """执行探险高台地图的移动逻辑"""
         self.log_info("执行探险高台地图移动")
-        self.send_key_down("lalt")
-        self.sleep(0.05)
+        self.sleep(0.1)
         self.send_key_down("w")
         self.sleep(0.1)
         self.send_key_down(self.get_dodge_key())
@@ -195,27 +197,49 @@ class AutoExploration_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.send_key(self.get_interact_key(), down_time=0.1,after_sleep=0.8)
         if not self.try_solving_puzzle():
             return True
+        self.send_key_down("s")
+        self.sleep(0.5)
+        self.send_key_up("s")
         self.send_key_down("d")
         self.sleep(0.1)
-        self.send_key(self.get_dodge_key(),  down_time=0.2)
-        self.sleep(0.1)
+        self.send_key("space", down_time=0.1,after_sleep=0.1)
+        self.send_key(self.get_dodge_key(),  down_time=0.2,after_sleep=0.3)
+        self.send_key("space", down_time=0.1,after_sleep=0.7)
+        self.sleep(0.2)
         self.send_key_up("d")
-        self.sleep(0.1)
         self.send_key_down("s")
         self.sleep(0.1)
-        self.send_key_up(self.get_dodge_key())
-        self.send_key_up("s")
+        self.send_key(self.get_dodge_key(),  down_time=0.2,after_sleep=0.3)
         self.sleep(0.2)
+        self.send_key_up("s")
+        self.send_key_down("d")
+        self.sleep(0.1)
+        self.send_key("space", down_time=0.1,after_sleep=0.1)
+        self.sleep(0.1)
+        self.send_key_up("d")
+        self.sleep(1)
+        self.send_key_down("w")
+        self.sleep(2)
+        self.send_key_down("d")
+        self.sleep(0.2)
+        self.send_key("space", down_time=0.1,after_sleep=0.1)
+        self.send_key("space", down_time=0.5,after_sleep=0.7)
+        self.sleep(0.2)
+        self.send_key_up("d")
+        self.sleep(0.2)
+        self.send_key("space", down_time=0.1,after_sleep=0.1)
+        self.send_key("space", down_time=0.7,after_sleep=0.7)
+        self.sleep(0.5)
+        self.send_key_up("w")
         self.middle_click()
-        self.send_key_up("lalt")
+        self.afk_config.update({"鼠标抖动": True})
         return True
     
     def execute_ground_map(self):
         """执行探险平地地图的移动逻辑"""
         self.log_info("执行探险平地地图移动")
         self.reset_and_transport()
-        self.send_key_down("lalt")
-        self.sleep(0.05)
+        self.sleep(0.1)
         self.send_key_down("a")
         self.sleep(0.1)
         self.send_key(self.get_dodge_key(), down_time=1.1)
@@ -224,9 +248,29 @@ class AutoExploration_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.send_key(self.get_interact_key(), down_time=0.1,after_sleep=0.8)
         if not self.try_solving_puzzle():
             return True
-        self.send_key('d',down_time=0.8,after_sleep=0.1)
+        self.send_key_down("w")
+        self.sleep(0.1)
+        self.send_key_down(self.get_dodge_key())
+        self.sleep(1.2)
+        self.send_key_up("w")
+        self.send_key_down("d")
+        self.sleep(0.8)
+        self.send_key_up("d")
+        self.send_key_down("w")
+        self.sleep(0.1)
+        self.send_key_down(self.get_dodge_key())
+        self.sleep(1.5)
+        self.send_key_up("w")
+        self.sleep(0.1)
+        self.send_key_down("a")
+        self.sleep(0.3)
+        self.send_key_up("a")
+        self.send_key_down("s")
+        self.sleep(0.1)
+        self.send_key_up("s")
+        self.sleep(0.1)
         self.middle_click()
-        self.send_key_up("lalt")
+        self.afk_config.update({"鼠标抖动": True})
         return True
             
             

@@ -107,7 +107,7 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             if self.runtime_state["start_time"] == 0:
                 self.runtime_state["start_time"] = time.time()
                 self.quick_assist_task.reset()
-            
+
             if not self.runtime_state["wait_next_round"] and time.time() - self.runtime_state["start_time"] >= self.config.get("超时时间", 120):
                 if self.external_movement is not _default_movement:
                     self.log_info("任务超时")
@@ -117,7 +117,7 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     self.log_info_notify("任务超时")
                     self.soundBeep()
                     self.runtime_state["wait_next_round"] = True
-            
+
             if not self.runtime_state["wait_next_round"]:
                 self.skill_tick()
         else:
@@ -140,7 +140,8 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.sleep(2)
             self.log_info_notify("任务开始")
             self.soundBeep()
-        
+
+
     def stop_func(self):
         self.get_round_info()
         if self.current_round >= self.config.get("轮次", 3):

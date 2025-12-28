@@ -72,8 +72,8 @@ class BaseChar:
         self.task.send_key_down("CONTROL")
         
         # 2. 稍微等待，确保系统/游戏识别到 Ctrl 已按住 (防止判定为单独按 E)
-        # 不设置check_combat=False，会报错sleep check not in combat
-        self.sleep(0.05, check_combat=False) 
+        # 0.05改为0.4秒，即使卡顿或者30帧也能稳定
+        self.sleep(0.4, check_combat=False) 
         
         # 3. 发送战技 (按 E)
         # 直接调用现有的 send_combat_key 方法

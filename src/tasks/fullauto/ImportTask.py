@@ -48,7 +48,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         })
         self.config_type['外部文件夹'] = {
             "type": "drop_down",
-            "options": self.load_direct_folder(fr'{Path.cwd()}\mod'),
+            "options": self.load_direct_folder(fr'{Path.cwd()}\mod\dm-mod'),
         }
 
         self.config_type['副本类型'] = {

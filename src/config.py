@@ -154,10 +154,14 @@ config = {
     },
     'version': version, #版本
     'my_app': ['src.globals', 'Globals'], # 全局单例对象, 可以存放加载的模型, 使用og.my_app调用
-    'onetime_tasks': [  # tasks to execute
+    'onetime_tasks': [  # tasks to execute    ["src.tasks.fullauto.AutoScheduleTask", "AutoScheduleTask"],
+        
         ["src.tasks.config.CommissionConfig", "CommissionConfig"],
         ["src.tasks.config.CommissionSkillConfig", "CommissionSkillConfig"],
         ["src.tasks.fullauto.AutoFishTask", "AutoFishTask"],
+        ["src.tasks.fullauto.AutoAllFishTask", "AutoAllFishTask"],
+        ["src.tasks.fullauto.AutoScheduleTask", "AutoScheduleTask"],
+        ["src.tasks.fullauto.AutoRogueTask", "AutoRogueTask"],
         ["src.tasks.fullauto.AutoExploration_Fast", "AutoExploration_Fast"],
         ["src.tasks.fullauto.AutoEscortTask", "AutoEscortTask"],
         ["src.tasks.fullauto.Auto65ArtifactTask_Fast", "Auto65ArtifactTask_Fast"],

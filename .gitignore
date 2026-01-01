@@ -71,6 +71,7 @@ working_images/
 .vscode
 # 忽略mod文件夹下的所有内容
 mod/*
+mod-dm/*
 # 但不忽略这个特定的文件夹
 !mod/示例-无巧手30火突破素材(1080p) by望目/
 !mod/示例-脚本工具/

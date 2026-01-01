@@ -159,7 +159,7 @@ config = {
         ["src.tasks.config.CommissionConfig", "CommissionConfig"],
         ["src.tasks.config.CommissionSkillConfig", "CommissionSkillConfig"],
         ["src.tasks.fullauto.AutoFishTask", "AutoFishTask"],
-        ["src.tasks.fullauto.AutoAllFishTask", "AutoAllFishTask"],
+        # ["src.tasks.fullauto.AutoAllFishTask", "AutoAllFishTask"],
         ["src.tasks.fullauto.AutoScheduleTask", "AutoScheduleTask"],
         ["src.tasks.fullauto.AutoRogueTask", "AutoRogueTask"],
         ["src.tasks.fullauto.AutoExploration_Fast", "AutoExploration_Fast"],

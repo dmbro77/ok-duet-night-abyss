@@ -1,13 +1,21 @@
+import re
 from qfluentwidgets import FluentIcon
 import time
 import cv2
+import random
+import win32api
 
 from ok import Logger, TaskDisabledException
 from src.tasks.BaseDNATask import BaseDNATask
 from src.tasks.DNAOneTimeTask import DNAOneTimeTask
 
+
 logger = Logger.get_logger(__name__)
 
+
+class FishOverException(Exception):
+    """钓鱼点没有鱼了"""
+    pass
 
 class AutoFishTask(DNAOneTimeTask, BaseDNATask):
     """AutoFishTask
@@ -25,8 +33,27 @@ class AutoFishTask(DNAOneTimeTask, BaseDNATask):
         self.group_name = "全自动"
         self.group_icon = FluentIcon.CAFE
 
+        self.fish_points = [
+            {"name": "净界岛", "point": (0.141, 0.001, 0.181, 0.05), "walk": [{"key": 'w', "time": 1.6}]},
+            {"name": "冰湖", "point": (0.191, 0.001, 0.221, 0.05),
+             "walk": [{"key": 'a', "time": 0.3}, {"key": 'w', "time": 1.6}]},
+            {"name": "下水道", "point": (0.241, 0.001, 0.261, 0.05), "walk": []},
+            {"name": "浮星埠", "point": (0.281, 0.001, 0.301, 0.05),
+             "walk": [{"key": 'w', "time": 0.3}, {"key": 'a', "time": 0.3}]},
+            {"name": "百年春", "point": (0.321, 0.001, 0.341, 0.05), "walk": [{"key": 'w', "time": 1.3}]},
+            {"name": "潮声岩穴", "point": (0.371, 0.001, 0.381, 0.05),
+             "walk": [{"key": 'a', "time": 0.3}, {"key": 'w', "time": 1.2}, {"key": '', "time": 1}]},
+            {"name": "枯荣阁", "point": (0.405, 0.001, 0.431, 0.05),
+             "walk": [{"key": 'd', "time": 0.3}, {"key": 'w', "time": 0.7}]},
+            {"name": "微茫市", "point": (0.451, 0.001, 0.471, 0.05),
+             "walk": [{"key": 'a', "time": 0.2}, {"key": 'w', "time": 0.2}]}
+        ]
+
         # 默认配置（会被 configs/AutoFishTask.json 覆盖）
         self.default_config.update({
+            "enable_one_dragon": False,
+            "fish_points_selection": ["净界岛", "冰湖", "下水道", '浮星埠', '百年春', '潮声岩穴', '枯荣阁', '微茫市'],
+            "auto_sell": True,
             "MAX_ROUNDS": 100,
             "END_WAIT_SPACE": 1.0,
             "MAX_START_SEC": 20.0,
@@ -36,12 +63,20 @@ class AutoFishTask(DNAOneTimeTask, BaseDNATask):
 
         # 配置描述（便于GUI显示）
         self.config_description.update({
-            "MAX_ROUNDS": "最大轮数，鱼塘每天上限为100次",
+            "enable_one_dragon": "开启一条龙模式（自动前往钓鱼点、切换钓鱼点，出售）\n需大世界启动、设置关闭自动进入区域联机",
+            "fish_points_selection": "一条龙模式下选择的钓鱼点",
+            "auto_sell": "一条龙模式下结束后自动出售鱼类",
+            "MAX_ROUNDS": "单点最大轮数，鱼塘每天上限为100次",
             "END_WAIT_SPACE": "每轮结束等待时间(秒)",
             "MAX_START_SEC": "开始阶段超时(秒)",
             "MAX_FIGHT_SEC": "溜鱼阶段超时(秒)",
             "MAX_END_SEC": "结束阶段超时(秒)",
         })
+
+        self.config_type["fish_points_selection"] = {
+            "type": "multi_selection",
+            "options": ["净界岛", "冰湖", "下水道", '浮星埠', '百年春', '潮声岩穴', '枯荣阁', '微茫市'],
+        }
 
         # runtime
         self.stats = {
@@ -51,11 +86,53 @@ class AutoFishTask(DNAOneTimeTask, BaseDNATask):
             "current_phase": "准备中",
             "chance_used": 0,  # 授渔以鱼使用次数
         }
+        # 全局统计（一条龙模式累计）
+        self.global_stats = {
+            "total_rounds": 0,
+            "total_chance_used": 0,
+            "start_time": None
+        }
+
+    def click_relative_random(self, x1, y1, x2, y2, down_time=0.02, post_sleep=0.0, after_sleep=0.0, use_safe_move=False, safe_move_box=None):
+        # 生成随机相对坐标
+        rx = random.uniform(x1, x2)
+        ry = random.uniform(y1, y2)
+        
+        # 转换为游戏内像素坐标
+        game_x = self.width_of_screen(rx)
+        game_y = self.height_of_screen(ry)
+        
+        if post_sleep > 0:
+            self.sleep(post_sleep)
+
+        # 移动物理鼠标到目标位置
+        if hasattr(self, 'executor') and hasattr(self.executor, 'interaction'):
+            abs_pos = self.executor.interaction.capture.get_abs_cords(game_x, game_y)
+            win32api.SetCursorPos(abs_pos)
+
+        self.sleep(0.1)    
+        # 执行点击
+        self.click(int(game_x), int(game_y), down_time=down_time)
+        self.sleep(0.01)  
+        self.click(int(game_x), int(game_y), down_time=down_time)
+        
+        # 点击后随机移动鼠标
+        curr_x, curr_y = win32api.GetCursorPos()
+        offset_x = random.randint(1, 10)
+        offset_y = random.randint(1, 10)
+        win32api.SetCursorPos((curr_x + offset_x, curr_y + offset_y))
+        self.sleep(after_sleep)
+        
+       
 
     def run(self):
         DNAOneTimeTask.run(self)
         try:
-            return self.do_run()
+            self.init()
+            if self.config.get("enable_one_dragon"):
+                return self.do_run_all()
+            else:
+                return self.do_run()
         except TaskDisabledException:
             pass
         except Exception as e:
@@ -69,6 +146,12 @@ class AutoFishTask(DNAOneTimeTask, BaseDNATask):
             "start_time": None,
             "current_phase": "准备中",
             "chance_used": 0,  # 授渔以鱼使用次数
+        }
+        # 重置全局统计
+        self.global_stats = {
+            "total_rounds": 0,
+            "total_chance_used": 0,
+            "start_time": time.time()
         }
 
     def find_fish_cast(self) -> tuple[bool, tuple]:
@@ -99,6 +182,20 @@ class AutoFishTask(DNAOneTimeTask, BaseDNATask):
         if box:
             return True, (box.x + box.width // 2, box.y + box.height // 2)
         return False, (0, 0)
+
+    def find_fish_over(self) -> tuple[bool, tuple]:
+        """查找 无鱼 文字，标识钓鱼点已经没有鱼，返回 (found, center)"""
+        CHANCE_THRESHOLD = 0.8  # fish_chance 匹配阈值
+        cur_time = time.time()
+        while time.time() - cur_time < 0.4:
+            fish_over_box = self.box_of_screen_scaled(2560, 1440, 2126/2, 884/2, 2974/2, 988/2, name="fish_over")
+            self.draw_boxes("fish_over", fish_over_box, "red")
+            boxes = self.ocr(box=fish_over_box, match=re.compile(".*无鱼.*", re.IGNORECASE), threshold=CHANCE_THRESHOLD)
+            logger.info(f"find_fish_over: {boxes}")
+            if boxes:
+                box = boxes[0]
+                return True, (box.x + box.width // 2, box.y + box.height // 2)
+        return False, (0, 0) 
 
     def find_bar_and_fish_by_area(self):
         """基于 ROI 找到鱼条和鱼标的区域与面积
@@ -260,6 +357,13 @@ class AutoFishTask(DNAOneTimeTask, BaseDNATask):
         else:
             logger.info("找到fish_cast -> 按下空格抛竿")
             self.send_key("space", down_time=0.06)
+        self.sleep(0.3)
+        has_fish_over, _ = self.find_fish_over()
+        if has_fish_over:
+            logger.info("找到无鱼文字 -> 钓鱼点没有鱼了")
+            # 抛出异常
+            raise FishOverException("钓鱼点没有鱼了")
+
 
         logger.info("等待fish_bite出现...")
         ret = self.wait_until(lambda: self.find_fish_bite()[0], time_out=start_deadline, raise_if_not_found=False)
@@ -518,7 +622,8 @@ class AutoFishTask(DNAOneTimeTask, BaseDNATask):
                             logger.info(f"✓ 平均每轮: {avg_time:.1f} 秒")
                         logger.info("自动钓鱼任务完成！")
                         logger.info("=" * 50)
-                        self.soundBeep()
+                        if not self.config.get("enable_one_dragon"):
+                            self.soundBeep()
                         break
 
                 if not self.phase_start():
@@ -558,6 +663,164 @@ class AutoFishTask(DNAOneTimeTask, BaseDNATask):
                 self.sleep(1.0)
             except TaskDisabledException:
                 raise
+            except FishOverException as e:
+                self.log_info(f"鱼已被钓完")
+                break
             except Exception as e:
                 logger.error("AutoFishTask fatal", e)
                 break
+
+    # 打开到鱼类图鉴页面
+    def go_fish(self):
+        try:
+            if not self.in_team():
+                raise Exception("请在大世界开始")
+            self.send_key("b")
+            self.sleep(0.4)
+            self.click_relative_random(0.29, 0.001, 0.33, 0.04, after_sleep=0.8)
+            self.sleep(0.4)
+            # x_step,y_step = 0.06,0.37
+            start_x, start_y = 0.09, 0.23
+            now = time.time()
+            self.click_relative_random(start_x, start_y, start_x + 0.01, start_y + 0.01, after_sleep=0.8)
+            self.sleep(0.4)
+            # box1 = self.wait_ocr(
+            #     box=self.box_of_screen_scaled(2560, 1440, 2560 * 0.78, 1440 * 0.80, 2560 * 0.87, 1440 * 0.83,
+            #                                   name="start", hcenter=True),
+            #     match='打开鱼类图鉴',
+            #     time_out=5,
+            #     raise_if_not_found=True,
+            # )
+            # box = self.box_of_screen_scaled(2560, 1440, 0.07, 0.11, 0.82, 0.83, name="letter_drag_area",
+            #                                 hcenter=True)
+            # self.click_box_random(box1[0], use_safe_move=True, safe_move_box=box, down_time=0.02, after_sleep=0.1)
+            self.click_relative_random(0.76, 0.80, 0.86, 0.821, down_time=0.02, after_sleep=0.8)
+        except Exception as e:
+            self.log_error(f"打开鱼类图鉴失败 {e}")
+            raise e
+
+    # 切换钓鱼点
+    def switch_fish_point(self, current_fish):
+        try:
+            box = self.box_of_screen_scaled(
+                2560, 1440, 0.001, 0.001, 0.999, 0.999,
+                name="letter_drag_area", hcenter=True
+            )
+            self.sleep(0.4)
+            self.click_relative_random(
+                *current_fish['point'],
+                use_safe_move=True, safe_move_box=box, down_time=0.02, after_sleep=0.8
+            )
+            self.click_relative_random(
+                0.80, 0.831, 0.901, 0.871,
+                use_safe_move=True, safe_move_box=box, down_time=0.02, after_sleep=0.8
+            )
+            self.click_relative_random(
+                0.828, 0.841, 0.881, 0.871,
+                use_safe_move=True, safe_move_box=box, down_time=0.02, after_sleep=0.8
+            )
+            self.sleep(2)
+            # 传送地图,等待传送完成
+            self.wait_until(self.in_team, time_out=30.0, raise_if_not_found=True, settle_time=1.2)
+            # 获取移动方式并执行移动
+            walk_step = current_fish['walk']
+            for step in walk_step:
+                key = step["key"]
+                if key:
+                    self.send_key_down(key)
+                self.sleep(step["time"])
+                if key:
+                    self.send_key_up(key)
+                self.sleep(0.2)
+            self.send_key("f")
+        except Exception as e:
+            self.log_error(f"切换钓鱼点失败 {e}")
+            raise e
+
+    # 开始钓鱼交互
+    def start_fish_interaction(self):
+        try:
+            self.sleep(0.8)
+            # self.wait_click_ocr(
+            #     box=self.box_of_screen_scaled(
+            #         2560, 1440, 2560 * 0.881, 1440 * 0.871, 2560 * 0.941, 1440 * 0.901,
+            #         name="start_fish", hcenter=True
+            #     ),
+            #     match=re.compile('开始钓鱼', re.IGNORECASE),
+            #     time_out=20,
+            #     raise_if_not_found=True,
+            #     after_sleep=0.5
+            # )
+            self.click_relative_random(0.87, 0.87, 0.96, 0.89, down_time=0.02, after_sleep=0.8)
+            # 移开鼠标
+            rx = random.uniform(0.91, 0.94)
+            ry = random.uniform(0.93, 0.98)
+            game_x = self.width_of_screen(rx)
+            game_y = self.height_of_screen(ry)
+            abs_pos = self.executor.interaction.capture.get_abs_cords(game_x, game_y)
+            win32api.SetCursorPos(abs_pos)
+        except Exception as e:
+            self.log_error(f"开始钓鱼失败 {e}")
+            raise e
+
+    def do_run_all(self):
+        self.go_fish()
+
+        for current_fish in self.fish_points:
+            if current_fish['name'] not in self.config.get("fish_points_selection"):
+                continue
+
+            self.switch_fish_point(current_fish)
+            self.info_set('当前钓鱼点', f" {current_fish['name']}")
+            self.start_fish_interaction()
+            self.sleep(1)
+
+            try:
+                # 钓鱼循环，重置单次钓鱼点统计
+                self.do_run()
+            except FishOverException as e:
+                self.log_info(f"鱼已被钓完，前往下一个钓鱼点")
+                break
+            
+            # 累计单次钓鱼点的统计数据到全局统计
+            self.global_stats["total_rounds"] += self.stats["rounds_completed"]
+            self.global_stats["total_chance_used"] += self.stats["chance_used"]
+            
+            # 计算全局耗时
+            global_elapsed = time.time() - self.global_stats["start_time"]
+            g_hours = int(global_elapsed // 3600)
+            g_minutes = int((global_elapsed % 3600) // 60)
+            g_seconds = int(global_elapsed % 60)
+            global_time_str = f"{g_hours:02d}:{g_minutes:02d}:{g_seconds:02d}"
+            
+            self.info_set("总计", f"【完成轮数：{self.global_stats['total_rounds']}，授渔以鱼：{self.global_stats['total_chance_used']}，总耗时：{global_time_str}】")
+            
+            # 退出钓鱼
+            self.sleep(1.5)
+            self.send_key('esc')
+            self.sleep(1.5)
+            self.click_relative_random(0.06, 0.86, 0.07, 0.89, after_sleep=0.8)
+
+        self.fishing_end()
+        self.soundBeep()
+
+    def fishing_end(self):
+        self.send_key("esc")
+        if self.config.get('auto_sell'):
+            # 打开背包
+            self.click_relative_random(0.025, 0.86, 0.04, 0.89, after_sleep=0.8)
+            # 点击出售
+            self.click_relative_random(0.62, 0.80, 0.68, 0.82, after_sleep=0.8)
+            # 5中类型鱼类全部勾选
+            for point in [
+                (0.11, 0.67, 0.12, 0.68),
+                (0.14, 0.67, 0.15, 0.68),
+                (0.16, 0.67, 0.17, 0.68),
+                (0.18, 0.67, 0.19, 0.68),
+                (0.21, 0.67, 0.22, 0.68),
+            ]:
+                self.click_relative_random(*point, after_sleep=0.8)
+            # 点击全部出售
+            self.click_relative_random(0.83, 0.89, 0.94, 0.91, after_sleep=0.8)
+            self.click_relative_random(0.55, 0.67, 0.62, 0.69, after_sleep=0.8)
+

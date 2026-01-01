@@ -211,6 +211,11 @@ class AutoEscortTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         self.wait_until(
                             lambda: not self.in_team(), time_out=30, settle_time=1
                         )
+                        # 未进入结算，也属于失败
+                        self.stats["failed_attempts"] += 1
+                        self.info_set("失败次数", self.stats["failed_attempts"])
+                        self.stats["current_phase"] = "重新开始"
+                        self.info_set("当前阶段", "重新开始")
                         _start_time = 0
                         _path_end_time = 0
 

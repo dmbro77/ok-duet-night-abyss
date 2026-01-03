@@ -1,0 +1,153 @@
+{
+  "name": "BSJJB-B-1",
+  "version": "4.2",
+  "mode": "hybrid",
+  "created_time": "2025-12-31 11:08:33",
+  "total_time": 15.570251500001177,
+  "action_count": 22,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.8702661999996053
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 1.950226599990856
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 1.9803625999920769
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 3.2002628999907756
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 3.250313999989885
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 3.6203431999892928
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 5.470311799988849
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 5.620265499994275
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 5.840270699991379
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 5.980303299991647
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 6.591259799999534
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 6.620177299992065
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 7.310289499990176
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 7.700275399998645
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 7.720324099995196
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 8.791197400001693
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 8.830263800002285
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 9.39031449999311
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 12.220276399995782
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 12.44047679999494
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 15.35029809999105
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 15.570251500001177
+    }
+  ],
+  "stats": {
+    "keyboard": 22,
+    "mouse_move": 0,
+    "mouse_click": 0,
+    "mouse_scroll": 0,
+    "arrow_key": 0,
+    "mouse_track": 0,
+    "hotkey_offset": 0,
+    "flying_gun": 0,
+    "reset_process": 0
+  },
+  "game_mode": true,
+  "movement_scale": 1.0,
+  "offset_hotkeys": {
+    "add_x": "numpad_6",
+    "sub_x": "numpad_4",
+    "add_y": "numpad_2",
+    "sub_y": "numpad_8"
+  },
+  "offset_steps": {
+    "x": 50,
+    "y": 50
+  },
+  "flying_gun": {
+    "enabled": true,
+    "hotkey": "f5",
+    "hold_time": 1000
+  },
+  "reset_process": {
+    "enabled": true,
+    "hotkey": "f7",
+    "images_dir": "F:\\EMT-录制器2.1\\4.2录制\\img"
+  }
+}

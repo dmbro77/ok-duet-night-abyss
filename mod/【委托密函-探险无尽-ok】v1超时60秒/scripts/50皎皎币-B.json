@@ -1,0 +1,107 @@
+{
+  "name": "人物碎片刷取B",
+  "version": "2.1",
+  "created_time": "2025-11-07 12:56:56",
+  "total_time": 21.309927940368652,
+  "action_count": 18,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.1533474922180176
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 3.7764511108398438
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 4.797086238861084
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 8.099032163619995
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 8.922682046890259
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 10.2357177734375
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 11.186163663864136
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 12.236507654190063
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 13.063907146453857
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 14.290820121765137
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 15.787310123443604
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 15.840245008468628
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 17.12710404396057
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 17.21982979774475
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 18.362409591674805
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 18.45353674888611
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 20.655630111694336
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 21.309927940368652
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 4,
+    "key_presses": 18,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

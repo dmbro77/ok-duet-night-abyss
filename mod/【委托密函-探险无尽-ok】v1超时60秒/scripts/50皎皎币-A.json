@@ -1,0 +1,107 @@
+{
+  "name": "人物碎片刷取A",
+  "version": "2.1",
+  "created_time": "2025-11-07 12:58:02",
+  "total_time": 18.68104600906372,
+  "action_count": 18,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.3722498416900635
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 5.786542654037476
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 5.889761447906494
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 7.516803503036499
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 7.589125156402588
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 10.49595308303833
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 11.116431713104248
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 11.453836917877197
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 12.383780479431152
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 12.766396284103394
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 14.141072273254395
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 14.239205360412598
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 15.111255407333374
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 15.191734790802002
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 16.763943672180176
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 17.512009859085083
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 18.173447370529175
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 18.68104600906372
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 5,
+    "key_presses": 18,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

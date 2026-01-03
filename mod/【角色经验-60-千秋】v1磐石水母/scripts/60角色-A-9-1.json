@@ -1,0 +1,67 @@
+{
+  "name": "60角色-1-1",
+  "version": "2.1",
+  "created_time": "2025-11-14 03:58:53",
+  "total_time": 9.288121223449707,
+  "action_count": 10,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.8802027702331543
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 2.7102138996124268
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 2.8421127796173096
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 3.292168140411377
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.5401885509490967
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 3.9981961250305176
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 4.15807318687439
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 6.074773788452148
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 9.136065483093262
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 9.288121223449707
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 10,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

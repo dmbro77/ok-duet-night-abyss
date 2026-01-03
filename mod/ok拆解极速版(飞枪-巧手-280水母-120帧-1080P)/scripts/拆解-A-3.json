@@ -1,0 +1,136 @@
+{
+  "name": "拆解-A-3",
+  "version": "2.0",
+  "created_time": "2025-12-31 10:22:11",
+  "total_time": 8.9,
+  "action_count": 25,
+  "actions": [
+    {
+      "type": "mouse_down",
+      "time": 0.0,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 0.3,
+      "button": "left"
+    },
+    {
+      "type": "key_down",
+      "time": 1.5,
+      "key": "d"
+    },
+    {
+      "type": "key_down",
+      "time": 1.6,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 1.7,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 2.4,
+      "key": "d"
+    },
+    {
+      "type": "key_down",
+      "time": 3.0,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "time": 3.1,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 3.2,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 3.8,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "time": 4.3,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 4.3999999999999995,
+      "key": "f"
+    },
+    {
+      "type": "key_down",
+      "time": 4.7,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 4.8,
+      "key": "f"
+    },
+    {
+      "type": "key_down",
+      "time": 5.8,
+      "key": "a"
+    },
+    {
+      "type": "key_up",
+      "time": 6.0,
+      "key": "a"
+    },
+    {
+      "type": "key_down",
+      "time": 6.0,
+      "key": "w"
+    },
+    {
+      "type": "key_up",
+      "time": 6.3,
+      "key": "w"
+    },
+    {
+      "type": "mouse_move",
+      "time": 6.3,
+      "dx": 120,
+      "dy": 60,
+      "source": "arrow_key"
+    },
+    {
+      "type": "key_down",
+      "time": 6.8999999999999995,
+      "key": "4"
+    },
+    {
+      "type": "key_up",
+      "time": 7.0,
+      "key": "4"
+    },
+    {
+      "type": "mouse_down",
+      "time": 7.6,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 7.8999999999999995,
+      "button": "left"
+    },
+    {
+      "type": "key_down",
+      "time": 8.8,
+      "key": "q"
+    },
+    {
+      "type": "key_up",
+      "time": 8.9,
+      "key": "q"
+    }
+  ]
+}

@@ -1,0 +1,1227 @@
+{
+  "name": "20皎皎币-A-1",
+  "version": "1.0",
+  "created_time": "2025-11-11 12:03:53",
+  "total_time": 65.02132857322692,
+  "action_count": 225,
+  "actions": [
+    {
+      "type": "mouse_rotation",
+      "time": 0.2,
+      "direction": "up",
+      "angle": 20,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 0.39126272201538104
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 0.746627998352051
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 0.9056736946105959
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 1.4696526050567629
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 1.5618390560150148
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 2.0642792701721193
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 2.1955658912658693
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 2.767764759063721
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 2.8510672569274904
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 3.29,
+      "direction": "down",
+      "angle": 10,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 3.445748043060303
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 3.5139815330505373
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 4.08020396232605
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 4.208477210998535
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 4.58,
+      "direction": "up",
+      "angle": 4,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 4.766903686523438
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 4.895234136581421
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 5.13,
+      "direction": "left",
+      "angle": 8,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 5.1899999999999995,
+      "direction": "down",
+      "angle": 22,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 5.503668022155762
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 5.635234136581421
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 6.183668022155762
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 6.557403135299683
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 7.062555027008057
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 7.1899999999999995,
+      "direction": "up",
+      "angle": 18,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 7.234999999999999,
+      "direction": "right",
+      "angle": 8,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 7.296106958389283
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 7.536131763458252
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 7.546591663360596
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 8.579062604904175
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 8.636131763458252
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 10.06605339050293
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 10.116591663360596
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 10.456058740615845
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 10.598918962478638
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 10.959999999999999,
+      "direction": "down",
+      "angle": 10.5,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 11.222527503967285
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 11.350408868789673
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 11.86,
+      "direction": "up",
+      "angle": 8.5,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 11.967109289169311
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 12.08133564376831
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 12.223000000000003,
+      "direction": "right",
+      "angle": 2,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 12.229000000000001,
+      "direction": "up",
+      "angle": 9,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 12.632086709976196
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 12.784726718902588
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 12.929000000000002,
+      "direction": "down",
+      "angle": 3,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 12.929200000000002,
+      "direction": "left",
+      "angle": 74,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 13.384623149871828
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 13.484623149871826
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 13.624623149871827
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 14.038462314987184
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 14.044623149871827
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 14.444623149871827
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 14.534623149871827
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 14.579,
+      "direction": "up",
+      "angle": 3,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 14.639,
+      "direction": "right",
+      "angle": 75.5,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 14.753730920791629
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 15.386570314407349
+    },
+    {
+      "type": "key_down",
+      "time": 15.854,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 15.951,
+      "key": "f"
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 16.054726718902586
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 16.175726718902588
+    },
+    {
+      "type": "key_down",
+      "time": 16.481,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 16.595,
+      "key": "f"
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 16.71172671890259
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 16.808726718902587
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 17.085526718902585
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 17.18787206390259
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 17.47244856390259
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 17.595848563902585
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 18.596721845,
+      "direction": "right",
+      "angle": 57,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 18.636721845,
+      "direction": "up",
+      "angle": 3,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 18.672548563902588
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 19.30439215940735
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 19.41254856390259
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 19.836721845,
+      "direction": "down",
+      "angle": 3,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 20.00439215940735
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 20.20404028892517
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 20.444040288925173
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 20.56570421218872
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 20.59570421218872
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 20.60404028892517
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 21.10570421218872
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 21.148536586761473
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 21.54073848724365
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 22.970958375930785
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 23.102204942703246
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 23.88065137863159
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 24.054688596725462
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 24.21668496131897
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 24.416178131103514
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 24.684634113311766
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 24.83091320991516
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 25.596721844999998,
+      "direction": "left",
+      "angle": 64,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 25.636721845000004,
+      "direction": "up",
+      "angle": 34,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 26.41254856390259
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 27.004392159407345
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 27.124888563902587
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 27.226721845,
+      "direction": "right",
+      "angle": 2,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 27.246721845000003,
+      "direction": "down",
+      "angle": 34,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 27.816732159407344
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 27.927288563902586
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 28.346721844999998,
+      "direction": "down",
+      "angle": 57,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 28.386721845000004,
+      "direction": "right",
+      "angle": 33,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 28.51913215940735
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 28.615628957748413
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 28.935628957748413
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 29.215628957748415
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 29.24546579360962
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 29.4244801902771
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 30.21608409881592
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 30.26562895774841
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 30.305465793609617
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 30.506
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 31.064480190277095
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 32.51047840118408
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 32.616115713119505
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 32.71047840118408
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 32.81611571311951
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 33.919510746002196
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 34.04478015899658
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 34.367217206954955
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 34.480572366714476
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 34.754899406433104
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 34.86531820297241
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 35.686721845,
+      "direction": "left",
+      "angle": 98,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 35.746721844999996,
+      "direction": "up",
+      "angle": 74,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 35.82488856390258
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 36.404392159407344
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 36.524888563902586
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 36.886721845,
+      "direction": "right",
+      "angle": 19,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 36.916721845,
+      "direction": "down",
+      "angle": 27,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 37.10439215940735
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 37.195888563902585
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 37.516721845,
+      "direction": "up",
+      "angle": 13,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 37.80439215940735
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 37.924888563902584
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 38.286721845,
+      "direction": "right",
+      "angle": 12,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 38.3466721845,
+      "direction": "up",
+      "angle": 11,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 38.504392159407345
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 39.38905816078186
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 39.392559099197385
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 40.72983675003052
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 40.74936633110047
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 40.98340468406678
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 41.014132308959965
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 41.3043752193451
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 41.30644707679749
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 42.79308276176453
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 42.926624584198
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 43.1831057548523
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 43.32632236480713
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 44.00885634422303
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 44.14908294677735
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 44.478328752517704
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 44.59527878761292
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 44.884090232849125
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 45.00570611953736
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 45.8866721845,
+      "direction": "down",
+      "angle": 21,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 45.8966721845,
+      "direction": "right",
+      "angle": 90,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 45.978328752517704
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 46.59527878761292
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 46.7083287525177
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 47.1966721845,
+      "direction": "left",
+      "angle": 38,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 47.325278787612916
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 47.4583287525177
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 47.796672184500004,
+      "direction": "up",
+      "angle": 11,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 48.075278787612916
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 48.1783287525177
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 48.6566721845,
+      "direction": "left",
+      "angle": 16.25,
+      "sensitivity": 10
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 48.686672184500004,
+      "direction": "down",
+      "angle": 15,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 48.795278787612915
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 48.90424203872681
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 49.3166721845,
+      "direction": "right",
+      "angle": 0.25,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 49.45142834663391
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 49.52667218450001,
+      "direction": "up",
+      "angle": 23,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 49.57781903266907
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 50.06256026268005
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 50.17581194877625
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 50.789723024368286
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 50.92585005760193
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 51.23667218450001,
+      "direction": "down",
+      "angle": 13,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 51.49415581703186
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 51.637819032669064
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 52.11256026268005
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 52.255850057601926
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 52.82415581703186
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 52.9400611114502
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 53.356672184500006,
+      "direction": "left",
+      "angle": 0.3,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 53.46418678283691
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 53.63990064620972
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 54.24402690887451
+    },
+    {
+      "type": "key_down",
+      "time": 54.37,
+      "key": "mouse_left"
+    },
+    {
+      "type": "key_up",
+      "time": 54.92,
+      "key": "mouse_left"
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 55.05887491733704
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 55.20614878450001,
+      "direction": "down",
+      "angle": 8,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 55.63102109462891
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 55.781
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 56.106148784500014,
+      "direction": "down",
+      "angle": 24,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 56.598000000000006
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 56.960000000000015
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 57.30614878450002,
+      "direction": "up",
+      "angle": 10,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 57.414026908874526
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 57.75
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 57.82
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 57.952337880441284
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 58.114
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 58.124
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 58.13221845180666
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 58.6858934211731
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 59.105062131881716
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 59.32338035583496
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 59.966069822311404
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 60.300597791671755
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 60.5083552646637
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 61.35293519973755
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 62.167379503250125
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 63.027019863128665
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 63.41104972839356
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 63.90678680419922
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 64.26077926635742
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 64.3373118686676
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 64.77975380897522
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 64.91846025466918
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 65.02132857322692
+    }
+  ]
+}

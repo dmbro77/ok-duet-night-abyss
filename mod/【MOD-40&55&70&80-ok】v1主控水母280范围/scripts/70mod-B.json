@@ -1,0 +1,57 @@
+{
+  "name": "70mod-B",
+  "version": "2.1",
+  "created_time": "2025-11-07 15:32:15",
+  "total_time": 72.17349195480347,
+  "action_count": 90,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.6781795024871826
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.4750092029571533
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 1.6020448207855225
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.8122878074645996
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.9588963985443115
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 4.439017057418823
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.591130495071411
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 7.241075754165649
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 7,
+    "key_presses": 90,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

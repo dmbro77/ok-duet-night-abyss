@@ -1,0 +1,97 @@
+{
+  "name": "80皎皎币-C-2",
+  "version": "2.1",
+  "created_time": "2025-11-21 14:08:10",
+  "total_time": 11.523784637451172,
+  "action_count": 16,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.49028706550598145
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 0.49336791038513184
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 0.7438554763793945
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 0.7456197738647461
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.7558667659759521
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 0.7583415508270264
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 0.8538305759429932
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 1.4198060035705566
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 1.4438912868499756
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 3.857903242111206
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 4.831844329833984
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 10.075799703598022
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 10.223779678344727
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 11.2698073387146
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 11.447866201400757
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 11.523784637451172
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 4,
+    "key_presses": 16,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

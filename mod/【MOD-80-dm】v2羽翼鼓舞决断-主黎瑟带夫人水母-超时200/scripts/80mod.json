@@ -1,0 +1,77 @@
+{
+  "name": "扼守-电梯-移动",
+  "version": "2.1",
+  "created_time": "2025-12-30 12:18:18",
+  "total_time": 7.984263181686401,
+  "action_count": 12,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.527230978012085
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 0.9392855167388916
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.2832820415496826
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.4493346214294434
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 5.7311601638793945
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 5.866255760192871
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 6.020264148712158
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 6.207517147064209
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 6.874310731887817
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 6.957422256469727
+    },
+    {
+      "type": "key_down",
+      "key": "q",
+      "time": 7.858302593231201
+    },
+    {
+      "type": "key_up",
+      "key": "q",
+      "time": 7.984263181686401
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 4,
+    "key_presses": 12,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

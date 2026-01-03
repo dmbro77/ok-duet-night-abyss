@@ -1,0 +1,207 @@
+{
+  "name": "电梯-移动1",
+  "version": "2.1",
+  "created_time": "2025-12-27 16:29:26",
+  "total_time": 27.170235633850098,
+  "action_count": 38,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.1802120208740234
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.6611995697021484
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 5.341203689575195
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 5.347980976104736
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.130247354507446
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 9.560207843780518
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 10.690422058105469
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 10.730254888534546
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 11.120269298553467
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 11.540376424789429
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 12.670234680175781
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 12.750269412994385
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 14.280219554901123
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 14.730290174484253
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 16.630208492279053
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 16.760215997695923
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 17.70023012161255
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 17.78022050857544
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 18.13021945953369
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 18.19124460220337
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 18.290253400802612
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 18.3502299785614
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 18.40027141571045
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 18.590217113494873
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 18.680238246917725
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 18.720219373703003
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 20.210227727890015
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 20.46029305458069
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 21.330252647399902
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 21.670259714126587
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 22.510258436203003
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 22.910242557525635
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 23.990247011184692
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 24.291247844696045
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 25.810281991958618
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 26.11025834083557
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 26.791248559951782
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 27.170235633850098
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 5,
+    "key_presses": 38,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

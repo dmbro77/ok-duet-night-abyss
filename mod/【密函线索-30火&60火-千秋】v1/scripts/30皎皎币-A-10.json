@@ -1,0 +1,107 @@
+{
+  "name": "30皎皎币-A-10",
+  "version": "2.1",
+  "created_time": "2025-11-05 16:13:05",
+  "total_time": 12.464294910430908,
+  "action_count": 18,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "esc",
+      "time": 0.16400694847106934
+    },
+    {
+      "type": "key_up",
+      "key": "esc",
+      "time": 0.2739999294281006
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 2.1989853382110596
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 2.308990478515625
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 2.6
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 2.8
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 4.5271148681640625
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 4.579039096832275
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 5.916016101837158
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 5.979973077774048
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 7.732118844985962
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 7.872312545776367
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 9.321006774902344
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 9.437001705169678
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 10.747273445129395
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 10.87507939338684
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 12.320268154144287
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 12.464294910430908
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 4,
+    "key_presses": 18,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "name": "驱离-A",
+  "version": "2.1",
+  "created_time": "2025-11-16 21:46:01",
+  "total_time": 11.288048028945923,
+  "action_count": 28,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.8044602870941162
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.196441888809204
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 1.320507287979126
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 1.3800742626190186
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 1.4401097297668457
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 1.492307424545288
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 2.0003700256347656
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 2.0243213176727295
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 2.288193702697754
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 3.1004366874694824
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.2240898609161377
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 3.2841289043426514
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 3.2880516052246094
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 4.168094635009766
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 4.173908948898315
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 4.44450306892395
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 6.220238447189331
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 6.292171001434326
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 7.204174757003784
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 7.384076118469238
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 7.744163751602173
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 7.812073230743408
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 7.960226058959961
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 8.036007642745972
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.72404170036316
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 9.90815806388855
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 11.208113670349121
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 11.288048028945923
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 5,
+    "key_presses": 28,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

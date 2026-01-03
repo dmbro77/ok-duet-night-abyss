@@ -1,0 +1,137 @@
+{
+  "name": "65mod-水母主控-移动",
+  "version": "2.1",
+  "created_time": "2025-11-23 00:26:47",
+  "total_time": 29.574092149734497,
+  "action_count": 24,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.39609503746032715
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 0.7500684261322021
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 1.604189157485962
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 1.6402688026428223
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 2.4703667163848877
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 2.590214967727661
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 3.590153932571411
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 3.7101240158081055
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 4.9562599658966064
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 5.1422693729400635
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 6.946271896362305
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 8.266093730926514
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 8.852065324783325
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 9.762152194976807
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 10.496721029281616
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 19.3288791179657
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 24.721559286117554
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 25.2662091255188
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 25.514822006225586
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 25.7460618019104
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 25.96422576904297
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 28.81816077232361
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 29.50422430038452
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 29.574092149734497
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 6,
+    "key_presses": 24,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

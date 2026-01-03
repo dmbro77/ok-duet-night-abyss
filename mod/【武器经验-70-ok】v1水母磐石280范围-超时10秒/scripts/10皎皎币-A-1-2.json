@@ -1,0 +1,457 @@
+{
+  "name": "10皎皎币-A-1-2",
+  "version": "2.1",
+  "created_time": "2025-11-10 05:44:39",
+  "total_time": 176.5030436515808,
+  "action_count": 88,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.9154064655303955
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 8.521172523498535
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 9.601127862930298
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 12.637476682662964
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 13.06049633026123
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 15.122060537338257
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 15.596054315567017
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 15.749658107757568
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 16.13824725151062
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 16.300641775131226
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 16.806939125061035
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 16.938965320587158
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 18.339593172073364
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 20.727832555770874
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 21.2316734790802
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 25.778234720230103
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 26.30937099456787
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 26.44020104408264
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 26.89149570465088
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 27.064661741256714
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 32.66658282279968
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 34.243765115737915
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 34.615259647369385
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 38.746549129486084
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 39.044233083724976
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 40.869133949279785
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 41.24409866333008
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 45.626749992370605
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 45.84621286392212
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 49.4362268447876
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 49.95387554168701
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 53.62254548072815
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 53.95432114601135
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 55.18554425239563
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 55.72517395019531
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 68.7512469291687
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 68.99514532089233
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 69.39341592788696
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 69.54674553871155
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 71.35373330116272
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 71.57666182518005
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 71.76584482192993
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 72.20795488357544
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 72.37050914764404
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 78.77669310569763
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 85.96128511428833
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 86.23279047012329
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 90.3983838558197
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 90.79399967193604
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 95.46503949165344
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 95.7933394908905
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 99.36910939216614
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 99.57366156578064
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 100.90290093421936
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 101.12194895744324
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 102.04675245285034
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 102.75367188453674
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 102.90235638618469
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 103.36736631393433
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 103.51966977119446
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 109.0716643333435
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 111.02027654647827
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 111.43792724609375
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 112.9311797618866
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 113.5072991847992
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 117.25817584991455
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 117.87324857711792
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 118.03992080688477
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 118.48317885398865
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 118.6166455745697
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 119.19439625740051
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 119.34073400497437
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 125.97798681259155
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 129.07737636566162
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 129.39258408546448
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 130.88685250282288
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 131.0628068447113
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 131.1690547466278
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 131.36800074577332
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 140.0437958240509
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 140.822336435318
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 143.56295704841614
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 143.9172101020813
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 150.12374138832092
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 151.32669806480408
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 154.24883890151978
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 154.98511123657227
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 176.5030436515808
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 5,
+    "key_presses": 88,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

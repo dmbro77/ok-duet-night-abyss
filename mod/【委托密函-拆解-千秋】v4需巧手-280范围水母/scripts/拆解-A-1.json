@@ -1,0 +1,199 @@
+{
+  "name": "拆解-A-1",
+  "version": "1.0",
+  "created_time": "2025-11-20 20:27:22",
+  "total_time": 22.556043100357055,
+  "action_count": 38,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 0.4961121082305908
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 0.7900686264038086
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.007972002029419
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 2.7899227142333984
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 3.25
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 6.686436891555786
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 7.057969570159912
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 8.613988161087036
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 8.726036548614502
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 9.016003608703613
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 9.111903667449951
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 9.18193793296814
+    },
+    {
+      "type": "key_down",
+      "time": 10.1,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 10.2,
+      "key": "f"
+    },
+    {
+      "type": "key_down",
+      "time": 10.7,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 10.8,
+      "key": "f"
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 12.026138257980346
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 12.092054080963134
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 12.7481059551239
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 13.206120920181274
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 13.816483688354491
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 14.156151008605956
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 14.510166597366332
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 15.700061988830566
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 15.82209153175354
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 16.87205286026001
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 17.194088172912597
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 18.594136428833007
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 18.622273635864257
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 20.498203229904174
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 20.86007947921753
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 21.278158378601074
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 21.822236490249633
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 21.89145369529724
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 22.182150316238403
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 22.24005241394043
+    },
+    {
+      "type": "key_down",
+      "key": "q",
+      "time": 22.520360898971557
+    },
+    {
+      "type": "key_up",
+      "key": "q",
+      "time": 22.556043100357055
+    }
+  ]
+}

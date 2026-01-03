@@ -1,0 +1,21 @@
+{
+    "loop_count": "0",
+    "battle_timeout": "160",
+    "jiaojiao_level": "60",
+    "endless_waves": "1",
+    "adventure_level": "10",
+    "adventure_attribute": "火",
+    "skill_key": "",
+    "skill_interval": "",
+    "skill_count": "1",
+    "skill_hold_time": "0",
+    "shutdown_enabled": false,
+    "shutdown_minutes": "60",
+    "monthly_card_enabled": false,
+    "hotkey": "home",
+    "script_mode": "驱离",
+    "boost_type": "不选择",
+    "selected_characters": [],
+    "endpoint_detection_enabled": false,
+    "last_saved": "2025-11-13 17:57:07"
+}

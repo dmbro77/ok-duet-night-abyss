@@ -1,0 +1,27 @@
+{
+  "name": "80-皎皎币-B",
+  "version": "2.1",
+  "created_time": "2025-11-10 20:05:37",
+  "total_time": 5.9161217212677,
+  "action_count": 2,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.156308889389038
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 5.9161217212677
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 1,
+    "key_presses": 2,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

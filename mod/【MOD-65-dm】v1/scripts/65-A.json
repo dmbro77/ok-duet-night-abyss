@@ -1,0 +1,193 @@
+{
+  "name": "新脚本",
+  "version": "4.2",
+  "mode": "hybrid",
+  "created_time": "2026-01-01 11:37:57",
+  "total_time": 28.139277900000307,
+  "action_count": 32,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.6651858000000175
+    },
+    {
+      "type": "key_down",
+      "key": "lshift",
+      "time": 1.0462907999999516
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 1.771389800000179
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 2.774067400000149
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 2.9435041000001547
+    },
+    {
+      "type": "key_up",
+      "key": "lshift",
+      "time": 3.148162500000126
+    },
+    {
+      "type": "key_down",
+      "key": "lshift",
+      "time": 3.5433812000001126
+    },
+    {
+      "type": "key_up",
+      "key": "lshift",
+      "time": 4.04028610000023
+    },
+    {
+      "type": "key_down",
+      "key": "lshift",
+      "time": 4.567639100000179
+    },
+    {
+      "type": "key_up",
+      "key": "lshift",
+      "time": 5.568470000000161
+    },
+    {
+      "type": "key_down",
+      "key": "lshift",
+      "time": 6.1242136000000755
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 6.624401500000204
+    },
+    {
+      "type": "key_up",
+      "key": "lshift",
+      "time": 6.685373799999979
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 7.050368400000025
+    },
+    {
+      "type": "key_down",
+      "key": "lshift",
+      "time": 7.1264148000000205
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 7.151370600000064
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 9.866990400000304
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 10.009397000000263
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 10.56135600000016
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 10.817497000000003
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 20.001229100000273
+    },
+    {
+      "type": "key_up",
+      "key": "lshift",
+      "time": 20.02247430000034
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 20.05542060000016
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 20.17358030000014
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 21.933397799999966
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 22.403225999999904
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 24.00519600000007
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 25.15530609999996
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 25.252190600000176
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 27.5038850000021
+    }
+  ],
+  "stats": {
+    "keyboard": 30,
+    "mouse_move": 0,
+    "mouse_click": 0,
+    "mouse_scroll": 0,
+    "arrow_key": 0,
+    "mouse_track": 0,
+    "hotkey_offset": 0,
+    "flying_gun": 0,
+    "reset_process": 0
+  },
+  "game_mode": true,
+  "movement_scale": 1.0,
+  "offset_hotkeys": {
+    "add_x": "numpad_6",
+    "sub_x": "numpad_4",
+    "add_y": "numpad_2",
+    "sub_y": "numpad_8"
+  },
+  "offset_steps": {
+    "x": 50,
+    "y": 50
+  },
+  "flying_gun": {
+    "enabled": false,
+    "hotkey": "f5",
+    "hold_time": 1000
+  },
+  "reset_process": {
+    "enabled": false,
+    "hotkey": "f7",
+    "images_dir": "D:\\install\\ok-dna\\data\\apps\\ok-dna\\working\\mod\\示例-脚本工具\\回放和录制软件\\img"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "name": "角色经验-B",
+  "version": "1.0",
+  "created_time": "2025-11-04 12:13:10",
+  "total_time": 12.2,
+  "action_count": 14,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.5
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.017
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.61
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 4.987
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 5.504
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 5.872
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 6.21
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 6.344
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 7.17
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 8.272
+    },
+    {
+      "type": "key_down",
+      "time": 9.082,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 9.187,
+      "key": "f"
+    },
+    {
+      "type": "key_down",
+      "time": 12,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 12.2,
+      "key": "f"
+    }
+  ]
+}

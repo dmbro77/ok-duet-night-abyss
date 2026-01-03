@@ -1,0 +1,57 @@
+{
+  "name": "55mod-A",
+  "version": "2.1",
+  "created_time": "2025-11-17 04:16:15",
+  "total_time": 5.6962339878082275,
+  "action_count": 8,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.7640717029571533
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 2.822057008743286
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 3.746080160140991
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 4.3180718421936035
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 5.182129621505737
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 5.2601306438446045
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 5.62414026260376
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 5.6962339878082275
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 2,
+    "key_presses": 8,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

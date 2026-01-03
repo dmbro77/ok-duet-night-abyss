@@ -1,0 +1,358 @@
+{
+  "name": "密函驱逐-D",
+  "version": "2.0",
+  "created_time": "2026-01-02 20:20:48",
+  "total_time": 17.3,
+  "action_count": 67,
+  "actions": [
+    {
+      "type": "key_down",
+      "time": 0.7000000000000001,
+      "key": "q"
+    },
+    {
+      "type": "key_up",
+      "time": 1.7000000000000002,
+      "key": "q"
+    },
+    {
+      "type": "mouse_move",
+      "time": 2.2,
+      "dx": -12,
+      "dy": -40,
+      "source": "arrow_key"
+    },
+    {
+      "type": "key_down",
+      "time": 2.7,
+      "key": "space"
+    },
+    {
+      "type": "key_up",
+      "time": 2.9000000000000004,
+      "key": "space"
+    },
+    {
+      "type": "key_down",
+      "time": 3.0,
+      "key": "e"
+    },
+    {
+      "type": "key_up",
+      "time": 3.02,
+      "key": "e"
+    },
+    {
+      "type": "mouse_down",
+      "time": 3.02,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 3.02,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 3.3000000000000003,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 3.3000000000000003,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 3.3000000000000003,
+      "button": "right"
+    },
+    {
+      "type": "mouse_up",
+      "time": 3.899999999999999,
+      "button": "right"
+    },
+    {
+      "type": "mouse_down",
+      "time": 3.899999999999999,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 3.899999999999999,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 3.9999999999999987,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 3.9999999999999987,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 4.3,
+      "dx": -60,
+      "dy": -20,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "time": 4.6,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 4.9,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 5.2,
+      "dx": 0,
+      "dy": -150,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "time": 5.201,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 5.5,
+      "button": "left"
+    },
+    {
+      "type": "key_down",
+      "time": 6.000000000000001,
+      "key": "e"
+    },
+    {
+      "type": "key_up",
+      "time": 6.01,
+      "key": "e"
+    },
+    {
+      "type": "mouse_down",
+      "time": 6.01,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 6.3,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 6.3,
+      "button": "right"
+    },
+    {
+      "type": "mouse_up",
+      "time": 6.999999999999999,
+      "button": "right"
+    },
+    {
+      "type": "mouse_down",
+      "time": 6.999999999999999,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 6.999999999999999,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 7.099999999999999,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 7.099999999999999,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 7.8,
+      "dx": 50,
+      "dy": 100,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "time": 8.1,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 8.4,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 8.7,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 9.0,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 9.5,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 9.8,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 10.1,
+      "dx": -200,
+      "dy": -30,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "time": 10.1,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 10.4,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 10.700000000000001,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 11.0,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 11.3,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 11.6,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 11.9,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 11.91,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 12.5,
+      "dx": -280,
+      "dy": 50,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "time": 12.5,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 12.8,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 13.6,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 13.9,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 14.2,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 14.5,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 14.79,
+      "dx": -40,
+      "dy": 35,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "time": 14.8,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 15.1,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 15.4,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 15.7,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 16.0,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 16.3,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 16.6,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 16.9,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 17.2,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 17.3,
+      "button": "left"
+    }
+  ]
+}

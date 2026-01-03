@@ -1,0 +1,207 @@
+{
+  "name": "扼守-电梯-移动",
+  "version": "2.1",
+  "created_time": "2025-12-30 15:43:42",
+  "total_time": 40.37503218650818,
+  "action_count": 38,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.8271362781524658
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 2.56506085395813
+    },
+    {
+      "type": "key_down",
+      "key": "q",
+      "time": 3.2260262966156006
+    },
+    {
+      "type": "key_up",
+      "key": "q",
+      "time": 3.3750901222229004
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 6.739082336425781
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 7.236219644546509
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 7.459094762802124
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 9.508049488067627
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 10.254061937332153
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 11.63806438446045
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 12.220094442367554
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 13.022050142288208
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 13.5540611743927
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 15.18900203704834
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 15.546054363250732
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 17.130040168762207
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 17.426012754440308
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 17.442021131515503
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 18.526028394699097
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 18.90600895881653
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 21.165040493011475
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 23.000027418136597
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 23.439057111740112
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 23.62702775001526
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 24.585041522979736
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 26.371047019958496
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 27.03305196762085
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 28.35304021835327
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 28.43211054801941
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 29.048993587493896
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 29.661041021347046
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 30.39909076690674
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 31.329015731811523
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 31.805029153823853
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 33.94800782203674
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 34.38212013244629
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 35.2270302772522
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 40.37503218650818
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 6,
+    "key_presses": 38,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

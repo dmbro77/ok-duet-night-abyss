@@ -1,0 +1,113 @@
+{
+  "name": "BSJJB-C-3",
+  "version": "4.2",
+  "mode": "hybrid",
+  "created_time": "2025-12-31 11:15:18",
+  "total_time": 13.510261399991577,
+  "action_count": 14,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 0.6202220999985002
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 1.460191299993312
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 1.5103204000042751
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 2.17023029999109
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 2.220313300000271
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.8512582999974256
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.780233700003009
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 4.810305499995593
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 5.0002931999915745
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 5.75021790000028
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 5.800277300004382
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 13.000474200001918
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 13.150264800002333
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 13.510261399991577
+    }
+  ],
+  "stats": {
+    "keyboard": 14,
+    "mouse_move": 0,
+    "mouse_click": 0,
+    "mouse_scroll": 0,
+    "arrow_key": 0,
+    "mouse_track": 0,
+    "hotkey_offset": 0,
+    "flying_gun": 0,
+    "reset_process": 0
+  },
+  "game_mode": true,
+  "movement_scale": 1.0,
+  "offset_hotkeys": {
+    "add_x": "numpad_6",
+    "sub_x": "numpad_4",
+    "add_y": "numpad_2",
+    "sub_y": "numpad_8"
+  },
+  "offset_steps": {
+    "x": 50,
+    "y": 50
+  },
+  "flying_gun": {
+    "enabled": true,
+    "hotkey": "f5",
+    "hold_time": 1000
+  },
+  "reset_process": {
+    "enabled": true,
+    "hotkey": "f7",
+    "images_dir": "F:\\EMT-录制器2.1\\4.2录制\\img"
+  }
+}

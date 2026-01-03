@@ -1,0 +1,117 @@
+{
+  "name": "驱离-C",
+  "version": "2.1",
+  "created_time": "2025-11-19 05:28:22",
+  "total_time": 17.842196702957153,
+  "action_count": 18,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.5880424976348877
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.0540168285369873
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.4440438747406006
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 4.204071998596191
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 5.012059688568115
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 9.834104061126709
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 9.930060863494873
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 10.918108224868774
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 11.016054153442383
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 11.34604549407959
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 13.00196099281311
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 13.00454068183899
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 13.872048139572144
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 14.014026403427124
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 14.502116203308105
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 14.504847526550293
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 15.22
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 15.34604549407959
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 17.82
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 17.83196099281311
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 5,
+    "key_presses": 18,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

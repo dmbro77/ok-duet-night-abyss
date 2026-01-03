@@ -1,0 +1,327 @@
+{
+  "name": "武器突破-A",
+  "version": "2.1",
+  "created_time": "2025-11-19 23:49:52",
+  "total_time": 51.570019483566284,
+  "action_count": 62,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 2.2880470752716064
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.686018466949463
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 2.9940922260284424
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 3.322373390197754
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.0620574951171875
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 13.926028728485107
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 14.780551433563232
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 15.084025859832764
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 15.176100254058838
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 17.040117025375366
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 17.132248163223267
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 17.5901141166687
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 20.390167713165283
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 20.39269995689392
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 20.894006729125977
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 22.50568413734436
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 22.70405626296997
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 23.362088918685913
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 23.546447277069092
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 23.920175790786743
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 24.95421576499939
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 25.864080905914307
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 26.00403881072998
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 26.650355339050293
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 26.768221855163574
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 27.364065885543823
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 27.5380220413208
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 27.590038537979126
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 29.134167432785034
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 29.69616150856018
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 29.912118434906006
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 31.198018312454224
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 32.102054595947266
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 32.783982276916504
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 32.988025188446045
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 33.36803126335144
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 34.480193853378296
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 34.48387575149536
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 34.67217254638672
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 37.336260080337524
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 37.60409450531006
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 38.01016592979431
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 38.860135555267334
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 39.18201303482056
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 39.20003271102905
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 40.48006224632263
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 40.95057535171509
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 41.228087425231934
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 42.224041223526
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 43.28805065155029
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 43.46007323265076
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 44.946107387542725
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 45.30407786369324
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 45.794066429138184
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 47.36595129966736
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 48.39004731178284
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 48.47005343437195
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 48.62808418273926
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 49.95604181289673
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 50.11802124977112
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 51.516069173812866
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 51.570019483566284
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 7,
+    "key_presses": 62,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

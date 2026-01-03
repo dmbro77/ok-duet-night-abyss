@@ -1,0 +1,57 @@
+{
+  "name": "80mod",
+  "version": "2.1",
+  "created_time": "2025-12-30 12:15:12",
+  "total_time": 6.024292230606079,
+  "action_count": 8,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.6260244846343994
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.4840779304504395
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 3.683955192565918
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 3.8409931659698486
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.738041162490845
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 4.798051595687866
+    },
+    {
+      "type": "key_down",
+      "key": "q",
+      "time": 5.887065887451172
+    },
+    {
+      "type": "key_up",
+      "key": "q",
+      "time": 6.024292230606079
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 4,
+    "key_presses": 8,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

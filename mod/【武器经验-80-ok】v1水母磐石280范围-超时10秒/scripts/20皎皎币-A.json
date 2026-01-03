@@ -1,0 +1,67 @@
+{
+  "name": "20皎皎币-A",
+  "version": "2.1",
+  "created_time": "2025-11-09 19:31:35",
+  "total_time": 24.369933366775513,
+  "action_count": 10,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.1428508758544922
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 5.940923690795898
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 6.120323181152344
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 7.43898868560791
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 7.614641189575195
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 19.07789945602417
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 19.33391046524048
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 19.837826013565063
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 19.977869749069214
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 24.369933366775513
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 10,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

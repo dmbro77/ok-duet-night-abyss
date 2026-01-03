@@ -1,0 +1,79 @@
+{
+  "name": "80皎皎币-A-3",
+  "version": "2.0",
+  "created_time": "2025-11-23 19:01:58",
+  "total_time": 12.719999999999999,
+  "action_count": 14,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.2300395965576172
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.55007004737854
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 1.6760303974151611
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 1.9001269340515137
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 2.068234920501709
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 2.161992311477661
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 3.029967784881592
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 3.0920352935791016
+    },
+    {
+      "type": "key_down",
+      "time": 4.064,
+      "key": "f4"
+    },
+    {
+      "type": "key_up",
+      "time": 4.276,
+      "key": "f4"
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 7.940087556838989
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 8.412044763565063
+    },
+    {
+      "type": "key_up",
+      "time": 9.399999999999999,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 12.719999999999999,
+      "key": "w"
+    }
+  ]
+}

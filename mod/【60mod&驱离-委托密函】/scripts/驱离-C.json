@@ -1,0 +1,69 @@
+{
+  "name": "驱离-C",
+  "version": "2.0",
+  "created_time": "2025-12-27 14:27:24",
+  "total_time": 14.0468,
+  "action_count": 12,
+  "actions": [
+    {
+      "type": "key_down",
+      "time": 0.4068,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "time": 0.6068,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 3.1869,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 3.4368,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "time": 4.0568,
+      "key": "w"
+    },
+    {
+      "type": "key_up",
+      "time": 4.3768,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "time": 4.6568,
+      "key": "w"
+    },
+    {
+      "type": "key_up",
+      "time": 5.4378,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "time": 9.7168,
+      "key": "d"
+    },
+    {
+      "type": "key_up",
+      "time": 12.7568,
+      "key": "d"
+    },
+    {
+      "type": "key_down",
+      "time": 13.0178,
+      "key": "w"
+    },
+    {
+      "type": "key_up",
+      "time": 14.0468,
+      "key": "w"
+    }
+  ]
+}

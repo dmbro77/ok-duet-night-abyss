@@ -1,0 +1,157 @@
+{
+  "name": "探险无尽-A",
+  "version": "2.1",
+  "created_time": "2025-11-14 19:19:31",
+  "total_time": 12.63650369644165,
+  "action_count": 28,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.3400402069091797
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 0.7970578670501709
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 1.7970843315124512
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 1.921149730682373
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 2.319098472595215
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 2.4701502323150635
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.5551202297210693
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.824157238006592
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.450134038925171
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 4.124223470687866
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 4.234194755554199
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 4.528186082839966
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 4.6261866092681885
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 5.1622819900512695
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 7.106295108795166
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 7.1583099365234375
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 7.250319480895996
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 7.928278923034668
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 8.053394317626953
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 8.464336156845093
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 8.653327941894531
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 9.000438690185547
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 9.98643445968628
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 10.078445672988892
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 10.743450164794922
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 10.861438751220703
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 12.53852105140686
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 12.63650369644165
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 7,
+    "key_presses": 28,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

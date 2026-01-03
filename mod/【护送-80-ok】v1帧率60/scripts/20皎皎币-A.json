@@ -1,0 +1,83 @@
+{
+  "name": "20皎皎币-A",
+  "version": "1.0",
+  "created_time": "2025-11-11 10:45:04",
+  "total_time": 4.99,
+  "action_count": 14,
+  "actions": [
+    {
+      "type": "mouse_rotation",
+      "time": 1.49,
+      "direction": "up",
+      "angle": 16,
+      "sensitivity": 10
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 1.6327033042907715
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 2.169150686264038
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 2.2896397399902337
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 2.881243419647217
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 3.012703304290772
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 3.6691506862640386
+    },
+    {
+      "type": "key_down",
+      "key": "mouse_left",
+      "time": 3.799639739990233
+    },
+    {
+      "type": "key_up",
+      "key": "mouse_left",
+      "time": 4.381243419647216
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 4.559639739990233
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 4.659639739990235
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 4.781243419647216
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.894234196472169
+    },
+    {
+      "type": "mouse_rotation",
+      "time": 4.99,
+      "direction": "down",
+      "angle": 26,
+      "sensitivity": 10
+    }
+  ]
+}

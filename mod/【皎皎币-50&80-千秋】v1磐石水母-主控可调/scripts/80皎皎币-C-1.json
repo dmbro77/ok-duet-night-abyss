@@ -1,0 +1,57 @@
+{
+  "name": "80皎皎币-C-1",
+  "version": "2.1",
+  "created_time": "2025-11-21 13:54:11",
+  "total_time": 6.708867788314819,
+  "action_count": 8,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 0.48659825325012207
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.5066885948181152
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 0.9165902137756348
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.554591178894043
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 5.428614139556885
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 6.4766685962677
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 6.688607931137085
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 6.708867788314819
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 8,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

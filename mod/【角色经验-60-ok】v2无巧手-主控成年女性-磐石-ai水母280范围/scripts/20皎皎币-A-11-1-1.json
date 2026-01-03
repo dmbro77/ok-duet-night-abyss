@@ -1,0 +1,139 @@
+{
+  "name": "1-1-1",
+  "version": "1.0",
+  "created_time": "2025-11-06 14:52:28",
+  "total_time": 20.372622966766357,
+  "action_count": 26,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 0.8970468044281006
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 1.1626431941986084
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.3222355842590332
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.9152309894561768
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.100703477859497
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 6.034829378128052
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 6.183887004852295
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 9.0
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 9.475242376327515
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 10.13882827758789
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 10.340815782546997
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 10.66558027267456
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 10.8192880153656
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 12.447840213775635
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 12.600316524505615
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 14.380112409591675
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 14.608922958374023
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 15.4260094165802
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 15.541913270950317
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 16.18130326271057
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 16.304341793060303
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 17.5
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 18.039628982543945
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 18.327686548233032
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 18.52120590209961
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 20.372622966766357
+    }
+  ]
+}

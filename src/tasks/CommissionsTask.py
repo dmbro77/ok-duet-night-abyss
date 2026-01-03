@@ -44,12 +44,12 @@ class CommissionsTask(BaseDNATask):
             "超时时间": "超时后将重启任务",
         })
 
-    def find_quit_btn(self, threshold=0, box=None):
+    def find_ingame_quit_btn(self, threshold=0, box=None):
         if box is None:
             box = self.box_of_screen_scaled(2560, 1440, 729, 960, 854, 1025, name="quit_mission", hcenter=True)
         return self.find_one("ingame_quit_icon", threshold=threshold, box=box)
 
-    def find_continue_btn(self, threshold=0, box=None):
+    def find_ingame_continue_btn(self, threshold=0, box=None):
         if box is None:
             box = self.box_of_screen(0.610, 0.671, 0.647, 0.714, name="continue_mission", hcenter=True)
         return self.find_one("ingame_continue_icon", threshold=threshold, box=box)
@@ -117,9 +117,9 @@ class CommissionsTask(BaseDNATask):
 
     def quit_mission(self, timeout=0):
         action_timeout = self.action_timeout if timeout == 0 else timeout
-        quit_btn = self.wait_until(self.find_quit_btn, time_out=action_timeout, raise_if_not_found=True)
+        quit_btn = self.wait_until(self.find_ingame_quit_btn, time_out=action_timeout, raise_if_not_found=True)
         self.wait_until(
-            condition=lambda: not self.find_quit_btn(),
+            condition=lambda: not self.find_ingame_quit_btn(),
             post_action=lambda: self.click_box_random(quit_btn, right_extend=0.1, post_sleep=0, after_sleep=0.25),
             time_out=action_timeout,
             raise_if_not_found=True,
@@ -129,7 +129,7 @@ class CommissionsTask(BaseDNATask):
 
     def give_up_mission(self, timeout=0):
         def is_mission_start_iface():
-            return self.find_retry_btn() or self.find_bottom_start_btn() or self.find_big_bottom_start_btn() or self.find_continue_btn() or self.find_esc_menu()
+            return self.find_retry_btn() or self.find_bottom_start_btn() or self.find_big_bottom_start_btn() or self.find_ingame_continue_btn() or self.find_esc_menu()
 
         action_timeout = self.action_timeout if timeout == 0 else timeout
         box = self.box_of_screen_scaled(2560, 1440, 1301, 776, 1365, 841, name="give_up_mission", hcenter=True)
@@ -155,9 +155,9 @@ class CommissionsTask(BaseDNATask):
         if self.in_team():
             return False
         action_timeout = self.action_timeout if timeout == 0 else timeout
-        continue_btn = self.wait_until(self.find_continue_btn, time_out=action_timeout, raise_if_not_found=True)
+        continue_btn = self.wait_until(self.find_ingame_continue_btn, time_out=action_timeout, raise_if_not_found=True)
         self.wait_until(
-            condition=lambda: not self.find_continue_btn(),
+            condition=lambda: not self.find_ingame_continue_btn(),
             post_action=lambda: self.click_box_random(continue_btn, right_extend=0.1, up_extend=-0.002, down_extend=-0.002, post_sleep=0, after_sleep=0.25),
             time_out=action_timeout,
             raise_if_not_found=True,
@@ -455,7 +455,7 @@ class CommissionsTask(BaseDNATask):
             self.start_mission()
             self.mission_status = Mission.START
             return
-        elif self.find_continue_btn():
+        elif self.find_ingame_continue_btn():
             if stop_func():
                 self.log_info("处理任务界面: 终止任务")
                 return Mission.STOP

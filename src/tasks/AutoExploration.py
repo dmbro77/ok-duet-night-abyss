@@ -1,5 +1,6 @@
 from qfluentwidgets import FluentIcon
 import time
+from typing import Callable
 
 from ok import Logger, TaskDisabledException
 from src.tasks.CommissionsTask import CommissionsTask, QuickAssistTask, Mission, _default_movement
@@ -41,7 +42,7 @@ class AutoExploration(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self._merged_config_cache.update(self._external_config)
             return self._merged_config_cache
 
-    def config_external_movement(self, func: callable, config: dict):
+    def config_external_movement(self, func: Callable, config: dict):
         if callable(func):
             self.external_movement = func
         else:

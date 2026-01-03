@@ -1,4 +1,5 @@
 from qfluentwidgets import FluentIcon
+from typing import Callable
 
 from ok import Logger, TaskDisabledException
 from src.tasks.CommissionsTask import CommissionsTask, QuickAssistTask, Mission, _default_movement
@@ -50,7 +51,7 @@ class AutoGeneral(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self._merged_config_cache.update(self._external_config)
             return self._merged_config_cache
 
-    def config_external_movement(self, approach: callable, config: dict, evacuation: callable = _default_movement):
+    def config_external_movement(self, approach: Callable, config: dict, evacuation: Callable = _default_movement):
         if callable(approach):
             self.external_movement = approach
         else:

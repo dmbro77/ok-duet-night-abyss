@@ -38,7 +38,7 @@ class TestMissonInterface(TaskTestCase):
 
     def test_feature5(self):
         self.set_image('tests/images/iface_cont.png')
-        feature = self.task.find_continue_btn()
+        feature = self.task.find_ingame_continue_btn()
         self.assertIsNotNone(feature)
         self.logger.info(feature)
 

@@ -1,27 +1,28 @@
 from qfluentwidgets import FluentIcon
 import time
+import numpy as np
 
 from ok import Logger, TaskDisabledException
 from src.tasks.DNAOneTimeTask import DNAOneTimeTask
 from src.tasks.BaseCombatTask import BaseCombatTask
 from src.tasks.CommissionsTask import CommissionsTask, Mission
-from src.tasks.trigger.AutoMazeTask import AutoMazeTask
 
 logger = Logger.get_logger(__name__)
 
 DEFAULT_PA_DELAY = 0.160
-
+MOUSE_DEG_TO_PIXELS = 10
+TARGET_WHITE_PIXELS_1920_1080 = 1200
 
 
 class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
-    """自动护送任务"""
+    """自动快速护送任务"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.icon = FluentIcon.FLAG
-        self.name = "黎瑟：超级飞枪80护送（需120帧+黎瑟+巧手+协战+远程双枪）【需要游戏处于前台】"
-        self.description = "注：需求120帧 帧数敏感 掉帧会坠机。\n"
-        self.description += "请在OK设置里配置螺旋飞跃键位 游戏内设置四项灵敏度0.2 OK已强制0.2灵敏度无需设置\n"
+        self.name = "黎瑟：超级飞枪80护送（需120帧+黎瑟+春玦戟+弧光百劫/裂魂+巧手+协战）【需要游戏处于前台】"
+        self.description = "注：需求120帧 帧数敏感 掉帧会坠机\n"
+        self.description += "请确保游戏内【射击时灵敏度】与正常灵敏度相同 请在OK-DNA里设置【灵敏度】和【螺旋飞跃键位】\n"
         self.description += "展开查看具体配置\n"
         self.group_name = "全自动"
         self.group_icon = FluentIcon.CAFE
@@ -31,78 +32,98 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.default_config.update({
             "快速继续挑战": True,
             "失误截图": True,
+            "我已在游戏内设置【射击时灵敏度】与正常灵敏度相同（推荐4项相同）": False,
+            "我已在OK-DNA里设置【灵敏度】和【螺旋飞跃键位】": False,
             "帧数敏感，如果不能稳120帧，大概率坠机": False,
-            "我已在OK设置里配置螺旋飞跃键位": False,
-            "我已在游戏内设置四项灵敏度为0.2": False,
-            "装备：黎瑟 + 0精春玦戟 迅捷+10 + 远程任意双枪": False,
             "设置：镜头距离1.3，120帧，最低画质，垂直同步关， 插帧关": False,
-            "魔之楔：金色迅捷+10 / 紫色穿引共鸣 / 紫色迅捷蓄势+5 / 紫色迅捷坠击+5（面板攻速2.0）": False,
-            "如果路线2撤离撞墙 请设置路线2结算超级跳延迟为-1": False,
+            "阵容：黎瑟 + 0精春玦戟 + 弧光百劫/裂魂 + 任意协战": False,
+            "近战魔之楔：【金色迅捷+10】 / 紫色穿引共鸣 / 紫色迅捷蓄势+5 / 紫色迅捷坠击+5（面板攻速2.0）": False,
+            "远程魔之楔：【请勿携带“专注·厚重”】推荐装备金色迅捷+10或任意迅捷": False,
+            "路线1·4撤离撞门超级跳延迟Offset": 0,
+            "路线1·4撤离撞门超级跳延迟-/+": "-",
             "路线1结算超级跳延迟Offset": 0,
-            "路线1结算超级跳延迟+-": "-",
+            "路线1结算超级跳延迟-/+": "-",
             "路线1结算超级跳角度Offset": 0,
-            "路线1结算超级跳角度+-": "-",
+            "路线1结算超级跳角度-/+": "-",
             "路线2结算超级跳延迟Offset": 0,
-            "路线2结算超级跳延迟+-": "-",
+            "路线2结算超级跳延迟-/+": "-",
             "路线2结算超级跳角度Offset": 0,
-            "路线2结算超级跳角度+-": "-",
+            "路线2结算超级跳角度-/+": "-",
             "路线3结算超级跳延迟Offset": 0,
-            "路线3结算超级跳延迟+-": "-",
+            "路线3结算超级跳延迟-/+": "-",
             "路线3结算超级跳角度Offset": 0,
-            "路线3结算超级跳角度+-": "-",
+            "路线3结算超级跳角度-/+": "-",
             "路线4结算超级跳延迟Offset": 0,
-            "路线4结算超级跳延迟+-": "-",
+            "路线4结算超级跳延迟-/+": "-",
             "路线4结算超级跳角度Offset": 0,
-            "路线4结算超级跳角度+-": "-",
+            "路线4结算超级跳角度-/+": "-",
+            # "DEBUG_PATH": 0,
+            "DEBUG_GATE": 0,
         })
         self.config_description.update({
-            "快速继续挑战": "R键快速继续挑战，跳过结算动画",
-            "失误截图": "ok-duet-night-abyss\screenshots 文件夹下保存，重启OK后清空",
+            "快速继续挑战": "R键快速继续挑战，跳过结算动画。",
+            "失误截图": "ok-duet-night-abyss\screenshots 文件夹下保存，重启OK后清空。如成功率较低，长时间使用可以考虑关闭（截图文件可能会过度占用空间）。",
+            "我已在游戏内设置【射击时灵敏度】与正常灵敏度相同（推荐4项相同）": "必须勾选才能执行任务！",
+            "我已在OK-DNA里设置【灵敏度】和【螺旋飞跃键位】": "必须勾选才能执行任务！",
             "帧数敏感，如果不能稳120帧，大概率坠机": "必须勾选才能执行任务！",
-            "我已在OK设置里配置螺旋飞跃键位": "必须勾选才能执行任务！",
-            "我已在游戏内设置四项灵敏度为0.2": "必须勾选才能执行任务！",
-            "装备：黎瑟 + 0精春玦戟 迅捷+10 + 远程任意双枪": "必须勾选才能执行任务！",
             "设置：镜头距离1.3，120帧，最低画质，垂直同步关， 插帧关": "必须勾选才能执行任务！",
-            "魔之楔：金色迅捷+10 / 紫色穿引共鸣 / 紫色迅捷蓄势+5 / 紫色迅捷坠击+5（面板攻速2.0）": "必须勾选才能执行任务！",
-            "如果路线2撤离撞墙 请设置路线2结算超级跳延迟为-1": "必须勾选才能执行任务！",
-            "路线1结算超级跳延迟Offset": "-+ 1",
-            "路线1结算超级跳角度Offset": "-+ 5",
-            "路线2结算超级跳延迟Offset": "-+ 1",
-            "路线2结算超级跳角度Offset": "-+ 5",
-            "路线3结算超级跳延迟Offset": "-+ 1",
-            "路线3结算超级跳角度Offset": "-+ 5",
-            "路线4结算超级跳延迟Offset": "-+ 1",
-            "路线4结算超级跳角度Offset": "-+ 5",
+            "阵容：黎瑟 + 0精春玦戟 + 弧光百劫/裂魂 + 任意协战": "必须勾选才能执行任务！",
+            "近战魔之楔：【金色迅捷+10】 / 紫色穿引共鸣 / 紫色迅捷蓄势+5 / 紫色迅捷坠击+5（面板攻速2.0）":"必须勾选才能执行任务！",
+            "远程魔之楔：【请勿携带“专注·厚重”】推荐装备金色迅捷+10或任意迅捷": "必须勾选才能执行任务！",
+            "路线1·4撤离撞门超级跳延迟Offset": "-/+ 1",
+            "路线1·4撤离撞门超级跳延迟-/+": "撤离点自动门前撞墙-不开门+",
+            "路线1结算超级跳延迟Offset": "-/+ 1",
+            "路线1结算超级跳延迟-/+": "撤离点在落点后-前+",
+            "路线1结算超级跳角度Offset": "-/+ 5",
+            "路线1结算超级跳角度-/+": "撤离点在落点左-右+",
+            "路线2结算超级跳延迟Offset": "-/+ 1",
+            "路线2结算超级跳延迟-/+": "撤离点在落点后-前+",
+            "路线2结算超级跳角度Offset": "-/+ 5",
+            "路线2结算超级跳角度-/+": "撤离点在落点左-右+",
+            "路线3结算超级跳延迟Offset": "-/+ 1",
+            "路线3结算超级跳延迟-/+": "撤离点在落点后-前+",
+            "路线3结算超级跳角度Offset": "-/+ 5",
+            "路线3结算超级跳角度-/+": "撤离点在落点左-右+",
+            "路线4结算超级跳延迟Offset": "-/+ 1",
+            "路线4结算超级跳延迟-/+": "撤离点在落点后-前+",
+            "路线4结算超级跳角度Offset": "-/+ 5",
+            "路线4结算超级跳角度-/+": "撤离点在落点左-右+",
+            # "DEBUG_PATH": "测试用，强制选择路径，0为不强制",
+            "DEBUG_GATE": "测试用，强制选择机关，0为不强制",
         })
-        self.config_type["路线1结算超级跳延迟+-"] = {
+        self.config_type["路线1·4撤离撞门超级跳延迟-/+"] = {
             "type": "drop_down",
             "options": ["-", "+"],
         }
-        self.config_type["路线1结算超级跳角度+-"] = {
+        self.config_type["路线1结算超级跳延迟-/+"] = {
             "type": "drop_down",
             "options": ["-", "+"],
         }
-        self.config_type["路线2结算超级跳延迟+-"] = {
+        self.config_type["路线1结算超级跳角度-/+"] = {
             "type": "drop_down",
             "options": ["-", "+"],
         }
-        self.config_type["路线2结算超级跳角度+-"] = {
+        self.config_type["路线2结算超级跳延迟-/+"] = {
             "type": "drop_down",
             "options": ["-", "+"],
         }
-        self.config_type["路线3结算超级跳延迟+-"] = {
+        self.config_type["路线2结算超级跳角度-/+"] = {
             "type": "drop_down",
             "options": ["-", "+"],
         }
-        self.config_type["路线3结算超级跳角度+-"] = {
+        self.config_type["路线3结算超级跳延迟-/+"] = {
             "type": "drop_down",
             "options": ["-", "+"],
         }
-        self.config_type["路线4结算超级跳延迟+-"] = {
+        self.config_type["路线3结算超级跳角度-/+"] = {
             "type": "drop_down",
             "options": ["-", "+"],
         }
-        self.config_type["路线4结算超级跳角度+-"] = {
+        self.config_type["路线4结算超级跳延迟-/+"] = {
+            "type": "drop_down",
+            "options": ["-", "+"],
+        }
+        self.config_type["路线4结算超级跳角度-/+"] = {
             "type": "drop_down",
             "options": ["-", "+"],
         }
@@ -122,8 +143,11 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             "selected_path": None,  # 当前选择的路径
             "previous_path": None,  # 上一次选择的路径
             "path_select_fail": 0, # 路径选择失败次数
+            "previous_door_count": 0,  # 上一次开门数
             "path_count": [0, 0, 0, 0],
             "path_fail": [0, 0, 0, 0],
+            "door_count": [0, 0, 0, 0],
+            "door_fail": [0, 0, 0, 0],
         }
 
         self.maze_task = None
@@ -131,12 +155,6 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def run(self):
         mouse_jitter_setting = self.afk_config.get("鼠标抖动")
         self.afk_config.update({"鼠标抖动": False})
-        sensitivity_switch = self.sensitivity_config.get("Game Sensitivity Switch")
-        self.sensitivity_config.update({"Game Sensitivity Switch": True})
-        sensitivity_x = self.sensitivity_config.get("X-axis sensitivity")
-        self.sensitivity_config.update({"X-axis sensitivity": 0.2})
-        sensitivity_y = self.sensitivity_config.get("Y-axis sensitivity")
-        self.sensitivity_config.update({"Y-axis sensitivity": 0.2})
         DNAOneTimeTask.run(self)
         self.move_mouse_to_safe_position(save_current_pos=False)
         self.set_check_monthly_card()
@@ -149,31 +167,23 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             raise
         finally:
             self.afk_config.update({"鼠标抖动": mouse_jitter_setting})
-            self.sensitivity_config.update({"Game Sensitivity Switch": sensitivity_switch})
-            self.sensitivity_config.update({"X-axis sensitivity": sensitivity_x})
-            self.sensitivity_config.update({"Y-axis sensitivity": sensitivity_y})
 
     def do_run(self):
         # 检查是否已阅读注意事项
-        if not self.config.get("帧数敏感，如果不能稳120帧，大概率坠机", False) or not self.config.get("我已在OK设置里配置螺旋飞跃键位", False) or not self.config.get("我已在游戏内设置四项灵敏度为0.2", False) \
-                or not self.config.get("装备：黎瑟 + 0精春玦戟 迅捷+10 + 远程任意双枪", False) \
-                or not self.config.get("设置：镜头距离1.3，120帧，最低画质，垂直同步关， 插帧关", False) \
-                or not self.config.get("魔之楔：金色迅捷+10 / 紫色穿引共鸣 / 紫色迅捷蓄势+5 / 紫色迅捷坠击+5（面板攻速2.0）", False) \
-                or not self.config.get("如果路线2撤离撞墙 请设置路线2结算超级跳延迟为-1", False):
+        if (not self.config.get("我已在游戏内设置【射击时灵敏度】与正常灵敏度相同（推荐4项相同）", False)
+            or not self.config.get("我已在OK-DNA里设置【灵敏度】和【螺旋飞跃键位】", False)
+            or not self.config.get("帧数敏感，如果不能稳120帧，大概率坠机", False)
+            or not self.config.get("设置：镜头距离1.3，120帧，最低画质，垂直同步关， 插帧关", False)
+            or not self.config.get("阵容：黎瑟 + 0精春玦戟 + 弧光百劫/裂魂 + 任意协战", False)
+            or not self.config.get("近战魔之楔：【金色迅捷+10】 / 紫色穿引共鸣 / 紫色迅捷蓄势+5 / 紫色迅捷坠击+5（面板攻速2.0）", False)
+            or not self.config.get("远程魔之楔：【请勿携带“专注·厚重”】推荐装备金色迅捷+10或任意迅捷", False)
+        ):
             logger.error("⚠️ 请先阅读注意事项并确认配置！")
 
             # 使用 info_set 显示详细配置要求
             self.info_set("错误", "未勾选配置确认")
-            self.info_set("角色与武器", "使用黎瑟主控，近战武器: 0精春玦戟")
-            self.info_set(
-                "武器mod(不要携带其他魔之楔)",
-                "金色迅捷+10、紫色穿引共鸣、紫色迅捷蓄势+5、紫色迅捷坠击+5",
-            )
-            self.info_set("武器面板攻速", "面板攻速: 2.0")
-            self.info_set("控制设置", "游戏内设置四项灵敏度: 0.2。镜头距离: 1.3")
-
-            self.log_error("请先勾选「我已阅读注意事项并确认配置」")
-            return
+            self.log_error("请先阅读并勾选注意事项")
+            raise TaskDisabledException
 
         self.load_char()
         _start_time = 0
@@ -184,6 +194,8 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.path_str = "N"
         self.door_count = 0
         self.screenshot_frames = []
+        self.scaled_path_points = {}
+        self.scaled_path_threshold = 50
 
         # 初始化统计信息
         self.stats["rounds_completed"] = 0
@@ -193,6 +205,8 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.stats["path_select_fail"] = 0
         self.stats["path_count"] = [0, 0, 0, 0]
         self.stats["path_fail"] = [0, 0, 0, 0]
+        self.stats["door_count"] = [0, 0, 0, 0]
+        self.stats["door_fail"] = [0, 0, 0, 0]
 
         # 初始化 UI 显示
         self.info_set("完成轮数", "")
@@ -211,6 +225,10 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     self.path_str = "N"
                     self.door_count = 0
                     self.screenshot_frames = []
+                    self.scaled_path_points = {}
+                    self.scaled_path_threshold = 50
+                    
+                    self.stats["selected_path"] = None
 
                     # 更新阶段
                     self.stats["current_phase"] = "执行初始路径"
@@ -218,30 +236,24 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
                     # 先执行初始路径
                     self.execute_escort_path_init()
+                    self.save_frame(name="INIT")
 
                     self.sleep(0.300)
                     # 基于 track_point 位置选择后续路径
                     self.stats["current_phase"] = "检测路径"
                     self.info_set("当前阶段", "检测路径")
                     logger.info("检测 track_point 位置，选择护送路径...")
-                    for i in range(1, 5):
-                        selected_path = self.get_escort_path_by_position()
-                        if selected_path is not None:
-                            self.path_str = str(selected_path)
-                            break
-                        self.sleep(0.100)
-                    if selected_path is None:
-                        for i in range(1, 5):
-                            self.sleep(0.200*i)
-                            selected_path = self.get_escort_path_by_position()
-                            if selected_path is not None:
-                                self.path_str = str(selected_path)
-                                break
-                    self.save_frame(name="INIT")
-                    self.stats["selected_path"] = selected_path
+                    self.calc_escort_path_by_position_scaled_reference()
+                    self.wait_until(
+                        lambda: self.get_escort_path_by_position(), time_out=2.000
+                    )
+                    selected_path = self.stats["selected_path"]
                     logger.info(f"选择的护送路径: {selected_path}")
-                    
-                    if selected_path is None:
+
+                    if (selected_path is None
+                        or self.config.get("DEBUG_PATH", 0) in [1,2,3,4]
+                        and selected_path != self.config.get("DEBUG_PATH", 0)
+                    ):
                         self.dump_screenshots()
                         self.give_up_mission()
                         logger.warning("路径选择失败，等待退出队伍...")
@@ -249,6 +261,7 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         self.stats["path_select_fail"] += 1
                         self.stats["current_phase"] = "重新开始"
                         self.stats["previous_path"] = None
+                        self.stats["previous_door_count"] = 0
                         self.info_set("上轮路径", f"路径选择失败")
                         self.info_set("当前阶段", "重新开始")
                         self.wait_until(
@@ -257,42 +270,96 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         _start_time = 0
                         _path_end_time = 0
                         continue
+                    self.path_str = f"{selected_path}"
                     
                     self.stats["current_phase"] = "执行护送路径"
                     self.info_set("当前阶段", f"执行路径{self.stats.get('selected_path', '?')}")
                     self.stats["path_count"][selected_path-1] += 1
                     
+                    # 执行进场路径
                     self.execute_escort_path_cont()
                     self.save_frame(name="CONT-P")
                     
+                    # 执行开门路径
+                    # 前往门A
                     self.door_count += 1
                     self.execute_escort_path_door_A()
                     self.save_frame(name="GATE-A")
-                    if self.target_found:
+                    if (self.check_target_found() 
+                        and self.config.get("DEBUG_GATE", 0) not in [1,2,3,4] 
+                        or self.config.get("DEBUG_GATE", 0) == 1
+                    ):
+                        # 已找到目标 执行门A撤离路径
                         self.execute_escort_path_door_A_exit()
                     else:
+                        # 未找到目标 前往门B
                         self.door_count += 1
                         self.execute_escort_path_door_B()
                         self.save_frame(name="GATE-B")
-                        if not self.target_found:
-                            self.door_count += 1
-                        self.execute_escort_path_door_C()
-                        self.save_frame(name="GATE-C")
-                        if self.target_found:
+                        if (self.check_target_found() 
+                            and self.config.get("DEBUG_GATE", 0) not in [1,2,3,4] 
+                            or self.config.get("DEBUG_GATE", 0) == 2):
+                            # 已找到目标 前往门C 并执行门C撤离路径
+                            # 注：门B撤离路径与门C相同
+                            self.execute_escort_path_door_C()
+                            self.save_frame(name="GATE-C")
                             self.execute_escort_path_door_C_exit()
                         else:
+                            # 未找到目标 前往门C
                             self.door_count += 1
-                            self.execute_escort_path_door_D()
-                            self.save_frame(name="GATE-D")
-                            self.execute_escort_path_door_D_exit()
-                    
+                            self.execute_escort_path_door_C()
+                            self.save_frame(name="GATE-C")
+                            if (self.check_target_found() 
+                                and self.config.get("DEBUG_GATE", 0) not in [1,2,3,4] 
+                                or self.config.get("DEBUG_GATE", 0) == 3):
+                                # 已找到目标 执行门C撤离路径
+                                self.execute_escort_path_door_C_exit()
+                            else:
+                                # 未找到目标 前往门D
+                                self.door_count += 1
+                                self.execute_escort_path_door_D()
+                                self.save_frame(name="GATE-D")
+                                if self.check_target_found():
+                                    # 已找到目标 执行门D撤离路径
+                                    self.execute_escort_path_door_D_exit()
+                                else:
+                                    # 未找到目标 继续等待协战开门
+                                    self.wait_until(
+                                        lambda: self.check_target_found(delay=1.000), time_out=6.000
+                                    )
+                                    if self.target_found:
+                                        # 已找到目标 执行门D撤离路径
+                                        self.execute_escort_path_door_D_exit()
+                                    else:
+                                        self.dump_screenshots()
+                                        logger.warning("未找到目标，等待退出队伍...")
+                                        self.give_up_mission()
+                                        self.stats["failed_attempts"] += 1
+                                        self.stats["current_phase"] = "重新开始"
+                                        if self.stats.get("selected_path", None) is not None:
+                                            self.stats["path_fail"][self.stats.get("selected_path", 1)-1] += 1
+                                            if self.door_count > 0:
+                                                self.stats["door_fail"][self.door_count-1] += 1
+                                        self.info_set("上轮路径", f"路径{selected_path} 机关{self.door_count}")
+                                        self.info_set("当前阶段", "重新开始")
+                                        self.wait_until(
+                                            lambda: not self.in_team(), time_out=30, settle_time=1
+                                        )
+                                        _start_time = 0
+                                        _path_end_time = 0
+                                        continue
+
+                    # 执行撤离路径
                     self.execute_escort_path_exit()
 
                     _path_end_time = time.time()
                     self.stats["current_phase"] = "等待结算"
                     self.info_set("当前阶段", "等待结算")
+                    if self.door_count > 0:
+                        self.stats["door_count"][self.door_count-1] += 1
                     self.stats["previous_path"] = selected_path
-                    self.info_set("上轮路径", f"路径{selected_path}")
+                    self.stats["previous_door_count"] = self.door_count
+                    self.info_set("上轮路径", f"路径{selected_path} 机关{self.door_count}")
                     logger.info("护送路径执行完毕，等待结算...")
 
                 # 路径执行完成后，检查是否超时（5秒内应该进入结算）
@@ -305,12 +372,11 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         self.give_up_mission()
                         self.stats["failed_attempts"] += 1
                         self.stats["current_phase"] = "重新开始"
-                        if self.stats.get("selected_path", 1) is not None:
+                        if self.stats.get("selected_path", None) is not None:
                             self.stats["path_fail"][self.stats.get("selected_path", 1)-1] += 1
+                            if self.door_count > 0:
+                                self.stats["door_fail"][self.door_count-1] += 1
                         self.info_set("当前阶段", "重新开始")
-                        self.wait_until(
-                            lambda: not self.in_team(), time_out=30, settle_time=1
-                        )
                         self.wait_until(
                             lambda: not self.in_team(), time_out=30, settle_time=1
                         )
@@ -375,12 +441,23 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.sleep(0.2)
     
     def update_escort_stats(self):
-        self.info_set("完成轮数", f"{self.stats['rounds_completed']-self.stats['failed_attempts']}/{self.stats['rounds_completed']}")
-        self.info_set("路径数据", f"路径1: {self.stats['path_count'][0]-self.stats['path_fail'][0]}/{self.stats['path_count'][0]}, \
-            路径2: {self.stats['path_count'][1]-self.stats['path_fail'][1]}/{self.stats['path_count'][1]}, \
-            路径3: {self.stats['path_count'][2]-self.stats['path_fail'][2]}/{self.stats['path_count'][2]}, \
-            路径4: {self.stats['path_count'][3]-self.stats['path_fail'][3]}/{self.stats['path_count'][3]}"
+        """更新 UI 数据显示"""
+        self.info_set("完成轮数", f"{self.get_success_frac(self.stats['rounds_completed'], self.stats['failed_attempts'])}")
+        self.info_set("路径数据", f"路径1: {self.get_success_frac(self.stats['path_count'][0], self.stats['path_fail'][0])}, \
+            路径2: {self.get_success_frac(self.stats['path_count'][1], self.stats['path_fail'][1])}, \
+            路径3: {self.get_success_frac(self.stats['path_count'][2], self.stats['path_fail'][2])}, \
+            路径4: {self.get_success_frac(self.stats['path_count'][3], self.stats['path_fail'][3])}"
         )
+        self.info_set("机关数据", f"机关1: {self.get_success_frac(self.stats['door_count'][0], self.stats['door_fail'][0])}, \
+            机关2: {self.get_success_frac(self.stats['door_count'][1], self.stats['door_fail'][1])}, \
+            机关3: {self.get_success_frac(self.stats['door_count'][2], self.stats['door_fail'][2])}, \
+            机关4: {self.get_success_frac(self.stats['door_count'][3], self.stats['door_fail'][3])}"
+        )
+        
+    def get_success_frac(self, count: int, fail: int) -> str:
+        """计算成功率"""
+        success = (count - fail)
+        return f"{success}/{count}"
 
     def execute_escort_path_init(self):
         """执行护送路径中的初始动作"""
@@ -422,9 +499,9 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa(deg_y=-8)
                 self.sleep(DEFAULT_PA_DELAY)
-                self.sleep(0.100)
-                self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa(deg_x=-0.5)
+                self.sleep(DEFAULT_PA_DELAY)
+                self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
                 self.sleep(0.100)
                 self.execute_mouse_rot_deg(deg_x=-50, deg_y=-5)
@@ -463,7 +540,6 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa(deg_x=-0.5)
                 self.sleep(DEFAULT_PA_DELAY)
-                self.sleep(0.100)
                 self.execute_mouse_rot_deg(deg_x=-50, deg_y=-5)
                 self.sleep(0.050)
                 self.execute_pa(deg_x=-10)
@@ -483,31 +559,34 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
                 self.save_frame(name="CONT-O")
-                self.execute_pa(deg_x=-20)
+                self.execute_pa(deg_x=-20, deg_y=20)
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa()
+                self.execute_pa(deg_x=20)
+                self.sleep(DEFAULT_PA_DELAY)
+                self.execute_pa(deg_y=-20)
                 self.sleep(DEFAULT_PA_DELAY)
                 self.send_key_down(self.get_dodge_key())
                 self.sleep(0.050)
                 self.send_key_up(self.get_dodge_key())
                 self.sleep(0.400)
-                self.execute_mouse_rot_deg(deg_x=20)
+                self.execute_mouse_rot_deg(deg_x=15)
                 self.sleep(0.050)
-                self.execute_pa(deg_x=10)
-                self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa(deg_x=-10)
-                self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa(deg_y=24)
-                self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa()
-                self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa(deg_y=-24)
-                self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa()
-                self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
                 self.sleep(0.100)
+                self.execute_mouse_rot_deg(deg_x=-15)
+                self.sleep(0.050)
+                self.execute_pa()
+                self.sleep(DEFAULT_PA_DELAY)
+                self.execute_pa(deg_y=20)
+                self.sleep(DEFAULT_PA_DELAY)
+                self.execute_pa()
+                self.sleep(DEFAULT_PA_DELAY)
+                self.execute_pa(deg_y=-20)
+                self.sleep(DEFAULT_PA_DELAY)
+                self.execute_pa()
+                self.sleep(DEFAULT_PA_DELAY)
+                self.execute_pa()
                 self.execute_mouse_rot_deg(deg_x=-50, deg_y=-5)
                 self.sleep(0.050)
                 self.execute_pa(deg_x=-10)
@@ -519,11 +598,11 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa(deg_x=10)
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa(deg_x=20)
+                self.execute_pa(deg_x=22)
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa(deg_x=20)
+                self.execute_pa(deg_x=19)
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
@@ -531,14 +610,20 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
+                self.mouse_down(key="left")
+                self.sleep(0.050)
+                self.mouse_up(key="left")
+                self.sleep(0.200)
                 self.save_frame(name="CONT-O")
-                self.execute_pa(deg_x=1.5)
+                self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa(deg_y=15)
+                self.execute_pa(deg_y=18)
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa(deg_y=-15)
+                self.execute_pa(deg_y=-10)
+                self.sleep(DEFAULT_PA_DELAY)
+                self.execute_pa(deg_y=-8)
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
@@ -547,7 +632,9 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.sleep(0.100)
                 self.execute_mouse_rot_deg(deg_x=-50, deg_y=-5)
                 self.sleep(0.050)
-                self.execute_pa(deg_x=-25, deg_y=20)
+                self.execute_pa(deg_x=-5)
+                self.sleep(DEFAULT_PA_DELAY)
+                self.execute_pa(deg_x=-20, deg_y=20)
                 self.sleep(DEFAULT_PA_DELAY)
         self.sleep(0.200)
     
@@ -557,10 +644,12 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
         self.sleep(0.200)
+        self.execute_mouse_rot_deg(deg_y=-5)
+        self.sleep(0.050)
         self.wait_for_interaction()
         
     def execute_escort_path_door_A_exit(self):
-        self.execute_mouse_rot_deg(deg_x=-5, deg_y=-33)
+        self.execute_mouse_rot_deg(deg_x=-5, deg_y=-28)
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
         self.execute_pa()
@@ -580,7 +669,7 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.sleep(DEFAULT_PA_DELAY)
     
     def execute_escort_path_door_B(self):
-        self.execute_mouse_rot_deg(deg_x=51, deg_y=-3)
+        self.execute_mouse_rot_deg(deg_x=51, deg_y=2)
         self.sleep(0.050)
         self.execute_pa(deg_y=1)
         self.sleep(DEFAULT_PA_DELAY)
@@ -599,31 +688,32 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.sleep(DEFAULT_PA_DELAY)
         self.execute_pa(deg_x=1)
         self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa(deg_y=73)
+        self.execute_pa(deg_y=73.5)
         self.sleep(DEFAULT_PA_DELAY)
         self.mouse_down(key="left")
         self.sleep(0.050)
         self.mouse_up(key="left")
-        self.execute_mouse_rot_deg(deg_y=-43)
+        self.execute_mouse_rot_deg(deg_y=-43.5)
         self.sleep(0.600)
         self.wait_for_interaction()
         
     def execute_escort_path_door_C_exit(self):
-        self.execute_mouse_rot_deg(deg_x=-21.5)
+        self.execute_mouse_rot_deg(deg_x=-21, deg_y=-2)
+        self.sleep(0.050)
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
+        self.execute_pa(deg_y=2)
+        self.sleep(DEFAULT_PA_DELAY)
+        self.execute_pa(deg_x=11.5)
+        self.sleep(DEFAULT_PA_DELAY)
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa(deg_x=10)
-        self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa()
-        self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa(deg_x=10)
+        self.execute_pa(deg_x=8)
         self.sleep(DEFAULT_PA_DELAY)
         self.sleep(0.200)
 
     def execute_escort_path_door_D(self):
-        self.execute_mouse_rot_deg(deg_x=-52, deg_y=-30)
+        self.execute_mouse_rot_deg(deg_x=-51.5, deg_y=-30)
         self.sleep(0.050)
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
@@ -634,34 +724,33 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
         self.execute_mouse_rot_deg(deg_y=-30)
-        self.sleep(0.050)
-        self.execute_pa()
-        self.sleep(DEFAULT_PA_DELAY)
+        self.sleep(0.500)
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
         self.sleep(0.200)
         self.execute_mouse_rot_deg(deg_y=15)
-        self.sleep(0.200)
+        self.sleep(0.400)
         self.wait_for_interaction()
              
     def execute_escort_path_door_D_exit(self):
-        self.execute_mouse_rot_deg(deg_x=100.5, deg_y=15)
+        self.execute_mouse_rot_deg(deg_x=115, deg_y=15)
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa(deg_y=-15)
+        self.execute_pa(deg_x=-30,deg_y=-15)
         self.sleep(DEFAULT_PA_DELAY)
         self.sleep(0.200)
-        self.execute_mouse_rot_deg(deg_x=-50)
+        self.execute_mouse_rot_deg(deg_x=-25)
         self.execute_pa()
+        self.sleep(DEFAULT_PA_DELAY)
+        self.execute_pa(deg_x=-5)
+        self.sleep(DEFAULT_PA_DELAY)
+        self.execute_pa(deg_x=-15)
+        self.sleep(DEFAULT_PA_DELAY)
+        self.execute_pa(deg_x=-10)
         self.sleep(DEFAULT_PA_DELAY)
         self.execute_pa(deg_x=20)
         self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa()
-        self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa(deg_x=-40)
-        self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa(deg_x=20)
-        self.sleep(DEFAULT_PA_DELAY)
+        self.sleep(0.200)
 
     def execute_escort_path_exit(self):
         self.send_key_down(self.get_dodge_key())
@@ -670,22 +759,27 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.sleep(0.400)
         self.execute_mouse_rot_deg(deg_x=10)
         self.sleep(0.050)
-        self.execute_pa()
+        self.execute_pa(deg_y=-8)
         self.sleep(DEFAULT_PA_DELAY)
         self.sleep(0.200)
-        self.execute_mouse_rot_deg(deg_x=-10)
+        self.execute_mouse_rot_deg(deg_x=-10, deg_y=8)
         self.sleep(0.050)
         self.save_frame(name="EXIT-X")
         match self.stats.get("selected_path", 1):
             case 1:
+                self.execute_mouse_rot_deg(deg_y=-20)
+                self.sleep(0.050)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_mouse_rot_deg(deg_y=-60)
+                self.execute_mouse_rot_deg(deg_y=-10)
                 self.sleep(0.100)
                 self.send_key_down(self.get_spiral_dive_key())
                 self.sleep(0.050)
                 self.send_key_up(self.get_spiral_dive_key())
-                self.execute_rhythm_super_jump(deg_x=0.5, deg_y=45, slide_delay=0.500)
+                self.execute_rhythm_super_jump(
+                    deg_x=0.5, deg_y=25, 
+                    slide_delay=0.500 + self.config.get("路线1·4撤离撞门超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线1·4撤离撞门超级跳延迟-/+","-"))
+                )
                 self.sleep(0.050)
                 self.mouse_down(key="left")
                 self.sleep(0.050)
@@ -694,11 +788,14 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.execute_mouse_rot_deg(deg_y=-10)
                 self.sleep(0.100)
                 self.save_frame(name="EXIT-Y")
-                self.execute_rhythm_super_jump(deg_x=0 + self.config.get("路线1结算超级跳角度Offset",0.000)*0.100*self.mapping_pn.get(self.config.get("路线1结算超级跳角度+-","-")), deg_y=5, slide_delay=0.240 + self.config.get("路线1结算超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线1结算超级跳延迟+-","-")))
+                self.execute_rhythm_super_jump(
+                    deg_x=0 + self.config.get("路线1结算超级跳角度Offset",0.000)*0.100*self.mapping_pn.get(self.config.get("路线1结算超级跳角度-/+","-")), 
+                    deg_y=5, slide_delay=0.220 + self.config.get("路线1结算超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线1结算超级跳延迟-/+","-"))
+                )
             case 2:
-                self.execute_pa()
+                self.execute_pa(deg_y=8)
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_pa(deg_x=-10, deg_y=-5)
+                self.execute_pa(deg_x=-10, deg_y=-13)
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa(deg_x=13, deg_y=7)
                 self.sleep(DEFAULT_PA_DELAY)
@@ -712,33 +809,46 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.execute_mouse_rot_deg(deg_y=-10)
                 self.sleep(0.100)
                 self.save_frame(name="EXIT-Y")
-                self.execute_rhythm_super_jump(deg_x=-1 + self.config.get("路线2结算超级跳角度Offset",0.000)*0.100*self.mapping_pn.get(self.config.get("路线2结算超级跳角度+-","-")), deg_y=5, slide_delay=0.080 + self.config.get("路线2结算超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线2结算超级跳延迟+-","-")))
+                self.execute_rhythm_super_jump(
+                    deg_x=-1 + self.config.get("路线2结算超级跳角度Offset",0.000)*0.100*self.mapping_pn.get(self.config.get("路线2结算超级跳角度-/+","-")), 
+                    deg_y=5, slide_delay=0.080 + self.config.get("路线2结算超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线2结算超级跳延迟-/+","-"))
+                )
                 self.sleep(0.100)
             case 3:
-                self.execute_pa(deg_x=10, deg_y=-10)
+                self.execute_pa(deg_x=20, deg_y=-6.5)
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_rhythm_super_jump(deg_x=-27, deg_y=10, slide_delay=0.200)
-                self.execute_mouse_rot_deg(deg_x=22)
+                self.execute_rhythm_super_jump(deg_x=-40, deg_y=16.5, slide_delay=0.200)
+                self.sleep(0.200)
+                self.send_key_down(self.get_dodge_key())
                 self.sleep(0.050)
+                self.send_key_up(self.get_dodge_key())
+                self.execute_mouse_rot_deg(deg_x=25)
+                self.sleep(0.200)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_mouse_rot_deg(deg_x=-4)
+                self.execute_mouse_rot_deg(deg_x=-6, deg_y=-20)
                 self.sleep(0.050)
-                self.execute_mouse_rot_deg(deg_y=-10)
-                self.sleep(0.100)
                 self.save_frame(name="EXIT-Y")
-                self.execute_rhythm_super_jump(deg_x=-0.5 + self.config.get("路线3结算超级跳角度Offset",0.000)*0.100*self.mapping_pn.get(self.config.get("路线3算超级跳角度+-","-")), deg_y=5, slide_delay=0.160 + self.config.get("路线3结算超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线3结算超级跳延迟+-","-")))
+                self.execute_rhythm_super_jump(
+                    deg_x=0 + self.config.get("路线3结算超级跳角度Offset",0.000)*0.100*self.mapping_pn.get(self.config.get("路线3结算超级跳角度-/+","-")), 
+                    deg_y=5, slide_delay=0.080 + self.config.get("路线3结算超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线3结算超级跳延迟-/+","-"))
+                )
             case 4:
+                self.execute_mouse_rot_deg(deg_y=-20)
+                self.sleep(0.050)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
-                self.execute_mouse_rot_deg(deg_y=-60)
+                self.execute_mouse_rot_deg(deg_y=-10)
                 self.sleep(0.100)
                 self.send_key_down(self.get_spiral_dive_key())
                 self.sleep(0.050)
                 self.send_key_up(self.get_spiral_dive_key())
-                self.execute_rhythm_super_jump(deg_x=0.5, deg_y=45, slide_delay=0.500)
+                self.execute_rhythm_super_jump(
+                    deg_x=0.5, deg_y=25, 
+                    slide_delay=0.500 + self.config.get("路线1·4撤离撞门超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线1·4撤离撞门超级跳延迟-/+","-"))
+                )
                 self.sleep(0.050)
                 self.mouse_down(key="left")
                 self.sleep(0.050)
@@ -747,7 +857,10 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.execute_mouse_rot_deg(deg_y=-10)
                 self.sleep(0.100)
                 self.save_frame(name="EXIT-Y")
-                self.execute_rhythm_super_jump(deg_x=-1 + self.config.get("路线4结算超级跳角度Offset",0.000)*0.100*self.mapping_pn.get(self.config.get("路线4结算超级跳角度+-","-")), deg_y=5, slide_delay=0.260 + self.config.get("路线4结算超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线4结算超级跳延迟+-","-")))
+                self.execute_rhythm_super_jump(
+                    deg_x=-1 + self.config.get("路线4结算超级跳角度Offset",0.000)*0.100*self.mapping_pn.get(self.config.get("路线4结算超级跳角度-/+","-")), 
+                    deg_y=5, slide_delay=0.220 + self.config.get("路线4结算超级跳延迟Offset",0.000)*0.010*self.mapping_pn.get(self.config.get("路线4结算超级跳延迟-/+","-"))
+                )
         self.sleep(0.100)
         self.mouse_down(key="left")
         self.sleep(0.050)
@@ -768,29 +881,18 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.sleep(0.400)
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
-    
-    def get_escort_path_by_position(self, distance_threshold=50):
-        """根据 track_point 的位置选择护送路径
 
-        使用 AutoExcavation 的 find_track_point 方法检测当前位置，
-        根据坐标与预设点的距离选择最近的路径。
-
-        3840x2160 分辨率下的参考点：
-        - 路径1: (1902, 431)
-        - 路径2: (1719, 438)
-        - 路径3: (2284, 461)
-        - 路径4: (2898, 688)
-
-        Returns:
-            选择的路径动作列表
-        """
-        # 定义 1920x1080 分辨率下的参考点
+    def calc_escort_path_by_position_scaled_reference(self):
+        """计算缩放后的 track point 参考点"""
+        # 1920x1080 分辨率下的参考点
         reference_points = {
             1: (957, 589) ,
             2: (805, 487),
             3: (1254, 538),
             4: (1545, 562),
         }
+        # 像素距离参考阈值
+        reference_threshold = 50
 
         # 获取当前分辨率
         current_width = self.width
@@ -801,22 +903,28 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         scale_y = current_height / 1080
 
         # 缩放参考点到当前分辨率
-        scaled_points = {}
+        self.scaled_path_points = {}
         for path_id, (x, y) in reference_points.items():
-            scaled_points[path_id] = (int(x * scale_x), int(y * scale_y))
+            self.scaled_path_points[path_id] = (int(x * scale_x), int(y * scale_y))
+        # 缩放参考阈值到当前分辨率
+        self.scaled_path_threshold = int(reference_threshold * np.sqrt(scale_x * scale_y))
 
         logger.info(
             f"当前分辨率: {current_width}x{current_height}, 缩放比例: {scale_x:.3f}x{scale_y:.3f}"
         )
-        logger.info(f"缩放后的参考点: {scaled_points}")
-
-        # 使用 AutoExcavation 的 find_track_point 方法检测位置
+        logger.info(f"缩放后的参考点: {self.scaled_path_points}")
+        logger.info(f"缩放后的距离阈值: {self.scaled_path_threshold} 像素")
+        
+    def get_escort_path_by_position(self, delay=0.100) -> bool:
+        """根据 track_point 的位置选择护送路径"""
+        # 使用 find_track_point 检测位置
         try:
+            self.sleep(delay)
             track_point = self.find_track_point()
 
             if track_point is None:
                 logger.warning("❌ 未检测到 track_point，无法确定路径")
-                return None
+                return False
 
             # 获取检测到的坐标（使用中心点）
             detected_x = track_point.x + track_point.width // 2
@@ -828,7 +936,7 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             min_distance = float("inf")
             selected_path = 1
 
-            for path_id, (ref_x, ref_y) in scaled_points.items():
+            for path_id, (ref_x, ref_y) in self.scaled_path_points.items():
                 distance = (
                     (detected_x - ref_x) ** 2 + (detected_y - ref_y) ** 2
                 ) ** 0.5
@@ -838,24 +946,25 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     min_distance = distance
                     selected_path = path_id
 
+            if min_distance > self.scaled_path_threshold:
+                logger.warning(f"❌ 距离超过阈值 {self.scaled_path_threshold} 像素，路径选择失败")
+                return False
+
             logger.info(
                 f"✅ 选择路径{selected_path}，距离最近参考点 {min_distance:.2f} 像素"
             )
-            
-            if min_distance > distance_threshold:
-                logger.warning(f"❌ 距离超过阈值 {distance_threshold} 像素，路径选择失败")
-                return None
 
             # 记录选择的路径
             self.stats["selected_path"] = selected_path
             
-            return selected_path
+            return True
 
         except Exception as e:
             logger.error("❌ 检测 track_point 时出错", e)
-            return None
+            return False
     
     def wait_for_interaction(self):
+        """等待协战与机关交互 超时尝试主控交互"""
         if not self.target_found:
             ally_interaction = False
             ally_interaction_check_count = 0
@@ -869,69 +978,74 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         ally_interaction = True
                         break
                     else:
-                        logger.info(f"检测到 track_point 位置: ({track_point.x}, {track_point.y}), 继续执行后续路径")
+                        logger.info(f"检测到 track_point 位置: ({track_point.x}, {track_point.y}), 继续等待协战")
                 except Exception as e:
                         logger.error("检测 track_point 时出错，忽略目标检测", e)
                 ally_interaction_check_count += 1
                     
             if not ally_interaction:
-                logger.info(f"等待协战超时，尝试交互门{self.door_count}")
+                logger.info(f"等待协战超时，尝试主控交互{self.door_count}")
                 self.send_key_down(self.get_interact_key())
                 self.sleep(0.050)
                 self.send_key_up(self.get_interact_key())
-                self.sleep(0.700)
+                self.sleep(0.500)
                 self.send_key_down(self.get_interact_key())
                 self.sleep(0.050)
                 self.send_key_up(self.get_interact_key())
-                self.sleep(2.000)
-            
-            ### track_point_found = True
-            
-            try:
-                track_point = self.find_track_point(filter_track_color=True)
-                if track_point is None:
-                    logger.info("未检测到 track_point，已找到目标")
-                    self.target_found = True
-                    ### track_point_found = False
-                else:
-                    logger.info(f"检测到 track_point 位置: ({track_point.x}, {track_point.y}), 继续执行后续路径")
-            except Exception as e:
-                    logger.error("检测 track_point 时出错，忽略目标检测", e)
-            
-            """
-            if not track_point_found:
-                self.sleep(0.200)
-                try:
-                    track_point = self.find_track_point(filter_track_color=False)
-                    if track_point is not None:
-                        logger.info(f"检测到撤离点 track_point 位置: ({track_point.x}, {track_point.y})，已找到目标")
-                        self.target_found = True
-                    else:
-                        logger.info("未检测到撤离点 track_point， 继续执行后续路径")
-                except Exception as e:
-                        logger.error("检测撤离点 track_point 时出错，忽略目标检测", e)
-            """
+                self.sleep(2.200)
+    
+    def check_target_found(self, delay=0.000) -> bool:
+        """检测是否已找到目标"""
+        # 检查是否找到目标，通过检测目标血条区域的白色像素数量判断
+        if not self.target_found:
+            self.sleep(delay)
 
-    def execute_mouse_rot_deg(self, deg_x=0, deg_y=0):
-        pixels_x = deg_x * 10
-        pixels_y = deg_y * 10
+            target_health_bar_box = self.box_of_screen_scaled(1920, 1080, 38, 401, 284, 426, name="target_health_bar", hcenter=True)
+            self.draw_boxes("target_health_bar", [target_health_bar_box], color="blue")
+            
+            logger.debug(f"目标血条检测区域: {target_health_bar_box}")
+            target_health_bar_pixels  = self.next_frame()[
+                target_health_bar_box.y:target_health_bar_box.y + target_health_bar_box.height,
+                target_health_bar_box.x:target_health_bar_box.x + target_health_bar_box.width
+            ]
+            
+            target_white_pixel_count = int(TARGET_WHITE_PIXELS_1920_1080 * self.width / 1920 * self.height / 1080)
+            box_white_pixel_count = np.sum(np.all(target_health_bar_pixels >= [250, 250, 250], axis=2))
+            logger.debug(f"目标血条区域白色像素阈值: {target_white_pixel_count}")
+            logger.debug(f"目标血条区域白色像素数量: {box_white_pixel_count}")
+
+            if box_white_pixel_count > target_white_pixel_count:
+                logger.info("检测到目标血条，已找到目标")
+                self.save_frame(name="TARGET")
+                self.target_found = True
+            else:
+                logger.info("未检测到目标血条")
+            
+        return self.target_found
+
+    def execute_mouse_rot_deg(self, deg_x=0, deg_y=0, debug=True):
+        if debug:
+            logger.debug(f"鼠标视角旋转: x={deg_x:.1f}, y={deg_y:.1f}")
+        pixels_x = deg_x * MOUSE_DEG_TO_PIXELS
+        pixels_y = deg_y * MOUSE_DEG_TO_PIXELS
 
         self.move_mouse_relative(pixels_x, pixels_y)
-        logger.debug(f"鼠标视角旋转: x={deg_x}度, y={deg_y}度, 像素: ({pixels_x}, {pixels_y})")
 
     def execute_pa(self, deg_x=0, deg_y=0, rot_delay=0.300):
+        logger.debug(f"执行穿引共鸣: 旋转 x={deg_x:.1f}, y={deg_y:.1f}, 长按{rot_delay:.3f}秒")
         self.mouse_down(key="left")
         self.sleep(rot_delay)
         if deg_x != 0 or deg_y != 0:
-            self.execute_mouse_rot_deg(deg_x, deg_y)
+            self.execute_mouse_rot_deg(deg_x, deg_y, debug=False)
         self.mouse_up(key="left")
     
     def execute_rhythm_super_jump(self, deg_x=0, deg_y=0, rot_delay=0.200, slide_delay=0.700):
+        logger.debug(f"执行黎瑟超级跳: 旋转 x={deg_x:.1f}, y={deg_y:.1f}, 延迟{rot_delay:.3f}秒, 滑行{slide_delay:.3f}秒")
         self.send_key_down("e")
         self.sleep(0.050)
         self.send_key_up("e")
         if deg_x != 0 or deg_y != 0:
-            self.execute_mouse_rot_deg(deg_x, deg_y)
+            self.execute_mouse_rot_deg(deg_x, deg_y, debug=False)
         self.sleep(rot_delay)
         self.mouse_down(key="left")
         self.sleep(0.300)
@@ -942,11 +1056,13 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.mouse_up(key="right")
         
     def save_frame(self, name = None):
+        """失误截图: 缓存当前帧"""
         if self.config.get("失误截图", True):
-            name=f"T{self.stats['rounds_completed']+1}P{self.path_str}G{self.door_count}_{time.strftime("%H.%M.%S", time.localtime(time.time()))}_{name}"
+            name=f"T{self.stats['rounds_completed']+1}P{self.path_str}G{self.door_count}_{time.strftime('%H.%M.%S', time.localtime(time.time()))}_{name}"
             self.screenshot_frames.append((name, self.next_frame().copy()))
 
     def dump_screenshots(self):
+        """失误截图: 提取缓存帧生成截图"""
         if self.config.get("失误截图", True):
             for (name, frame) in self.screenshot_frames:
                 self.screenshot(name=name, frame=frame)

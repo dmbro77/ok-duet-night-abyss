@@ -4,9 +4,13 @@ import time
 import threading
 import re
 import ctypes
+import win32api
+import win32con
+import random
+
 from datetime import datetime
 
-from ok import Logger, TaskDisabledException
+from ok import Logger, TaskDisabledException, og
 from src.tasks.BaseDNATask import BaseDNATask
 from src.tasks.DNAOneTimeTask import DNAOneTimeTask
 from src.tasks.CommissionsTask import CommissionsTask
@@ -102,6 +106,50 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             "使用外部移动逻辑自动打本": ImportTask
         }
         
+        self.init_param()
+    
+    def scroll_relative(self, x, y, delta):
+        try:
+            # 1. 计算目标位置
+            abs_pos = og.device_manager.hwnd_window.get_abs_cords(
+                self.width_of_screen(x),
+                self.height_of_screen(y)
+            )
+            
+            # 尝试激活窗口确保接收输入
+            self.try_bring_to_front()
+            
+            # 移动鼠标并发送移动事件确保焦点
+            win32api.SetCursorPos(abs_pos)
+            self.sleep(0.05)
+            win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 0, 0, 0)
+            self.sleep(0.05)
+            target_wheel_delta = -int(delta)
+            logger.info(f"scroll_relative: pos={abs_pos}, input_delta={delta}, wheel_delta={target_wheel_delta}")
+
+            step_size = 120
+            if target_wheel_delta < 0:
+                step_size = -120
+                
+            current_delta = 0
+            # 循环执行直到达到目标滚动量
+            while abs(current_delta) < abs(target_wheel_delta):
+                remaining = target_wheel_delta - current_delta
+                if abs(remaining) < abs(step_size):
+                    step = remaining
+                else:
+                    step = step_size
+                
+                win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, step, 0)
+                current_delta += step
+                
+                self.sleep(0.01)
+                
+        except Exception as e:
+            logger.error(f"win32 scroll failed: {e}")
+
+
+    def init_param(self):
         self.monitor_thread = None
         self.current_sub_task = None
         self.next_task_class = None
@@ -112,23 +160,25 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.last_check_hour = -1
         self.lock = threading.Lock()
         self.force_check = False 
-    
+
     def run(self):
         if not self.config.get("默认任务副本类型"):
-            self.info_set("自动密函:默认任务副本类型", "未配置")
+            self.info_set("自动密函：默认任务副本类型", "未配置")
             return
         if not self.config.get("默认任务副本等级"):
-            self.info_set("自动密函:默认任务副本等级", "未配置")
+            self.info_set("自动密函：默认任务副本等级", "未配置")
             return
         if not self.config.get("默认任务"):
-            self.info_set("自动密函:默认任务", "未配置")
+            self.info_set("自动密函：默认任务", "未配置")
             return
         if not self.config.get('密函委托优先级'):
-            self.info_set("自动密函:密函委托优先级", "未配置")
+            self.info_set("自动密函：密函委托优先级", "未配置")
             return
         if not self.config.get('关卡类型优先级'):
-            self.info_set("自动密函:关卡类型优先级", "未配置")
+            self.info_set("自动密函：关卡类型优先级", "未配置")
             return
+
+        self.init_param()    
         
         # 启动监控线程
         self.monitor_thread = threading.Thread(target=self.monitor_loop, name="AutoScheduleMonitor")
@@ -137,26 +187,32 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         
         logger.info("主任务循环开始，等待调度指令...")
 
-        self.stats = []
-
-        while True:
-            # 在检查的时候不执行
-            if self.force_check:
-                self.sleep(1)
-                return
-            # 1. 获取下一个要执行的任务
-            task_class = self.get_next_task()
-            
-            if not task_class:
-                self.sleep(1)
-                continue
+        try:
+            while True:
+                # 在检查的时候不执行
+                if self.force_check:
+                    self.sleep(1)
+                    return
+                # 1. 获取下一个要执行的任务
+                task_class = self.get_next_task()
                 
-            # 2. 执行子任务 (在主线程执行)
-            self.execute_sub_task(task_class)
-            
-            # 3. 检查自身是否被停止
-            if not self.enabled:
-                break
+                if not task_class:
+                    self.sleep(1)
+                    continue
+                    
+                # 2. 执行子任务 (在主线程执行)
+                self.execute_sub_task(task_class)
+                
+                # 3. 检查自身是否被停止
+                if not self.enabled:
+                    break
+
+        except TaskDisabledException:
+            pass
+        except Exception as e:
+            logger.error('主任务循环异常', e)
+            raise    
+        
     
     def get_next_task(self):
         with self.lock:
@@ -178,13 +234,23 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.stats.append(current_stat)
         
         # 更新UI
-        self.info_set("自动密函:当前任务", self.next_task_name)
-        self.info_set("自动密函:开始时间", start_str)
-        self.info_set("自动密函:任务状态", "执行中")
+        self.info_set("自动密函：当前任务", self.next_task_name)
+        self.info_set("自动密函：开始时间", start_str)
+        self.info_set("自动密函：任务状态", "执行中")
         self._update_task_summary_ui()
 
         try:
-            task = self.get_task_by_class(task_class)            
+            # 使用 get_task_by_class 获取实例，确保依赖注入（如 global_config）
+            task = self.get_task_by_class(task_class)
+            logger.debug(f"获取到的任务实例: {task} (Type: {type(task)}, ID: {id(task)})")
+            
+            if task is self:
+                logger.error(f"严重错误: get_task_by_class({task_class.__name__}) 返回了 self (AutoScheduleTask)! 这会导致递归调用。")
+                # 尝试强制修复或跳过
+                return
+
+            # 创建停止事件
+
             original_info_set = task.info_set
             task.info_set = self.info_set
             self.current_sub_task = task
@@ -194,32 +260,32 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             
             logger.info(f"开始执行子任务: {self.next_task_name}")
             # 确保任务启用
-            task.enable()
+            # task.enable()
             # 在主线程运行任务
             task.run()
             
             # 任务自然结束（未被disable中断）
-            logger.info(f"子任务自然结束: {self.next_task_name}")
+            logger.info(f"子任务自然结束或被关闭: {self.next_task_name}")
             
             current_stat["status"] = "已完成"
-            self.info_set("自动密函:任务状态", "已完成")
+            self.info_set("自动密函：任务状态", "已完成")
             
             self.handle_task_finished(task_class)
             
         except TaskDisabledException:
             logger.info(f"子任务已停止 (被调度打断): {self.next_task_name}")
             current_stat["status"] = "已停止"
-            self.info_set("自动密函:任务状态", "已停止")
+            self.info_set("自动密函：任务状态", "已停止")
         except Exception as e:
             logger.error(f"子任务执行出错: {e}")
             current_stat["status"] = "出错"
-            self.info_set("自动密函:任务状态", "出错")
+            self.info_set("自动密函：任务状态", "出错")
             self.sleep(5) 
         finally:
             end_time = datetime.now()
             end_str = end_time.strftime("%H:%M:%S")
             current_stat["end_time"] = end_str
-            self.info_set("自动密函:结束时间", end_str)
+            self.info_set("自动密函：结束时间", end_str)
             
             # 更新任务汇总
             self._update_task_summary_ui()
@@ -253,7 +319,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             summary_lines.append(f"{name}，{ranges_str}")
             
         summary_text = "\n".join(summary_lines)
-        self.info_set("自动密函:任务总计", summary_text)
+        self.info_set("自动密函：任务总计", summary_text)
 
 
     def handle_task_finished(self, task_class):
@@ -280,9 +346,9 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         now = datetime.now()
         if now.minute == 0:
             self.last_check_hour = now.hour
-
+        
         while self.enabled:
-            logger.info("监控线程运行中...")
+            logger.info(f"监控线程运行中，当前状态: {self.get_status()}")
             now = datetime.now()
             should_check = False
             
@@ -292,6 +358,8 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.last_check_hour = now.hour
                 # 新的一小时，是否清空已完成任务？根据需求决定，暂时保持原逻辑不清空或手动清空
                 # self.finished_tasks.clear() 
+                # 随机延时5-20秒
+                self.sleep(random.randint(5, 20))
                 should_check = True
                 
             # 2. 强制检查 (任务结束触发)
@@ -311,7 +379,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             with self.lock:
                 # 如果计划的任务发生变化
                 if new_task_class and (new_task_class != self.next_task_class or new_module_key != self.next_task_module):
-                    logger.info(f"任务计划变更: {self.next_task_class.__name__ if self.next_task_class else 'None'} -> {new_task_class.__name__}")
+                    logger.info(f"任务计划变更: {self.next_task_module+'_'+self.next_task_name if self.next_task_module else 'None'} -> {new_module_key+'_'+new_task_name}")
                     self.next_task_class = new_task_class
                     self.next_task_module = new_module_key
                     self.next_task_name = new_task_name
@@ -326,7 +394,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                              # 但这里已经是变更了才会进这个if，所以直接打断
                              pass
                         
-                        logger.info("停止当前运行的任务以应用新计划...")
                         self.current_sub_task.disable()
         except Exception as e:
             logger.error(f"调度检查出错: {e}")
@@ -341,7 +408,9 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         
         try:
             logger.info(f"开始请求API: {API_URL}")
-            response = requests.get(API_URL, headers=HEADERS, timeout=10)
+            # 添加时间戳防止缓存
+            params = {"_t": int(time.time() * 1000)}
+            response = requests.get(API_URL, headers=HEADERS, params=params, timeout=10)
             response.raise_for_status()
             data = response.json()
             
@@ -422,23 +491,22 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             return self.DEFAULT_TASK_MAPPING[default_task_name], "default", default_task_name
         return None, None, default_task_name
 
-    def disable(self):
-        """
-        当任务被手动停止时调用（重写 BaseTask.disable）。
-        """
-        logger.info("AutoScheduleTask 被手动停止")
-        # 1. 停止当前子任务
-        if self.current_sub_task:
-            logger.info("停止当前子任务...")
-            self.current_sub_task.disable()
-        # 2. 调用父类逻辑 (设置 enabled=False 等)
-        super().disable()
-        # # 3. 结束监控线程, super().disable() 会将 self.enabled 标记为 False
-        # # monitor_thread 中的循环 ( while self.enabled: ) 会在当前循环结束后（最多等待 1 秒 time.sleep ）检测到标记变化并退出循环
-        # if self.monitor_thread and self.monitor_thread.is_alive():
-        #     logger.info("等待监控线程结束...")
-        #     self.monitor_thread.join()
-        #     logger.info("监控线程已结束")   
+    # def disable(self):
+    #     """
+    #     当任务被手动停止时调用（重写 BaseTask.disable）。
+    #     """
+    #     # 防止递归调用
+    #     if not self.enabled:
+    #         return
+
+    #     logger.info(f"AutoScheduleTask 被手动停止 (ID: {id(self)}),{id(self.current_sub_task)}")
+        
+    #     # 1. 先调用父类逻辑设置 enabled=False，防止后续逻辑再次触发
+    #     super().disable()
+
+    #     # 2. 停止当前子任务
+    #     if self.current_sub_task:
+    #         self.current_sub_task.disable()
 
     def reset_ui_state(self, task_name):
         """
@@ -474,9 +542,15 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     )
                     # 退出副本
                     self.give_up_mission()
+                # 无尽副本可能需要点击撤离按钮
+                if (quit_btn:=self.find_ingame_quit_btn()):
+                    self.click_box_random(quit_btn, right_extend=0.1, post_sleep=0, after_sleep=0.25)   
+                self.sleep(1)      
+
             # 默认任务副本选择逻辑
             if task_name is not "AutoExploration_Fast" and task_name is not "AutoExpulsion": 
                 self.switch_to_default_task()
+                self.sleep(1)
                 self.switch_to_task_level()
             # 密函本需要切换到密函页面
             else:     
@@ -485,6 +559,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             logger.info("UI状态重置完成")
         except Exception as e:
             logger.warning(f"UI状态重置可能未完全成功: {e}")
+            raise e
 
 
     # 切换到默认任务副本
@@ -496,16 +571,11 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         flag = 0
         default_task_type = self.config.get("默认任务副本类型")
         # width,height = self.get_screen_size()
-        self.scroll_relative(0.5, 0.4, -1000)
+        self.scroll_relative(0.5, 0.4, int(self.width))
         self.sleep(1)
-        while not clicked and flag < 3:
-            logger.info(f"滚动副本: {int(0.3*self.width)}")
-            self.scroll_relative(0.5, 0.4, int(0.33*self.width))
-            # self.swipe_relative(0.3, 0.5, 0.5, 0.5)
-            # self.mouse_down(0.59*self.width, 0.50*self.height)
-            # self.move(0.17*self.width,0.52*self.height)
-            # self.mouse_up()
-            
+        while not clicked and flag < 10:
+            logger.info(f"滚动副本: 600")
+            self.scroll_relative(0.5, 0.4, 600)
             self.sleep(1)
             logger.info(f"尝试匹配默认任务副本类型: {default_task_type.split(":")[1]}")
             match_box = self.ocr(
@@ -537,6 +607,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 ),
                 match=re.compile(f'.*{default_task_level}.*')
             )
+            logger.info(f"匹配到的默认任务副本等级: {match_box}")
             if match_box:
                 self.click_box_random(match_box[0])
                 clicked = True

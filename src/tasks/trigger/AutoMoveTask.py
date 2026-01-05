@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 from ok import TriggerTask, Logger, og
 from src.scene.DNAScene import DNAScene
 from src.tasks.BaseDNATask import BaseDNATask
@@ -32,7 +34,7 @@ class AutoMoveTask(BaseListenerTask, BaseDNATask, TriggerTask):
         self.manual_activate = False
         self.signal = False
         self.signal_interrupt = False
-        self.is_down = False
+        self.running = False
 
     def disable(self):
         """禁用任务时，断开信号连接。"""
@@ -50,6 +52,7 @@ class AutoMoveTask(BaseListenerTask, BaseDNATask, TriggerTask):
         self.manual_activate = False
         self.signal = False
         self.signal_interrupt = False
+        self.running = False
 
     def run(self):
         if self.signal:
@@ -59,34 +62,35 @@ class AutoMoveTask(BaseListenerTask, BaseDNATask, TriggerTask):
             if og.device_manager.hwnd_window.is_foreground():
                 self.switch_state()
 
-        while self.manual_activate:
-            try:
-                self.do_move()
-            except TriggerDeactivateException as e:
-                logger.info(f'auto_move_task_deactivate {e}')
-                break
+        if self.manual_activate and not self.running:
+            self.running = True
+            self.handler.post(self.do_move)
 
-        if self.is_down:
-            self.is_down = False
+    @contextmanager
+    def left_click_scope(self):
+        self.mouse_down()
+        try:
+            yield
+        finally:
             self.mouse_up()
 
     def do_move(self):
         try:
-            self.mouse_down()
-            self.is_down = True
-            self.sleep_check(self.config.get('按下时间', 0.50), False)
-        finally:
-            if self.is_down:
-                self.mouse_up()
-                self.is_down = False
-        self.sleep_check(self.config.get('间隔时间', 0.45))
+            with self.left_click_scope():
+                self.sleep_check(self.config.get('按下时间', 0.50))
+            self.sleep_check(self.config.get("间隔时间", 0.50))
+        except TriggerDeactivateException as e:
+            logger.info(f"auto_aim_task_deactivate {e}")
+            self.running = False
+            return
+        self.handler.post(self.do_move)
 
     def sleep_check(self, sec, check_signal_flag=True):
         remaining = sec
         step = 0.1
         while remaining > 0:
             s = step if remaining > step else remaining
-            self.sleep_random(s, random_range=(1, 1.2))
+            self.sleep(s)
             remaining -= s
             if self._should_interrupt(check_signal_flag):
                 self.switch_state()

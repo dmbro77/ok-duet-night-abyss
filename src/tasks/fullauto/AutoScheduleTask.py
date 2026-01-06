@@ -37,14 +37,15 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         
         # 默认配置（仅保留业务配置）
         self.default_config = {
-            # 默认任务配置
-            "默认任务": "自动70级皎皎币本",
-            "默认任务副本类型": "角色技能材料:扼守/无尽",
-            "默认任务副本等级": "70",
             # 模块优先级
             "密函委托优先级": '角色>武器>MOD',
             # 任务优先级
             "关卡类型优先级": '探险/无尽>驱离',
+            # 默认任务配置
+            "默认任务": "自动70级皎皎币本",
+            "默认任务副本类型": "角色技能材料:扼守/无尽",
+            "选择任务副本等级": "70",
+            "夜航副本名称": "霜狱 野蜂暗箭",
         }
 
         self.config_type = {
@@ -60,28 +61,28 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             "默认任务副本类型": {
                 "type": "drop_down",
                  "options": [
-                    "委托:铜币:勘察无尽",
-                    "委托:角色经验:避险",
-                    "委托:武器经验:驱逐",
-                    "委托:角色突破材料:探险/无尽",
-                    "委托:武器突破材料:调停",
-                    "委托:魔之楔:驱离",
-                    "委托:深红凝珠:护送",
-                    "委托:角色技能材料:追缉",
-                    "委托:角色技能材料:扼守/无尽",
-                    "委托:铸造材料:迁移",
-                    "夜航手册:lv.20",
-                    "夜航手册:lv.30",
-                    "夜航手册:lv.40",
-                    "夜航手册:lv.50",
-                    "夜航手册:lv.55",
-                    "夜航手册:lv.60",
-                    "夜航手册:lv.65",
-                    "夜航手册:lv.70",
-                    "夜航手册:lv.80"
+                    "铜币:勘察无尽",
+                    "角色经验:避险",
+                    "武器经验:驱逐",
+                    "角色突破材料:探险/无尽",
+                    "武器突破材料:调停",
+                    "魔之楔:驱离",
+                    "深红凝珠:护送",
+                    "角色技能材料:追缉",
+                    "角色技能材料:扼守/无尽",
+                    "铸造材料:迁移",
+                    "夜航手册:20",
+                    "夜航手册:30",
+                    "夜航手册:40",
+                    "夜航手册:50",
+                    "夜航手册:55",
+                    "夜航手册:60",
+                    "夜航手册:65",
+                    "夜航手册:70",
+                    "夜航手册:80"
                 ]
             },
-            "默认任务副本等级或者夜航选项": {
+            "选择任务副本等级": {
                 "type": "drop_down",
                  "options": [
                     "委托:lv.5", "委托:lv.10", "委托:lv.15", "委托:lv.20", "委托:lv.30", "委托:lv.35", "委托:lv.40", "委托:lv.50", "委托:lv.60", "委托:lv.70", "委托:lv.80", "委托:lv.100",
@@ -90,11 +91,12 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         }
 
         self.config_description = {
-            "默认任务": "当没有匹配的委托密函任务时，自动执行此任务\n任务基于已有的任务执行，请对设置的默认任务做好相应配置",
-            "默认任务副本类型": "选择要执行的任务类型，根据选择的默认任务进行设置",
-            "默认任务副本等级": "选择需要刷取的副本等级，根据选择的默认任务和副本类型进行设置",
             "密函委托优先级": "使用 > 分隔优先级，越靠前优先级越高，只能填写角色、武器、MOD。\n例如：角色>武器>MOD",
             "关卡类型优先级": "使用 > 分隔优先级，越靠前优先级越高，仅支持探险/无尽、驱离。\n例如：探险/无尽>驱离",
+            "默认任务": "当没有匹配的委托密函任务时，自动执行此任务\n任务基于已有的任务执行，请对设置的任务做好相应配置",
+            "默认任务副本类型": "选择要执行的任务类型，根据选择的默认任务进行设置\n有两种类型的委托，分别是委托和夜航手册",
+            "选择任务副本等级": "选择需要刷取的副本等级，根据选择的默认任务和副本类型进行设置\n副本类型为正常委托是生效",
+            "夜航副本名称": "填写需要刷取的夜航手册，根据选择的默认任务和副本类型进行设置\n列如：霜狱 野蜂暗箭，副本任务为夜航书册是生效",
         }
 
         # 任务映射关系
@@ -122,7 +124,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.scheduler_lock = threading.Lock()  # 调度器锁
         self.task_stop_event = threading.Event()  # 任务停止事件
         self.scheduler_running = True  # 调度器运行标志
-        self.scheduler_paused = False  # 调度器暂停标志（不修改父类的_paused）
         
         self.finished_tasks = set()  # 已完成的任务标识（仅密函任务）
         self.task_stats = []  # 任务统计信息
@@ -178,7 +179,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         try:
             # 启动调度器监控线程
             self.scheduler_running = True
-            self.scheduler_paused = False
             self.scheduler_thread = threading.Thread(
                 target=self._scheduler_loop,
                 name="AutoScheduleScheduler"
@@ -205,7 +205,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         """验证必需配置"""
         required_configs = [
             "默认任务副本类型",
-            "默认任务副本等级", 
+            "选择任务副本等级", 
             "默认任务",
             "密函委托优先级",
             "关卡类型优先级"
@@ -214,7 +214,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         for config_key in required_configs:
             if not self.config.get(config_key):
                 self.info_set(f"自动密函：{config_key}", "未配置")
-                logger.error(f"配置缺失: {config_key}")
                 return False
         
         return True
@@ -228,12 +227,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         
         while self.enabled and self.scheduler_running:
             try:
-                # 检查调度器是否暂停
-                if self.scheduler_paused:
-                    logger.debug("调度器暂停中，等待恢复...")
-                    self.sleep(1)
-                    continue
-                    
                 now = datetime.now()
                 should_check = False
                 
@@ -265,10 +258,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def _check_and_switch_task(self):
         """检查并切换任务 - 核心逻辑"""
         try:
-            # 检查调度器是否暂停
-            if self.scheduler_paused:
-                logger.debug("调度器暂停中，跳过任务检查")
-                return
             
             # 1. 获取新的目标任务
             task_class, module_key, task_name = self._calculate_target_task()
@@ -278,11 +267,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 return
             
             with self.scheduler_lock:
-                # 再次检查暂停状态（因为可能在获取任务过程中被暂停）
-                if self.scheduler_paused:
-                    logger.debug("调度器已被暂停，取消任务切换")
-                    return
-                
                 # 2. 检查是否与当前任务相同
                 is_same_task = (
                     self.current_sub_task and 
@@ -327,6 +311,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             if not isinstance(instance_info_list, list):
                 logger.error("API返回的data不是列表格式")
                 return self._get_default_task_info()
+            logger.info(f"API返回数据: {instance_info_list}")
             
             # 解析优先级配置
             commission_config = self.config.get("密函委托优先级", "角色>武器>MOD")
@@ -454,8 +439,11 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.task_stats.append(current_stat)
             
             # 更新UI
-            self._update_task_ui("执行中", start_time, task_name, module_key)
+            self._update_task_ui(current_stat)
             
+            # 正式执行任务前重置ui回到历练页面
+            self._reset_ui_state(task_name, module_key)
+
             # 启动任务执行线程
             self.task_stop_event.clear()
             self.task_thread = threading.Thread(
@@ -481,8 +469,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             original_info_set = task.info_set
             task.info_set = self.info_set
             
-            # 执行前置操作
-            self._reset_ui_state(task_name, module_key)
             
             logger.info(f"开始执行任务: {task_name}")
             
@@ -518,7 +504,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             current_stat["end_time"] = end_time
             
             # 更新UI
-            self._update_task_ui(current_stat["status"], end_time, task_name, module_key)
+            self._update_task_ui(current_stat)
             self._update_task_summary_ui()
             
             # 恢复原始info_set
@@ -533,43 +519,32 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     self.current_task_module = None
                     self.task_stop_event.clear()
     
-    def _update_task_ui(self, status, time_str, task_name, module_key):
+    def _update_task_ui(self, current_stat):
         """更新任务UI"""
-        self.info_set("自动密函：当前任务", task_name)
-        self.info_set("自动密函：任务模块", module_key)
-        self.info_set("自动密函：任务状态", status)
-        
-        if ":" in time_str:  # 判断是否为时间格式
-            if status == "执行中":
-                self.info_set("自动密函：开始时间", time_str)
-            else:
-                self.info_set("自动密函：结束时间", time_str)
+        module_key = current_stat["module"]
+        task_name = current_stat["task"]
+        status = current_stat["status"]
+        start_time = current_stat["start_time"]
+        end_time = current_stat["end_time"]
+        self.info_set("自动密函：当前任务", f"{module_key}，{task_name}，{status}，{start_time if status == "执行中" else ""}，{end_time if status != "执行中" else ""}")
+
     
     def _update_task_summary_ui(self):
         """更新任务汇总UI"""
         if not self.task_stats:
-            self.info_set("自动密函：任务总计", "暂无任务记录")
+            self.info_set("自动密函：任务统计", "暂无任务记录")
             return
             
-        task_groups = {}
-        for stat in self.task_stats:
-            name = f"{stat['task']}({stat['module']})"
-            if name not in task_groups:
-                task_groups[name] = []
-            
-            if stat['end_time']:
-                time_range = f"{stat['start_time']}-{stat['end_time']}"
-            else:
-                time_range = f"{stat['start_time']}-进行中"
-            task_groups[name].append(time_range)
-        
         summary_lines = []
-        for name, ranges in task_groups.items():
-            ranges_str = "，".join(ranges)
-            summary_lines.append(f"{name}，{ranges_str}")
-            
+        for stat in self.task_stats:
+            name = f"{stat['module']}，{stat['task']}，{stat['status']}"
+            if stat['end_time']:
+                time_range = f"{stat['start_time']}，{stat['end_time']}"
+            else:
+                time_range = f"{stat['start_time']}，未完成"
+            summary_lines.append(f"{name}，{time_range}")
         summary_text = "\n".join(summary_lines)
-        self.info_set("自动密函：任务总计", summary_text)
+        self.info_set("自动密函：任务统计", summary_text)
     
     def _reset_ui_state(self, task_name, module_key):
         """重置UI状态"""
@@ -606,6 +581,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
             # 切换到相应任务
             if module_key == "default":
+                self.sleep(1)
                 self.switch_to_default_task()
                 self.sleep(1)
                 self.switch_to_task_level()
@@ -635,116 +611,117 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         if self.task_thread and self.task_thread.is_alive():
             self.task_thread.join(timeout=3)
     
-    # ================ 暂停/恢复相关方法 ================
-    
-    def pause(self):
-        """暂停调度器和当前任务"""
-        logger.info("暂停调度器和当前任务")
-        
-        # 1. 设置调度器暂停标志
-        self.scheduler_paused = True
-        self.info_set("自动密函：调度状态", "已暂停")
-        
-        # 2. 暂停当前运行的任务
-        if self.current_sub_task:
-            try:
-                logger.info(f"暂停当前任务: {self.current_task_name}")
-                
-                # 调用子任务的暂停方法（如果子任务支持）
-                if hasattr(self.current_sub_task, 'pause'):
-                    self.current_sub_task.pause()
-                else:
-                    # 如果子任务没有pause方法，设置其_paused标志
-                    self.current_sub_task._paused = True
-                
-                # 更新UI
-                self.info_set("自动密函：任务状态", "已暂停")
-                
-            except Exception as e:
-                logger.error(f"暂停子任务失败: {e}")
-    
-    def unpause(self):
-        """恢复调度器和任务运行"""
-        logger.info("恢复调度器和任务运行")
-        
-        # 1. 清除暂停标志
-        self.scheduler_paused = False
-        self.info_set("自动密函：调度状态", "运行中")
-        
-        # 2. 恢复当前任务
-        if self.current_sub_task:
-            try:
-                logger.info(f"恢复当前任务: {self.current_task_name}")
-                
-                # 调用子任务的恢复方法（如果子任务支持）
-                if hasattr(self.current_sub_task, 'unpause'):
-                    self.current_sub_task.unpause()
-                else:
-                    # 如果子任务没有unpause方法，清除其_paused标志
-                    self.current_sub_task._paused = False
-                
-                # 更新任务状态
-                self.info_set("自动密函：任务状态", "执行中")
-                
-            except Exception as e:
-                logger.error(f"恢复子任务失败: {e}")
-        
-        # 3. 强制触发一次检查
-        self.force_check = True
- 
     # ================ 原有的辅助方法 ================
     
     def switch_to_default_task(self):
         """切换到默认任务副本"""
         default_task_type = self.config.get("默认任务副本类型")
-        # 点击切换到委托
-        self.click_relative_random(0.11, 0.16, 0.19, 0.18)
-        self.sleep(1) 
-        clicked  = False
-        flag = 0
-        self.scroll_relative(0.5, 0.4, int(self.width))
-        self.sleep(1)
-        while not clicked and flag < 10:
-            logger.info(f"滚动副本: 600")
-            self.scroll_relative(0.5, 0.4, 600)
+        if not default_task_type:
+            logger.warning("未配置默认任务副本类型")
+            return
+        
+        type_task, task_name = default_task_type.split(':')
+        
+        if type_task != "夜航手册":
+            # 点击切换到委托
+            self.click_relative_random(0.11, 0.16, 0.19, 0.18)
+            self.sleep(0.02)
+            self.click_relative_random(0.11, 0.16, 0.19, 0.18)
             self.sleep(1)
-            logger.info(f"尝试匹配默认任务副本类型: {default_task_type.split(':')[2]}")
+            # 委托搜索区域
+            box_params = (2560, 1440, 2560*0.07, 1440*0.69, 2560*0.66, 1440*0.75)
+            scroll_pos = (0.5, 0.4)
+            scroll_amount = 600
+            max_attempts = 10
+        else:
+            # 点击切换到夜航手册
+            self.click_relative_random(0.23, 0.16, 0.30, 0.18)
+            self.sleep(0.02)
+            self.click_relative_random(0.23, 0.16, 0.30, 0.18)
+            self.sleep(1)
+            # 夜航手册搜索区域
+            box_params = (2560, 1440, 2560*0.07, 1440*0.22, 2560*0.12, 1440*0.84)
+            scroll_pos = (0.1, 0.37)
+            scroll_amount = int(self.height)
+            max_attempts = 3
+        
+        # 初始滚动
+        self.scroll_relative(*scroll_pos, scroll_amount)
+        self.sleep(1)
+        
+        # 查找任务
+        clicked = False
+        for attempt in range(max_attempts):
+            logger.info(f"尝试匹配任务: {task_name} (尝试{attempt+1}/{max_attempts})")
+            
             match_box = self.ocr(
-                box=self.box_of_screen_scaled(
-                    2560, 1440, 2560 * 0.07, 1440 * 0.69, 2560 * 0.66, 1440 * 0.75,
-                    name="weituo", hcenter=True
-                ),
-                match=re.compile(f'.*{default_task_type.split(":")[2]}.*') 
+                box=self.box_of_screen_scaled(*box_params, name="weituo", hcenter=True),
+                match=re.compile(f'.*{task_name}.*')
             )
-            logger.info(f"匹配到的默认任务副本类型: {match_box}")
+            
             if match_box:
                 self.click_box_random(match_box[0])
                 clicked = True
                 break
             else:
-                flag += 1
+                self.scroll_relative(0.5, 0.4, 600)
+                self.sleep(1)
+        
+        if not clicked:
+            logger.warning(f"未找到任务: {task_name}")
     
     def switch_to_task_level(self):
         """选择默认任务关卡等级"""
-        clicked  = False
-        flag = 0
-        default_task_level = self.config.get("默认任务副本等级")
-        while not clicked and flag < 3:
-            logger.info(f"尝试匹配默认任务副本等级: {default_task_level}")
-            match_box = self.ocr(
-                box=self.box_of_screen_scaled(
-                    2560, 1440, 2560 * 0.10, 1440 * 0.19, 2560 * 0.17, 1440 * 0.62,
-                    name="等级", hcenter=True
-                ),
-                match=re.compile(f'.*{default_task_level}.*')
-            )
-            logger.info(f"匹配到的默认任务副本等级: {match_box}")
-            if match_box:
-                self.click_box_random(match_box[0])
-                clicked = True
-                break
-            else:
-                flag += 1
+        default_task_type = self.config.get("默认任务副本类型")
+        if not default_task_type:
+            logger.warning("未配置默认任务副本类型")
+            return
+        
+        type_task, task_name = default_task_type.split(':')
+        
+        if type_task != "夜航手册":
+            clicked  = False
+            flag = 0
+            default_task_level = self.config.get("选择任务副本等级")
+            while not clicked and flag < 3:
+                logger.info(f"尝试匹配选择任务副本等级: {default_task_level}")
+                match_box = self.ocr(
+                    box=self.box_of_screen_scaled(
+                        2560, 1440, 2560 * 0.10, 1440 * 0.19, 2560 * 0.17, 1440 * 0.62,
+                        name="等级", hcenter=True
+                    ),
+                    match=re.compile(f'.*{default_task_level}.*')
+                )
+                logger.info(f"匹配到的选择任务副本等级: {match_box}")
+                if match_box:
+                    self.click_box_random(match_box[0])
+                    clicked = True
+                    break
+                else:
+                    flag += 1
+        else:
+            clicked  = False
+            flag = 0
+            default_yehang_task_name = self.config.get("夜航副本名称")
+            while not clicked and flag < 10:
+                logger.info(f"尝试匹配选择夜航副本名称: {default_yehang_task_name}")
+                match_box = self.ocr(
+                    box=self.box_of_screen_scaled(
+                        2560, 1440, 2560 * 0.18, 1440 * 0.22, 2560 * 0.30, 1440 * 0.69,
+                        name="等级", hcenter=True
+                    ),
+                    match=re.compile(f'.*{default_yehang_task_name}.*')
+                )
+                logger.info(f"匹配到的选择夜航副本名称: {match_box}")
+                if match_box:
+                    self.click_box_random(match_box[0])
+                    clicked = True
+                    break
+                else:
+                    self.scroll_relative(0.5, 0.4, 600)
+                    self.sleep(1)
+                    flag += 1    
+            
     
     def switch_to_letter(self):
         """选择密函"""

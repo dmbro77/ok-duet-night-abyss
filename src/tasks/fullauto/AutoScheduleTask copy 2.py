@@ -113,7 +113,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.scheduler_lock = threading.Lock()  # 调度器锁
         self.task_stop_event = threading.Event()  # 任务停止事件
         self.scheduler_running = True  # 调度器运行标志
-        self.scheduler_paused = False  # 调度器暂停标志（不修改父类的_paused）
         
         self.finished_tasks = set()  # 已完成的任务标识（仅密函任务）
         self.task_stats = []  # 任务统计信息
@@ -122,7 +121,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.force_check = False  # 强制检查标志
     
     def scroll_relative(self, x, y, delta):
-        # 保持原有的滚动逻辑
         try:
             abs_pos = og.device_manager.hwnd_window.get_abs_cords(
                 self.width_of_screen(x),
@@ -169,7 +167,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         try:
             # 启动调度器监控线程
             self.scheduler_running = True
-            self.scheduler_paused = False
             self.scheduler_thread = threading.Thread(
                 target=self._scheduler_loop,
                 name="AutoScheduleScheduler"
@@ -219,12 +216,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         
         while self.enabled and self.scheduler_running:
             try:
-                # 检查调度器是否暂停
-                if self.scheduler_paused:
-                    logger.debug("调度器暂停中，等待恢复...")
-                    self.sleep(1)
-                    continue
-                    
                 now = datetime.now()
                 should_check = False
                 
@@ -256,11 +247,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def _check_and_switch_task(self):
         """检查并切换任务 - 核心逻辑"""
         try:
-            # 检查调度器是否暂停
-            if self.scheduler_paused:
-                logger.debug("调度器暂停中，跳过任务检查")
-                return
-            
             # 1. 获取新的目标任务
             task_class, module_key, task_name = self._calculate_target_task()
             
@@ -269,11 +255,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 return
             
             with self.scheduler_lock:
-                # 再次检查暂停状态（因为可能在获取任务过程中被暂停）
-                if self.scheduler_paused:
-                    logger.debug("调度器已被暂停，取消任务切换")
-                    return
-                
                 # 2. 检查是否与当前任务相同
                 is_same_task = (
                     self.current_sub_task and 
@@ -365,7 +346,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             
             # 找到第一个未完成的任务
             for task in tasks_to_execute:
-                # 使用模块+任务名称+任务类名作为唯一标识
+                # 修改这里：使用模块+任务类型+任务名称作为唯一标识
                 task_key = f"{task['module_key']}_{task['name']}_{task['class'].__name__}"
                 if task_key not in self.finished_tasks:
                     logger.info(f"匹配到任务: {task['name']} (模块: {task['module_key']})")
@@ -400,6 +381,9 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             # 强制停止任务
             self.current_sub_task.disable()
             
+            # 设置暂停标志
+            self.current_sub_task._paused = True
+            
             # 尝试调用任务的停止方法（如果有）
             if hasattr(self.current_sub_task, 'stop_task'):
                 self.current_sub_task.stop_task()
@@ -407,10 +391,10 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             # 等待一小段时间确保任务感知到停止
             self.sleep(0.5)
             
-            logger.info(f"任务已强制停止: {task_info}")
+            logger.info(f"任务已强制停止: {task_name}")
             
         except Exception as e:
-            logger.error(f"停止任务时出错: {task_info}", e)
+            logger.error(f"停止任务时出错: {task_name}", e)
         finally:
             # 清理状态
             self.current_sub_task = None
@@ -477,7 +461,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             
             logger.info(f"开始执行任务: {task_name}")
             
-            # 执行任务
+            # 执行任务（在主线程中，但通过线程调用）
             task.run()
             
             # 任务自然完成（没有被disable打断）
@@ -486,7 +470,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             
             # 如果是密函任务，添加到已完成集合
             if module_key != "default":
-                # 使用模块+任务名称+任务类名作为唯一标识
                 task_key = f"{module_key}_{task_name}_{task.__class__.__name__}"
                 self.finished_tasks.add(task_key)
                 logger.info(f"密函任务完成，加入已执行列表: {task_key}")
@@ -625,65 +608,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         # 等待任务线程结束
         if self.task_thread and self.task_thread.is_alive():
             self.task_thread.join(timeout=3)
-    
-    # ================ 暂停/恢复相关方法 ================
-    
-    def pause(self):
-        """暂停调度器和当前任务"""
-        logger.info("暂停调度器和当前任务")
-        
-        # 1. 设置调度器暂停标志
-        self.scheduler_paused = True
-        self.info_set("自动密函：调度状态", "已暂停")
-        
-        # 2. 暂停当前运行的任务
-        if self.current_sub_task:
-            try:
-                logger.info(f"暂停当前任务: {self.current_task_name}")
-                
-                # 调用子任务的暂停方法（如果子任务支持）
-                if hasattr(self.current_sub_task, 'pause'):
-                    self.current_sub_task.pause()
-                else:
-                    # 如果子任务没有pause方法，设置其_paused标志
-                    self.current_sub_task._paused = True
-                
-                # 更新UI
-                self.info_set("自动密函：任务状态", "已暂停")
-                
-            except Exception as e:
-                logger.error(f"暂停子任务失败: {e}")
-    
-    def unpause(self):
-        """恢复调度器和任务运行"""
-        logger.info("恢复调度器和任务运行")
-        
-        # 1. 清除暂停标志
-        self.scheduler_paused = False
-        self.info_set("自动密函：调度状态", "运行中")
-        
-        # 2. 恢复当前任务
-        if self.current_sub_task:
-            try:
-                logger.info(f"恢复当前任务: {self.current_task_name}")
-                
-                # 调用子任务的恢复方法（如果子任务支持）
-                if hasattr(self.current_sub_task, 'unpause'):
-                    self.current_sub_task.unpause()
-                else:
-                    # 如果子任务没有unpause方法，清除其_paused标志
-                    self.current_sub_task._paused = False
-                
-                # 更新任务状态
-                self.info_set("自动密函：任务状态", "执行中")
-                
-            except Exception as e:
-                logger.error(f"恢复子任务失败: {e}")
-        
-        # 3. 强制触发一次检查
-        self.force_check = True
- 
-    # ================ 原有的辅助方法 ================
     
     def switch_to_default_task(self):
         """切换到默认任务副本"""

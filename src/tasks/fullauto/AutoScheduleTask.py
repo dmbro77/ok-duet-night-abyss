@@ -25,7 +25,7 @@ from src.tasks.fullauto.AutoEscortTask_Fast import AutoEscortTask_Fast
 from src.tasks.fullauto.AutoAllFishTask import AutoAllFishTask
 from src.tasks.fullauto.ImportTask import ImportTask
 
-logger = Logger.get_logger('================')
+logger = Logger.get_logger(__name__+'====>')
 
 class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     def __init__(self, *args, **kwargs):
@@ -60,22 +60,31 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             "默认任务副本类型": {
                 "type": "drop_down",
                  "options": [
-                    "铜币:勘察无尽",
-                    "角色经验:避险",
-                    "武器经验:驱逐",
-                    "角色突破材料:探险/无尽",
-                    "武器突破材料:调停",
-                    "魔之楔:驱离",
-                    "深红凝珠:护送",
-                    "角色技能材料:追缉",
-                    "角色技能材料:扼守/无尽",
-                    "铸造材料:迁移",
+                    "委托:铜币:勘察无尽",
+                    "委托:角色经验:避险",
+                    "委托:武器经验:驱逐",
+                    "委托:角色突破材料:探险/无尽",
+                    "委托:武器突破材料:调停",
+                    "委托:魔之楔:驱离",
+                    "委托:深红凝珠:护送",
+                    "委托:角色技能材料:追缉",
+                    "委托:角色技能材料:扼守/无尽",
+                    "委托:铸造材料:迁移",
+                    "夜航手册:lv.20",
+                    "夜航手册:lv.30",
+                    "夜航手册:lv.40",
+                    "夜航手册:lv.50",
+                    "夜航手册:lv.55",
+                    "夜航手册:lv.60",
+                    "夜航手册:lv.65",
+                    "夜航手册:lv.70",
+                    "夜航手册:lv.80"
                 ]
             },
-            "默认任务副本等级": {
+            "默认任务副本等级或者夜航选项": {
                 "type": "drop_down",
                  "options": [
-                    "5", "10", "15", "20", "30", "35", "40", "50", "60", "70", "80", "100"
+                    "委托:lv.5", "委托:lv.10", "委托:lv.15", "委托:lv.20", "委托:lv.30", "委托:lv.35", "委托:lv.40", "委托:lv.50", "委托:lv.60", "委托:lv.70", "委托:lv.80", "委托:lv.100",
                 ]
             },
         }
@@ -687,25 +696,25 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     
     def switch_to_default_task(self):
         """切换到默认任务副本"""
+        default_task_type = self.config.get("默认任务副本类型")
         # 点击切换到委托
         self.click_relative_random(0.11, 0.16, 0.19, 0.18)
         self.sleep(1) 
         clicked  = False
         flag = 0
-        default_task_type = self.config.get("默认任务副本类型")
         self.scroll_relative(0.5, 0.4, int(self.width))
         self.sleep(1)
         while not clicked and flag < 10:
             logger.info(f"滚动副本: 600")
             self.scroll_relative(0.5, 0.4, 600)
             self.sleep(1)
-            logger.info(f"尝试匹配默认任务副本类型: {default_task_type.split(':')[1]}")
+            logger.info(f"尝试匹配默认任务副本类型: {default_task_type.split(':')[2]}")
             match_box = self.ocr(
                 box=self.box_of_screen_scaled(
                     2560, 1440, 2560 * 0.07, 1440 * 0.69, 2560 * 0.66, 1440 * 0.75,
                     name="weituo", hcenter=True
                 ),
-                match=re.compile(f'.*{default_task_type.split(":")[1]}.*') 
+                match=re.compile(f'.*{default_task_type.split(":")[2]}.*') 
             )
             logger.info(f"匹配到的默认任务副本类型: {match_box}")
             if match_box:

@@ -45,8 +45,8 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             # 默认任务配置
             "默认任务": "自动70级皎皎币本",
             "默认任务副本类型": "角色技能材料:扼守/无尽",
-            "选择任务副本等级": "70",
-            "夜航副本名称": "霜狱 野蜂暗箭",
+            "副本等级【普通任务】": "lv.70",
+            "副本名称【夜航任务】": "霜狱野蜂暗箭",
         }
 
         self.config_type = {
@@ -83,10 +83,10 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     "夜航手册:80"
                 ]
             },
-            "选择任务副本等级": {
+            "副本等级【普通任务】": {
                 "type": "drop_down",
                  "options": [
-                    "委托:lv.5", "委托:lv.10", "委托:lv.15", "委托:lv.20", "委托:lv.30", "委托:lv.35", "委托:lv.40", "委托:lv.50", "委托:lv.60", "委托:lv.70", "委托:lv.80", "委托:lv.100",
+                    "lv.5", "lv.10", "lv.15", "lv.20", "lv.30", "lv.35", "lv.40", "lv.50", "lv.60", "lv.70", "lv.80", "lv.100",
                 ]
             },
         }
@@ -95,9 +95,9 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             "密函委托优先级": "使用 > 分隔优先级，越靠前优先级越高，只能填写角色、武器、MOD。\n例如：角色>武器>MOD",
             "关卡类型优先级": "使用 > 分隔优先级，越靠前优先级越高，仅支持探险/无尽、驱离。\n例如：探险/无尽>驱离",
             "默认任务": "当没有匹配的委托密函任务时，自动执行此任务\n任务基于已有的任务执行，请对设置的任务做好相应配置",
-            "默认任务副本类型": "选择要执行的任务类型，根据选择的默认任务进行设置\n有两种类型的委托，分别是委托和夜航手册",
-            "选择任务副本等级": "选择需要刷取的副本等级，根据选择的默认任务和副本类型进行设置\n副本类型为正常委托是生效",
-            "夜航副本名称": "填写需要刷取的夜航手册，根据选择的默认任务和副本类型进行设置\n列如：霜狱野蜂暗箭(不需要空格)，副本任务为夜航书册是生效",
+            "默认任务副本类型": "可选普通任务和夜航任务\n根据选择的默认任务进行设置即可",
+            "副本等级【普通任务】": "副本类型为正常委托时生效\n选择需要刷取的副本等级，根据选择的默认任务和副本类型进行设置",
+            "副本名称【夜航任务】": "副本类型为夜航手册时生效\n填写需要刷取的夜航手册名称，根据选择的默认任务和副本类型进行设置\n列如：霜狱野蜂暗箭(不需要空格)",
         }
 
         # 任务映射关系
@@ -173,6 +173,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.last_check_hour = -1  # 上次检查的小时
         self.force_check = False  # 强制检查标志
         self.decision_queue = queue.Queue()  # 决策队列
+        self.last_api_response_data = None # 上次 API 返回的数据
 
     def run(self):
         """调度器主入口 - 重构版本"""
@@ -230,7 +231,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         """验证必需配置"""
         required_configs = [
             "默认任务副本类型",
-            "选择任务副本等级", 
+            "副本等级【普通任务】", 
             "默认任务",
             "密函委托优先级",
             "关卡类型优先级"
@@ -259,8 +260,8 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 if now.minute == 0 and now.second >= 10 and now.hour != self.last_check_hour:
                     logger.info(f"整点触发检查: {now.hour}:00")
                     self.last_check_hour = now.hour
-                    # 随机延时5-20秒，避免请求过于集中
-                    time.sleep(random.randint(5, 20))
+                    # 随机延时0-10秒，避免请求过于集中
+                    time.sleep(random.randint(0, 10))
                     should_check = True
                 
                 # 2. 强制检查（任务结束触发）
@@ -325,24 +326,61 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     
     def _calculate_target_task(self):
         """计算目标任务"""
-        API_URL = "https://wiki.ldmnq.com/v1/dna/instanceInfo"
+        # API_URL = "https://wiki.ldmnq.com/v1/dna/instanceInfo"
+        API_URL = "https://www.gamekee.com/v1/dna/instanceInfo"
         HEADERS = {"game-alias": "dna"}
         
         try:
             logger.info("请求API获取任务数据")
-            params = {"_t": int(time.time() * 1000)}
-            response = requests.get(API_URL, headers=HEADERS, params=params, timeout=10)
-            response.raise_for_status()
-            data = response.json()
             
-            if data.get("code") != 0:
-                logger.error(f"API返回错误代码: {data.get('code')}")
-                return self._get_default_task_info()
+            # 重试逻辑：最多请求5次，如果数据与上次相同则重试
+            max_retries = 5
+            current_data = None
+            
+            for i in range(max_retries):
+                params = {"_t": int(time.time() * 1000)}
+                try:
+                    response = requests.get(API_URL, headers=HEADERS, params=params, timeout=10)
+                    response.raise_for_status()
+                    json_data = response.json()
+                    
+                    if json_data.get("code") != 0:
+                        logger.error(f"API返回错误代码: {json_data.get('code')}")
+                        if i == max_retries - 1: # 最后一次尝试失败
+                             return self._get_default_task_info()
+                        time.sleep(random.randint(3, 5))
+                        continue
+                        
+                    current_data = json_data.get("data", [])
+                    if not isinstance(current_data, list):
+                        logger.error("API返回的data不是列表格式")
+                        if i == max_retries - 1:
+                            return self._get_default_task_info()
+                        time.sleep(random.randint(3, 5))
+                        continue
+                    
+                    # 检查是否与上次数据相同
+                    if self.last_api_response_data is not None and current_data == self.last_api_response_data:
+                        logger.info(f"API返回数据与上次相同，正在重试 ({i+1}/{max_retries})...")
+                        if i < max_retries - 1:
+                            time.sleep(random.randint(3, 5))
+                            continue
+                    
+                    # 数据不同或已达到最大重试次数，接受当前数据
+                    if self.last_api_response_data is not None and current_data != self.last_api_response_data:
+                         logger.info("API数据已更新")
+                    
+                    self.last_api_response_data = current_data
+                    break
+                    
+                except Exception as req_err:
+                    logger.warning(f"请求API失败 ({i+1}/{max_retries}): {req_err}")
+                    if i < max_retries - 1:
+                        time.sleep(random.randint(3, 5))
+                    else:
+                        return self._get_default_task_info()
 
-            instance_info_list = data.get("data", [])
-            if not isinstance(instance_info_list, list):
-                logger.error("API返回的data不是列表格式")
-                return self._get_default_task_info()
+            instance_info_list = self.last_api_response_data
             logger.info(f"API返回数据: {instance_info_list}")
             
             # 解析优先级配置
@@ -388,12 +426,28 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
             # 按优先级排序
             tasks_to_execute.sort(key=lambda x: x["priority"])
+
+            logger.info(f"api返回的可执行任务列表: {tasks_to_execute}")
             
             # 找到第一个未完成的任务
             for task in tasks_to_execute:
                 # 使用模块+任务名称+任务类名作为唯一标识
                 task_key = f"{task['module_key']}_{task['name']}_{task['class'].__name__}"
+                # 默认有数量，可以执行
+                rule_num, weapon_num, mod_num = 100,100,100
+                if self.find_lilian():
+                    rule_num, weapon_num, mod_num = self.get_letter_num()
+                logger.info(f"当前密函数量 - 角色: {rule_num}, 武器: {weapon_num}, MOD: {mod_num}")
                 if task_key not in self.finished_tasks:
+                    if task['module_key'] == "角色" and rule_num == 0:
+                        logger.info(f"角色任务 {task['name']} 密函数量为0，跳过")
+                        continue
+                    if task['module_key'] == "武器" and weapon_num == 0:
+                        logger.info(f"武器任务 {task['name']} 密函数量为0，跳过")
+                        continue
+                    if task['module_key'] == "MOD" and mod_num == 0:
+                        logger.info(f"MOD任务 {task['name']} 密函数量为0，跳过")
+                        continue
                     logger.info(f"匹配到任务: {task['name']} (模块: {task['module_key']})")
                     return task['class'], task['module_key'], task['name']
             logger.info(f"已完成的任务: {self.finished_tasks}")
@@ -480,7 +534,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self._update_task_ui(current_stat)
             
             # 正式执行任务前重置ui回到历练页面
-            self._reset_ui_state(task_name, module_key)
+            self._reset_ui_state(task_name, module_key, task_class)
 
             # 启动任务执行线程
             self.task_stop_event.clear()
@@ -584,7 +638,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         summary_text = "\n".join(summary_lines)
         self.info_set("自动密函：任务统计", summary_text)
     
-    def _reset_ui_state(self, task_name, module_key):
+    def _reset_ui_state(self, task_name, module_key, task_class):
         """重置UI状态"""
         logger.info(f"执行前置操作：重置UI状态 ({task_name}, 模块: {module_key})")
         try:
@@ -625,9 +679,28 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.switch_to_task_level()
             else:
                 self.switch_to_letter()
-            
+                # self.sleep(1)
+                # # 开始任务
+                # self.start_mission()
+                # for _ in range(2):
+                #     self.click_relative_random(0.533, 0.444, 0.575, 0.547, use_safe_move=True, safe_move_box=box, down_time=0.02, after_sleep=0.1)
+                #     if self.wait_until(lambda: not self.find_one(template=letter_snapshot, box=letter_roi, threshold=0.7), time_out=1):
+                #         break
+                # else:
+                #     logger.info("密函已耗尽")
+                #     # 添加到已完成任务列表
+                    
+                #     task_key = f"{module_key}_{task_name}_{task_class.__name__}"
+                #     self.finished_tasks.add(task_key)
+                #     logger.info(f"当前任务，加入已执行列表: {task_key}")
+                #     self.finished_tasks.append(task_name)
+                #     raise TaskDisabledException
             self.sleep(0.3)
+
             logger.info("UI状态重置完成")
+        except TaskDisabledException as e:
+            logger.warning(f"密函已耗尽: {e}")
+            raise e    
         except Exception as e:
             logger.warning(f"UI状态重置可能未完全成功: {e}")
             raise e
@@ -723,11 +796,12 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         
         # 夜航手册处理
         if type_task == "夜航手册":
-            task_name = self.config.get("夜航副本名称")
+            task_name = self.config.get("副本名称【夜航任务】")
             box_params = (2560 * 0.18, 1440 * 0.22, 2560 * 0.30, 1440 * 0.69)
         # 普通任务处理
         else:
-            task_name = self.config.get("选择任务副本等级")
+            task_text = self.config.get("副本等级【普通任务】")
+            task_name = task_text.split('.')[-1]
             box_params = (2560 * 0.10, 1440 * 0.19, 2560 * 0.17, 1440 * 0.62)
         
         timeout = 20
@@ -807,7 +881,43 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             )
             self.click_box_random(text[0])
             clicked = True
-    
+
+
+    def get_letter_num(self):
+        """获取当前密函数量"""
+
+        # 切换到密函委托
+        for _ in range(2):
+            self.click_relative_random(0.34, 0.15, 0.41, 0.18)
+            self.sleep(0.02) 
+
+        self.sleep(1) 
+
+        time_out = 5
+        now_time = time.time()
+        rule_num, weapon_num, mod_num = None, None, None
+        while (not isinstance(rule_num, (int, float)) or not isinstance(weapon_num, (int, float)) or not isinstance(mod_num, (int, float))) and time.time() - now_time < time_out:
+
+            rule_box_params = (2560, 1440, 2560*0.13, 1440*0.43, 2560*0.19, 1440*0.46)
+            rule_box = self.box_of_screen_scaled(*rule_box_params, name="letter_num_rule", hcenter=True)
+            rule_text = self.ocr(box=rule_box,match=re.compile(r'\d+'))
+            if rule_text and not isinstance(rule_num, (int, float)):
+                rule_num = int(re.sub(r'\D', '', rule_text[0].name))
+
+            weapon_box_params = (2560, 1440, 2560*0.33, 1440*0.43, 2560*0.39, 1440*0.46)
+            weapon_box = self.box_of_screen_scaled(*weapon_box_params, name="letter_num_weapon", hcenter=True)
+            weapon_text = self.ocr(box=weapon_box,match=re.compile(r'\d+'))
+            if weapon_text and not isinstance(weapon_num, (int, float)):
+                weapon_num = int(re.sub(r'\D', '', weapon_text[0].name))
+
+            mod_box_params = (2560, 1440, 2560*0.54, 1440*0.43, 2560*0.59, 1440*0.46)
+            mod_box = self.box_of_screen_scaled(*mod_box_params, name="letter_num_mod", hcenter=True)
+            mod_text = self.ocr(box=mod_box,match=re.compile(r'\d+'))
+            if mod_text and not isinstance(mod_num, (int, float)):
+                mod_num = int(re.sub(r'\D', '', mod_text[0].name))
+
+        return rule_num, weapon_num, mod_num
+
     def find_lilian(self):
         """查找历练文本"""
         lilian = None

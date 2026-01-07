@@ -255,11 +255,11 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 should_check = False
                 
                 # 1. 整点检查（必须的）
-                if now.minute == 0 and now.second >= 10 and now.hour != self.last_check_hour:
+                if now.minute == 0 and now.second >= 30 and now.hour != self.last_check_hour:
                     logger.info(f"整点触发检查: {now.hour}:00")
                     self.last_check_hour = now.hour
-                    # 随机延时0-10秒，避免请求过于集中
-                    time.sleep(random.randint(0, 10))
+                    # 随机延时1-10秒，避免请求过于集中
+                    time.sleep(random.randint(1, 10))
                     should_check = True
                 
                 # 2. 强制检查（任务结束触发）
@@ -324,15 +324,15 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
     
     def _calculate_target_task(self):
         """计算目标任务"""
-        # API_URL = "https://wiki.ldmnq.com/v1/dna/instanceInfo"
-        API_URL = "https://www.gamekee.com/v1/dna/instanceInfo"
+        API_URL = "https://wiki.ldmnq.com/v1/dna/instanceInfo"
+        # API_URL = "https://www.gamekee.com/v1/dna/instanceInfo"
         HEADERS = {"game-alias": "dna"}
         
         try:
             logger.info("请求API获取任务数据")
             
-            # 重试逻辑：最多请求5次，如果数据与上次相同则重试
-            max_retries = 5
+            # 重试逻辑：最多请求8次，如果数据与上次相同则重试
+            max_retries = 8
             current_data = None
             
             for i in range(max_retries):
@@ -346,7 +346,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         logger.error(f"API返回错误代码: {json_data.get('code')}")
                         if i == max_retries - 1: # 最后一次尝试失败
                              return self._get_default_task_info()
-                        time.sleep(random.randint(3, 5))
+                        time.sleep(random.randint(5, 8))
                         continue
                         
                     current_data = json_data.get("data", [])
@@ -354,14 +354,14 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                         logger.error("API返回的data不是列表格式")
                         if i == max_retries - 1:
                             return self._get_default_task_info()
-                        time.sleep(random.randint(3, 5))
+                        time.sleep(random.randint(5, 8))
                         continue
                     
                     # 检查是否与上次数据相同
                     if self.last_api_response_data is not None and current_data == self.last_api_response_data:
                         logger.info(f"API返回数据与上次相同，正在重试 ({i+1}/{max_retries})...")
                         if i < max_retries - 1:
-                            time.sleep(random.randint(3, 5))
+                            time.sleep(random.randint(5, 8))
                             continue
                     
                     # 数据不同或已达到最大重试次数，接受当前数据
@@ -374,7 +374,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 except Exception as req_err:
                     logger.warning(f"请求API失败 ({i+1}/{max_retries}): {req_err}")
                     if i < max_retries - 1:
-                        time.sleep(random.randint(3, 5))
+                        time.sleep(random.randint(5, 8))
                     else:
                         return self._get_default_task_info()
 

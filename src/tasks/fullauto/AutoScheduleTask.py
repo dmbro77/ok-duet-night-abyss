@@ -10,7 +10,7 @@ import win32con
 import random
 from datetime import datetime
 
-from ok import Logger, TaskDisabledException, og
+from ok import Logger, TaskDisabledException, og, Box
 from src.tasks.BaseDNATask import BaseDNATask
 from src.tasks.DNAOneTimeTask import DNAOneTimeTask
 from src.tasks.CommissionsTask import CommissionsTask
@@ -97,7 +97,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             "默认任务": "当没有匹配的委托密函任务时，自动执行此任务\n任务基于已有的任务执行，请对设置的任务做好相应配置",
             "默认任务副本类型": "选择要执行的任务类型，根据选择的默认任务进行设置\n有两种类型的委托，分别是委托和夜航手册",
             "选择任务副本等级": "选择需要刷取的副本等级，根据选择的默认任务和副本类型进行设置\n副本类型为正常委托是生效",
-            "夜航副本名称": "填写需要刷取的夜航手册，根据选择的默认任务和副本类型进行设置\n列如：霜狱 野蜂暗箭，副本任务为夜航书册是生效",
+            "夜航副本名称": "填写需要刷取的夜航手册，根据选择的默认任务和副本类型进行设置\n列如：霜狱野蜂暗箭(不需要空格)，副本任务为夜航书册是生效",
         }
 
         # 任务映射关系
@@ -115,24 +115,8 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         }
         
         # 调度器核心状态
-        self.current_sub_task = None  # 当前正在运行的任务实例
-        self.current_task_name = None  # 当前任务名称
-        self.current_task_module = None  # 当前任务模块
-        
-        self.scheduler_thread = None  # 调度器监控线程
-        self.task_thread = None  # 任务执行线程
-        
-        self.scheduler_lock = threading.Lock()  # 调度器锁
-        self.task_stop_event = threading.Event()  # 任务停止事件
-        self.scheduler_running = True  # 调度器运行标志
-        
-        self.finished_tasks = set()  # 已完成的任务标识（仅密函任务）
-        self.task_stats = []  # 任务统计信息
-        
-        self.last_check_hour = -1  # 上次检查的小时
-        self.force_check = False  # 强制检查标志
-        self.decision_queue = queue.Queue()  # 决策队列
-    
+        self.init_param()
+
     def scroll_relative(self, x, y, delta):
         # 保持原有的滚动逻辑
         try:
@@ -169,11 +153,36 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         except Exception as e:
             logger.error(f"win32 scroll failed: {e}")
     
+    def init_param(self):
+        """初始化"""
+          # 调度器核心状态
+        self.current_sub_task = None  # 当前正在运行的任务实例
+        self.current_task_name = None  # 当前任务名称
+        self.current_task_module = None  # 当前任务模块
+        
+        self.scheduler_thread = None  # 调度器监控线程
+        self.task_thread = None  # 任务执行线程
+        
+        self.scheduler_lock = threading.Lock()  # 调度器锁
+        self.task_stop_event = threading.Event()  # 任务停止事件
+        self.scheduler_running = True  # 调度器运行标志
+        
+        self.finished_tasks = set()  # 已完成的任务标识（仅密函任务）
+        self.task_stats = []  # 任务统计信息
+        
+        self.last_check_hour = -1  # 上次检查的小时
+        self.force_check = False  # 强制检查标志
+        self.decision_queue = queue.Queue()  # 决策队列
+
     def run(self):
         """调度器主入口 - 重构版本"""
         # 验证配置
         if not self._validate_config():
             return
+
+
+        # self.switch_to_task_level()
+        # return
         
         logger.info("自动密函调度器启动")
         self.info_set("自动密函：调度状态", "运行中")
@@ -387,7 +396,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 if task_key not in self.finished_tasks:
                     logger.info(f"匹配到任务: {task['name']} (模块: {task['module_key']})")
                     return task['class'], task['module_key'], task['name']
-            
+            logger.info(f"已完成的任务: {self.finished_tasks}")
             logger.info("未匹配到可执行的密函任务，执行默认任务")
             return self._get_default_task_info()
             
@@ -555,7 +564,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         status = current_stat["status"]
         start_time = current_stat["start_time"]
         end_time = current_stat["end_time"]
-        self.info_set("自动密函：当前任务", f"{module_key}，{task_name}，{status}，{start_time if status == "执行中" else ""}，{end_time if status != "执行中" else ""}")
+        self.info_set("自动密函：当前任务", f"{module_key}，{task_name}，{status}，{start_time}，{end_time if end_time else "--:--:--"}")
 
     
     def _update_task_summary_ui(self):
@@ -640,7 +649,6 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         if self.task_thread and self.task_thread.is_alive():
             self.task_thread.join(timeout=3)
     
-    # ================ 原有的辅助方法 ================
     
     def switch_to_default_task(self):
         """切换到默认任务副本"""
@@ -652,11 +660,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         type_task, task_name = default_task_type.split(':')
         
         if type_task != "夜航手册":
-            # 点击切换到委托
-            self.click_relative_random(0.11, 0.16, 0.19, 0.18)
-            self.sleep(0.02)
-            self.click_relative_random(0.11, 0.16, 0.19, 0.18)
-            self.sleep(1)
+            click_pos = (0.11, 0.16, 0.19, 0.18)
             # 委托搜索区域
             box_params = (2560, 1440, 2560*0.07, 1440*0.69, 2560*0.66, 1440*0.75)
             scroll_pos = (0.5, 0.4)
@@ -664,41 +668,50 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             max_attempts = 10
         else:
             # 点击切换到夜航手册
-            self.click_relative_random(0.23, 0.16, 0.30, 0.18)
-            self.sleep(0.02)
-            self.click_relative_random(0.23, 0.16, 0.30, 0.18)
-            self.sleep(1)
+            click_pos = (0.23, 0.16, 0.30, 0.18)
             # 夜航手册搜索区域
             box_params = (2560, 1440, 2560*0.07, 1440*0.22, 2560*0.12, 1440*0.84)
             scroll_pos = (0.1, 0.37)
             scroll_amount = int(self.height)
             max_attempts = 3
         
-        # 初始滚动
-        self.scroll_relative(*scroll_pos, scroll_amount)
-        self.sleep(1)
-        
+        timeout = 20
+        now_time = time.time()
         # 查找任务
         clicked = False
-        for attempt in range(max_attempts):
-            logger.info(f"尝试匹配任务: {task_name} (尝试{attempt+1}/{max_attempts})")
-            
-            match_box = self.ocr(
-                box=self.box_of_screen_scaled(*box_params, name="weituo", hcenter=True),
-                match=re.compile(f'.*{task_name}.*')
-            )
-            
-            if match_box:
-                self.click_box_random(match_box[0])
-                clicked = True
-                break
-            else:
-                self.scroll_relative(0.5, 0.4, 600)
-                self.sleep(1)
+        while not clicked and time.time() - now_time < timeout:            
+            # 双击，确保成功点击切换
+            for _ in range(2):    
+                # 点击切换到委托
+                self.click_relative_random(*click_pos)
+                self.sleep(0.02)
+            self.sleep(1)
         
+            # 初始滚动
+            self.scroll_relative(*scroll_pos, scroll_amount)
+            self.sleep(1)
+        
+            for attempt in range(max_attempts):
+                logger.info(f"尝试匹配任务: {task_name} (尝试{attempt+1}/{max_attempts})")
+                
+                match_box = self.ocr(
+                    box=self.box_of_screen_scaled(*box_params, name="weituo", hcenter=True),
+                    match=re.compile(f'.*{task_name}.*')
+                )
+                
+                if match_box:
+                    self.click_box_random(match_box[0])
+                    clicked = True
+                    break
+                else:
+                    # 滚动
+                    self.scroll_relative(0.5, 0.4, 600)
+                    self.sleep(1)
+            
         if not clicked:
             logger.warning(f"未找到任务: {task_name}")
-    
+            raise Exception(f"未找到任务: {task_name}")    
+
     def switch_to_task_level(self):
         """选择默认任务关卡等级"""
         default_task_type = self.config.get("默认任务副本类型")
@@ -708,50 +721,56 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         
         type_task, task_name = default_task_type.split(':')
         
-        if type_task != "夜航手册":
-            clicked  = False
-            flag = 0
-            default_task_level = self.config.get("选择任务副本等级")
-            while not clicked and flag < 3:
-                logger.info(f"尝试匹配选择任务副本等级: {default_task_level}")
-                match_box = self.ocr(
-                    box=self.box_of_screen_scaled(
-                        2560, 1440, 2560 * 0.10, 1440 * 0.19, 2560 * 0.17, 1440 * 0.62,
-                        name="等级", hcenter=True
-                    ),
-                    match=re.compile(f'.*{default_task_level}.*')
-                )
-                logger.info(f"匹配到的选择任务副本等级: {match_box}")
-                if match_box:
-                    self.click_box_random(match_box[0])
-                    clicked = True
-                    break
-                else:
-                    flag += 1
+        # 夜航手册处理
+        if type_task == "夜航手册":
+            task_name = self.config.get("夜航副本名称")
+            box_params = (2560 * 0.18, 1440 * 0.22, 2560 * 0.30, 1440 * 0.69)
+        # 普通任务处理
         else:
-            clicked  = False
-            flag = 0
-            default_yehang_task_name = self.config.get("夜航副本名称")
-            while not clicked and flag < 10:
-                logger.info(f"尝试匹配选择夜航副本名称: {default_yehang_task_name}")
-                match_box = self.ocr(
-                    box=self.box_of_screen_scaled(
-                        2560, 1440, 2560 * 0.18, 1440 * 0.22, 2560 * 0.30, 1440 * 0.69,
-                        name="等级", hcenter=True
-                    ),
-                    match=re.compile(f'.*{default_yehang_task_name}.*')
-                )
-                logger.info(f"匹配到的选择夜航副本名称: {match_box}")
-                if match_box:
-                    self.click_box_random(match_box[0])
-                    clicked = True
-                    break
+            task_name = self.config.get("选择任务副本等级")
+            box_params = (2560 * 0.10, 1440 * 0.19, 2560 * 0.17, 1440 * 0.62)
+        
+        timeout = 20
+        now_time = time.time()
+        clicked = False
+        attempt = 1
+        # 统一的匹配逻辑
+        while not clicked and time.time() - now_time < timeout:
+            logger.info(f"尝试匹配: {task_name} (第{attempt}次)")
+            match_box = self.ocr(
+                box=self.box_of_screen_scaled(
+                    2560, 1440, *box_params, name="等级", hcenter=True
+                ),
+                match=re.compile(f'.*{task_name}.*')
+                # match=re.compile(f'.*')
+            )
+            logger.info(f"OCR匹配到的夜航副本或者任务等级: {match_box}")
+            if match_box:
+                logger.info(f"匹配成功: {match_box}")
+                if type_task == "夜航手册":
+                    box = match_box[0]
+                    y= box.y
+                    to_y= y+box.height
+                    logger.info(f"夜航手册匹配到的框: {self.width*0.55}, {(y+0.1)}, {box.width}, {box.height}")
+                    box = Box(self.width*0.55, y+(0.016*self.height), box.width, box.height)
+                    self.draw_boxes(boxes=box)
+                    for _ in range(2):
+                        # 点击进入副本开始界面
+                        self.click_box_random(box)
+                        self.sleep(0.02)
                 else:
-                    self.scroll_relative(0.5, 0.4, 600)
-                    self.sleep(1)
-                    flag += 1    
+                    self.click_box_random(match_box[0])
+                clicked = True
             
-    
+            # 仅夜航手册在匹配失败后滚动
+            if type_task == "夜航手册" and not clicked:
+                self.scroll_relative(0.5, 0.4, 600)
+                self.sleep(1)
+            attempt += 1
+        if not clicked:
+            logger.warning(f"未找到匹配的{type_task}副本: {task_name}")
+            raise Exception(f"未找到匹配的{type_task}副本: {task_name}")    
+
     def switch_to_letter(self):
         """选择密函"""
         self.click_relative_random(0.34, 0.15, 0.41, 0.18)

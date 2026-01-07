@@ -181,9 +181,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         if not self._validate_config():
             return
 
-
-        # self.switch_to_task_level()
-        # return
+        self.init_param()
         
         logger.info("自动密函调度器启动")
         self.info_set("自动密函：调度状态", "运行中")

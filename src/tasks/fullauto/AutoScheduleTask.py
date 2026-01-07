@@ -3,6 +3,7 @@ from qfluentwidgets import FluentIcon
 import time
 import threading
 import re
+import queue
 import ctypes
 import win32api
 import win32con
@@ -130,6 +131,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         
         self.last_check_hour = -1  # 上次检查的小时
         self.force_check = False  # 强制检查标志
+        self.decision_queue = queue.Queue()  # 决策队列
     
     def scroll_relative(self, x, y, delta):
         # 保持原有的滚动逻辑
@@ -168,7 +170,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             logger.error(f"win32 scroll failed: {e}")
     
     def run(self):
-        """调度器主入口 - 简化版本"""
+        """调度器主入口 - 重构版本"""
         # 验证配置
         if not self._validate_config():
             return
@@ -186,11 +188,25 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             self.scheduler_thread.daemon = True
             self.scheduler_thread.start()
             
-            logger.info("调度器监控线程已启动，等待整点或任务结束触发检查...")
+            logger.info("调度器监控线程已启动，等待决策...")
             
-            # 主线程等待调度器结束
-            while self.enabled and self.scheduler_running:
-                self.sleep(1)
+            # 主线程：任务管理器
+            while self.enabled:
+                try:
+                    # 尝试从队列获取决策（非阻塞，带超时）
+                    try:
+                        target_info = self.decision_queue.get(timeout=1)
+                        self._process_decision(target_info)
+                    except queue.Empty:
+                        pass
+                    
+                    # 检查任务线程状态（可选，目前主要靠队列驱动切换）
+                    if not self.scheduler_running:
+                        break
+                        
+                except Exception as e:
+                    logger.error(f"主线程循环异常: {e}")
+                    time.sleep(1)
                 
         except TaskDisabledException:
             logger.info("调度器被手动停止")
@@ -219,11 +235,11 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         return True
     
     def _scheduler_loop(self):
-        """调度器主循环 - 简化版本"""
+        """调度器主循环 - 仅负责检查并放入队列"""
         logger.info("调度器循环开始")
         
         # 启动时立即检查一次
-        self._check_and_switch_task()
+        self._trigger_check()
         
         while self.enabled and self.scheduler_running:
             try:
@@ -235,7 +251,7 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     logger.info(f"整点触发检查: {now.hour}:00")
                     self.last_check_hour = now.hour
                     # 随机延时5-20秒，避免请求过于集中
-                    self.sleep(random.randint(5, 20))
+                    time.sleep(random.randint(5, 20))
                     should_check = True
                 
                 # 2. 强制检查（任务结束触发）
@@ -246,28 +262,35 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 
                 # 3. 执行检查
                 if should_check:
-                    self._check_and_switch_task()
+                    self._trigger_check()
                 
                 # 等待1秒后继续
-                self.sleep(1)
+                time.sleep(1)
                 
             except Exception as e:
                 logger.error(f"调度器循环异常: {e}")
-                self.sleep(5)  # 出错后等待5秒
-    
-    def _check_and_switch_task(self):
-        """检查并切换任务 - 核心逻辑"""
+                time.sleep(5)  # 出错后等待5秒
+
+    def _trigger_check(self):
+        """触发检查并放入队列"""
         try:
-            
-            # 1. 获取新的目标任务
-            task_class, module_key, task_name = self._calculate_target_task()
+            target = self._calculate_target_task()
+            if target:
+                self.decision_queue.put(target)
+        except Exception as e:
+            logger.error(f"触发检查失败: {e}")
+    
+    def _process_decision(self, target_info):
+        """处理决策 - 主线程执行"""
+        try:
+            task_class, module_key, task_name = target_info
             
             if not task_class:
                 logger.info("未找到可执行的任务")
                 return
             
             with self.scheduler_lock:
-                # 2. 检查是否与当前任务相同
+                # 检查是否与当前任务相同
                 is_same_task = (
                     self.current_sub_task and 
                     isinstance(self.current_sub_task, task_class) and
@@ -279,17 +302,17 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     logger.info(f"任务相同且正在运行，无需切换: {task_name}")
                     return
                 
-                # 3. 停止当前任务（必须停止，因为任务不同）
+                # 停止当前任务
                 if self.current_sub_task:
                     logger.info(f"停止当前任务以执行新任务: {task_name}")
                     self._stop_current_task_immediately()
                 
-                # 4. 启动新任务
+                # 启动新任务
                 logger.info(f"启动新任务: {task_name} (模块: {module_key})")
                 self._start_new_task(task_class, module_key, task_name)
                 
         except Exception as e:
-            logger.error(f"检查并切换任务失败: {e}")
+            logger.error(f"处理决策失败: {e}")
     
     def _calculate_target_task(self):
         """计算目标任务"""
@@ -398,8 +421,14 @@ class AutoScheduleTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             if hasattr(self.current_sub_task, 'stop_task'):
                 self.current_sub_task.stop_task()
             
-            # 等待一小段时间确保任务感知到停止
-            self.sleep(0.5)
+            # 等待任务线程结束
+            if self.task_thread and self.task_thread.is_alive():
+                logger.info("等待任务线程结束...")
+                self.task_thread.join(timeout=5)
+                if self.task_thread.is_alive():
+                    logger.warning("任务线程未能在5秒内结束，可能被阻塞")
+                else:
+                    logger.info("任务线程已安全退出")
             
             logger.info(f"任务已强制停止: {task_info}")
             

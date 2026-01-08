@@ -636,7 +636,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             box_params = (2560 * 0.18, 1440 * 0.22, 2560 * 0.30, 1440 * 0.69)
         # 普通任务处理
         else:
-            task_name = self.config.get("副本等级【普通任务】")
+            task_text = self.config.get("副本等级【普通任务】")
+            task_name = task_text.split('.')[-1]
             box_params = (2560 * 0.10, 1440 * 0.19, 2560 * 0.17, 1440 * 0.62)
         
         timeout = 20

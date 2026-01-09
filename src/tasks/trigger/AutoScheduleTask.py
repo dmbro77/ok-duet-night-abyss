@@ -203,8 +203,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             
         def _check_and_update_completed_task():
             """检查并更新已完成的任务状态"""
-            if not self.last_scheduled_task:
-                return
+            if self.last_scheduled_task is None:
+                return True
                 
             # 如果任务被禁用了（说明执行完成了，或者被手动停止了）
             if not self.last_scheduled_task.enabled:
@@ -220,8 +220,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     self.finished_tasks.add(task_key)
                     logger.info(f"密函任务完成，加入已执行列表: {task_key}")
                 
-                self.last_scheduled_task = None
                 self._update_task_summary_ui()
+                self.last_scheduled_task = None
                 return True
             return False
         
@@ -252,6 +252,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         
         # true 启动时立即检查一次
         should_check = True
+        self.last_check_hour = datetime.now().hour
         while self.is_enable_running():
             try:
                 # 确保执行器处于运行状态 (唤醒执行器)，否则OCR会卡住
@@ -261,18 +262,18 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 now = datetime.now()
                 
                 # 1. 检查已完成的任务并更新状态
-                _check_and_update_completed_task()
+                should_check = _check_and_update_completed_task()
                 
                 # 2. 整点检查（必须的）
                 if _should_trigger_hourly_check(now):
                     logger.info(f"整点触发检查: {now.hour}:00")
-                    self.last_check_hour = now.hour
                     time.sleep(random.randint(5, 20))  # 随机延时5-20秒，避免请求过于集中
                     should_check = True
             
                 # 3. 执行检查
                 if should_check:
                     task_class, module_key, task_name = self._calculate_target_task()
+                    self.last_check_hour = now.hour
                     self.schedule_task(task_class, module_key, task_name)
                     self._update_task_summary_ui()
                     should_check = False
@@ -292,7 +293,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
         def _fetch_api_data(api_url, headers, max_retries=5):
             """获取API数据（内部函数）"""
-            while self.is_enable_running() and max_retries > 0:
+            retries = 1
+            while self.is_enable_running() and retries <= max_retries:
                 params = {"_t": int(time.time() * 1000)}
                 try:
                     response = requests.get(api_url, headers=headers, params=params, timeout=10)
@@ -300,16 +302,18 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     json_data = response.json()
                     
                     if json_data.get("code") != 0 or not isinstance(current_data := json_data.get("data", []), list):
-                        logger.error(f"API返回错误代码: {json_data.get('code')}，或者data不是列表格式")
-                        max_retries -= 1
-                        time.sleep(60)
+                        logger.error(f"API返回错误代码: {json_data.get('code')}，或者data不是列表格式，{60*retries}s后重试 ({retries}/{max_retries})...")
+                        if retries < max_retries:
+                            time.sleep(60)
+                        retries += 1
                         continue
-                    
+                    logger.info(f"API返回数据: {current_data}")
                     # 检查是否与上次数据相同
                     if _is_same_as_last_data(current_data):
-                        logger.info(f"API返回数据与上次相同，正在重试 ({21-max_retries})...")
-                        max_retries -= 1
-                        time.sleep(60)
+                        logger.info(f"API返回数据与上次相同，60s后重试 ({retries}/{max_retries})...")
+                        if retries < max_retries:
+                            time.sleep(60)
+                        retries += 1
                         continue
                     
                     # 数据已更新
@@ -319,9 +323,10 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     return True
                     
                 except Exception as req_err:
-                    logger.warning(f"请求API失败 ({21-max_retries}): {req_err}")
-                    max_retries -= 1
-                    time.sleep(60)
+                    logger.warning(f"请求API失败 ({retries}): {req_err}")
+                    if retries < max_retries:
+                        time.sleep(60)
+                    retries += 1
                     
             return False
 
@@ -421,14 +426,14 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         HEADERS = {"game-alias": "dna"}
         
         try:
-            logger.info("请求API获取任务数据")
+            logger.info(f"请求API获取任务数据，小时信息：{self.last_check_hour}，{datetime.now().hour}，将最多执行{1 if self.last_check_hour == datetime.now().hour else 5}次")
             
             # 获取API数据
-            if not _fetch_api_data(API_URL, HEADERS):
+            if not _fetch_api_data(API_URL, HEADERS, 1 if self.last_check_hour == datetime.now().hour else 5):
                 return _get_default_task_info()
                 
             instance_info_list = self.last_api_response_data
-            logger.info(f"API返回数据: {instance_info_list}")
+            logger.info(f"最终API数据: {instance_info_list}")
             
             # 获取任务列表并排序
             tasks_to_execute = _get_sorted_tasks(instance_info_list)
@@ -506,6 +511,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
     def _update_task_summary_ui(self):
         """更新任务汇总UI"""
+        if not self.last_scheduled_task:
+            return
         if not self.task_stats:
             self.last_scheduled_task.info_set("自动密函：历史记录", "暂无任务记录")
             return
@@ -722,8 +729,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             self.click_box_random(text[0])
             clicked = True
         if not clicked:
-            logger.warning(f"进入密函任务：未找到匹配的{type_task}任务: {task_name}，无法点击进入")
-            raise Exception(f"进入密函任务：未找到匹配的{type_task}任务: {task_name}，无法点击进入")       
+            logger.warning(f"进入密函任务：未找到匹配的{self.last_task_module}任务: {self.last_task_name}，无法点击进入")
+            raise Exception(f"进入密函任务：未找到匹配的{self.last_task_module}任务: {self.last_task_name}，无法点击进入")       
 
     def get_letter_num(self):
         """获取当前密函数量，如果不在历练页面，直接返回100, 100, 100"""

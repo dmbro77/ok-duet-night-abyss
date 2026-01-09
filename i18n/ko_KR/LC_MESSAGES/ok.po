@@ -536,3 +536,9 @@ msgstr "Ctrl+전투 스킬 (프시케 전용)"
 
 msgid "任务设定"
 msgstr "임무 설정"
+
+msgid "Aim X-axis sensitivity"
+msgstr ""
+
+msgid "Aim Y-axis sensitivity"
+msgstr ""

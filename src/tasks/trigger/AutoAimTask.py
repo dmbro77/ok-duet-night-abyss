@@ -1,3 +1,6 @@
+from contextlib import contextmanager
+import time
+
 from ok import TriggerTask, Logger, og
 from src.scene.DNAScene import DNAScene
 from src.tasks.BaseCombatTask import BaseCombatTask, CharDeadException
@@ -37,7 +40,7 @@ class AutoAimTask(BaseListenerTask, BaseCombatTask, TriggerTask):
         self.manual_activate = False
         self.signal = False
         self.signal_interrupt = False
-        self.is_down = False
+        self.running = False
 
     def disable(self):
         """禁用任务时，断开信号连接。"""
@@ -55,52 +58,59 @@ class AutoAimTask(BaseListenerTask, BaseCombatTask, TriggerTask):
         self.manual_activate = False
         self.signal = False
         self.signal_interrupt = False
+        self.running = False
 
     def run(self):
         if self.signal:
             self.signal = False
-            if not self.scene.in_team(self.in_team_and_world):
+            if not self.scene.in_team(self.in_team_and_world) or self.find_one("exp_tool"):
                 return
             if og.device_manager.hwnd_window.is_foreground():
                 self.switch_state()
 
-        while self.manual_activate:
-            try:
-                self.do_aim()
-            except CharDeadException:
-                self.log_error("Characters dead", notify=True)
-                break
-            except TriggerDeactivateException as e:
-                logger.info(f"auto_aim_task_deactivate {e}")
-                break
+        if self.manual_activate and not self.running:
+            self.running = True
+            self.submit_periodic_task(0.01, self.do_aim)
 
-        if self.is_down:
-            self.is_down = False
-            self.mouse_up(key="right")
         return
+    
+    @contextmanager
+    def right_click_scope(self):
+        self.mouse_down(key="right")
+        try:
+            yield
+        finally:
+            self.mouse_up(key="right")
 
     def do_aim(self):
         try:
-            self.mouse_down(key="right")
-            self.is_down = True
-            self.sleep_check(self.config.get('按下时间', 0.50), False)
-        finally:
-            if self.is_down:
-                self.mouse_up(key="right")
-                self.is_down = False
-        self.sleep_check(self.config.get("间隔时间", 0.50))
+            with self.right_click_scope():
+                self.sleep_check(self.config.get('按下时间', 0.50))
+            self.sleep_check(self.config.get("间隔时间", 0.50))
+        except CharDeadException:
+            self.log_error("Characters dead", notify=True)
+            self.running = False
+            return False
+        except TriggerDeactivateException as e:
+            logger.info(f"auto_aim_task_deactivate {e}")
+            self.running = False
+            return False
 
     def sleep_check(self, sec, check_signal_flag=True):
-        remaining = sec
-        step = 0.2
-        while remaining > 0:
+        if sec <= 0:
+            return
+        end_time = time.perf_counter() + sec
+        step = 0.01
+        while True:
+            remaining = end_time - time.perf_counter()
+            if remaining <= 0:
+                break
             s = step if remaining > step else remaining
-            self.sleep_random(s, random_range=(1, 1.2))
-            remaining -= s
+            time.sleep(s)
+            if not self.manual_activate or not self._enabled or self.paused:
+                raise TriggerDeactivateException
             if self._should_interrupt(check_signal_flag):
                 self.switch_state()
-            if not self.manual_activate:
-                raise TriggerDeactivateException
 
     def _should_interrupt(self, check_signal_flag: bool) -> bool:
         """检查是否应该中断当前操作"""

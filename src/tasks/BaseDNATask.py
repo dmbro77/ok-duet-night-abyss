@@ -95,7 +95,14 @@ class BaseDNATask(BaseTask):
 
     @property
     def thread_pool_executor(self) -> ThreadPoolExecutor:
+        if og.my_app is None:
+            return None
         return og.my_app.get_thread_pool_executor()
+
+    def submit_periodic_task(self, delay, task, *args, **kwargs):
+        if og.my_app is None:
+            return None
+        return og.my_app.submit_periodic_task(delay, task, *args, **kwargs)
     
     @property
     def shared_frame(self) -> np.ndarray:
@@ -365,17 +372,23 @@ class BaseDNATask(BaseTask):
         self.sleep(_after_sleep)
 
     def click_btn_random(self, box: Box, safe_move_box: Box = None, down_time=0.0, post_sleep=0.0, after_sleep=0.0):
-        box = box.copy(x_offset=-box.width*0.20, width_offset=box.width * 8.1,
+        _safe_move_box = box.copy(x_offset=-box.width*0.20, width_offset=box.width * 8.1,
                                  y_offset=-box.height*0.30, height_offset=box.height * 0.7, name='safe_move_box')
-        random_x = random.uniform(box.x + box.width, box.x + self.width * 0.12)
-        random_y = random.uniform(box.y, box.y + box.height)
+        
+        x_range = [box.x + box.width, box.x + self.width * 0.12]
+        y_range = [box.y, box.y + box.height]
+        random_x = random.uniform(x_range[0], x_range[1])
+        random_y = random.uniform(y_range[0], y_range[1])
+
+        random_box = self.box_of_screen_scaled(self.width, self.height, int(x_range[0]), int(y_range[0]), int(x_range[1]), int(y_range[1]), name="random_box", hcenter=True)
+        self.draw_boxes(random_box.name, random_box, "blue")
         
         if safe_move_box is not None:
             if isinstance(safe_move_box, Box):
                 safe_move_box = [safe_move_box]
-            safe_move_box.append(box)
+            safe_move_box.append(_safe_move_box)
         else:
-            safe_move_box = box
+            safe_move_box = _safe_move_box
 
         self._perform_random_click(
             random_x, random_y, 
@@ -392,8 +405,13 @@ class BaseDNATask(BaseTask):
         ue_px = up_extend * self.height
         de_px = down_extend * self.height
 
-        random_x = random.uniform(box.x - le_px, box.x + box.width + re_px)
-        random_y = random.uniform(box.y - ue_px, box.y + box.height + de_px)
+        x_range = [box.x - le_px, box.x + box.width + re_px]
+        y_range = [box.y - ue_px, box.y + box.height + de_px]
+        random_x = random.uniform(x_range[0], x_range[1])
+        random_y = random.uniform(y_range[0], y_range[1])
+
+        random_box = self.box_of_screen_scaled(self.width, self.height, int(x_range[0]), int(y_range[0]), int(x_range[1]), int(y_range[1]), name="random_box", hcenter=True)
+        self.draw_boxes(random_box.name, random_box, "blue")
 
         self._perform_random_click(
             random_x, random_y, 
@@ -565,7 +583,7 @@ class BaseDNATask(BaseTask):
         """
         return self.key_config['HelixLeap Key']
         
-    def calculate_sensitivity(self, dx, dy, original_Xsensitivity=1.0, original_Ysensitivity=1.0):
+    def calculate_sensitivity(self, dx, dy, use_aim_sensitivity=False, original_Xsensitivity=1.0, original_Ysensitivity=1.0):
         """计算玩家水平鼠标移动值和垂直鼠标移动值,并且移动鼠标.
 
         Returns:
@@ -576,8 +594,12 @@ class BaseDNATask(BaseTask):
         # 判断设置中灵敏度开关是否打开
         if self.sensitivity_config['Game Sensitivity Switch']:
             # 获取设置中的游戏灵敏度
-            game_Xsensitivity = self.sensitivity_config['X-axis sensitivity']
-            game_Ysensitivity = self.sensitivity_config['Y-axis sensitivity']
+            if not use_aim_sensitivity:
+                game_Xsensitivity = self.sensitivity_config['X-axis sensitivity']
+                game_Ysensitivity = self.sensitivity_config['Y-axis sensitivity']
+            else:
+                game_Xsensitivity = self.sensitivity_config['Aim X-axis sensitivity']
+                game_Ysensitivity = self.sensitivity_config['Aim Y-axis sensitivity']
 
             # 判断和计算
             if original_Xsensitivity == game_Xsensitivity and original_Ysensitivity == game_Ysensitivity:
@@ -592,8 +614,8 @@ class BaseDNATask(BaseTask):
 
         return calculate_dx, calculate_dy
 
-    def move_mouse_relative(self, dx, dy, original_Xsensitivity=1.0, original_Ysensitivity=1.0):
-        dx, dy = self.calculate_sensitivity(dx, dy, original_Xsensitivity, original_Ysensitivity)
+    def move_mouse_relative(self, dx, dy, use_aim_sensitivity=False, original_Xsensitivity=1.0, original_Ysensitivity=1.0):
+        dx, dy = self.calculate_sensitivity(dx, dy, use_aim_sensitivity, original_Xsensitivity, original_Ysensitivity)
         self.try_bring_to_front()
         self.genshin_interaction.move_mouse_relative(int(dx), int(dy))
 

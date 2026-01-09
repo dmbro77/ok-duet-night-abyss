@@ -4,6 +4,7 @@ import concurrent.futures
 from qfluentwidgets import DoubleSpinBox
 from PySide6.QtWidgets import QApplication
 from ok import Logger, og
+from threading import Event
 
 logger = Logger.get_logger(__name__)
 
@@ -33,6 +34,7 @@ class Globals(QObject):
         self.pynput_keyboard = None
         self._thread_pool_executor_max_workers = 0
         self.thread_pool_executor = None
+        self.thread_pool_exit_event = Event()
         self.shared_frame = None
         exit_event.bind_stop(self)
         self.init_pynput()
@@ -65,19 +67,19 @@ class Globals(QObject):
     def on_press(self, key):
         self.pressed.emit(key)
 
-    def get_thread_pool_executor(self, max_workers=4):
+    def get_thread_pool_executor(self, max_workers=6):
         """
         获取全局执行器。
-
         如果请求的 max_workers 大于当前值，将安全地重建线程池。
         """
         if self.thread_pool_executor is not None and max_workers > self._thread_pool_executor_max_workers:
             logger.info(
                 f"thread pool max_workers not enough, reset max_workers {self._thread_pool_executor_max_workers} -> {max_workers}")
-            self.shutdown_task_executor()
+            self.shutdown_thread_pool_executor()
 
         if self.thread_pool_executor is None:
             logger.info(f"create thread pool executor, max_workers: {max_workers}")
+            self.thread_pool_exit_event.clear() 
             self.thread_pool_executor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers)
             self._thread_pool_executor_max_workers = max_workers
 
@@ -85,10 +87,46 @@ class Globals(QObject):
 
     def shutdown_thread_pool_executor(self):
         if self.thread_pool_executor is not None:
+            logger.info("Shutting down thread pool executor...")
+            self.thread_pool_exit_event.set()
             self.thread_pool_executor.shutdown(wait=False, cancel_futures=True)
             self.thread_pool_executor = None
             self._thread_pool_executor_max_workers = 0
 
+    def submit_periodic_task(self, delay, task, *args, **kwargs):
+        """
+        提交一个循环任务到线程池。
+        如果要停止循环，任务函数应返回 False。
+        
+        :param task: 要执行的函数
+        :param delay: 每次执行后的间隔时间（秒）
+        :param args: 位置参数
+        :param kwargs: 关键字参数
+        """
+        executor = self.get_thread_pool_executor()
+
+        def loop_wrapper():
+            logger.debug(f"Periodic task {task.__name__} started.")
+            
+            while not self.thread_pool_exit_event.is_set():
+                should_stop = False
+                try:
+                    if task(*args, **kwargs) is False:
+                        should_stop = True
+                except Exception as e:
+                    logger.error(f"Error in periodic task {task.__name__}: {e}")
+
+                if should_stop:
+                    logger.debug(f"Periodic task {task.__name__} decided to stop.")
+                    break
+        
+                if self.thread_pool_exit_event.wait(timeout=delay):
+                    logger.debug(f"Periodic task {task.__name__} received stop signal.")
+                    break
+            
+            logger.debug(f"Periodic task {task.__name__} stopped.")
+
+        executor.submit(loop_wrapper)
 
 if __name__ == "__main__":
     glbs = Globals(exit_event=None)

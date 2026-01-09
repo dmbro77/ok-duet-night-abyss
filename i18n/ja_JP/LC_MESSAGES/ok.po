@@ -536,3 +536,9 @@ msgstr "Ctrl+戦技（プシュケ専用）"
 
 msgid "任务设定"
 msgstr "任務設定"
+
+msgid "Aim X-axis sensitivity"
+msgstr ""
+
+msgid "Aim Y-axis sensitivity"
+msgstr ""

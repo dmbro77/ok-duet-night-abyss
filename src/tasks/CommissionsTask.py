@@ -103,8 +103,10 @@ class CommissionsTask(BaseDNATask):
         box = self.box_of_screen_scaled(2560, 1440, 69, 969, 2498, 1331, name="reward_drag_area", hcenter=True)
         start_time = time.time()
         while time.time() - start_time < action_timeout:
-            if (btn := self.find_retry_btn() or self.find_bottom_start_btn() or self.find_big_bottom_start_btn()):
-                self.click_box_random(btn, use_safe_move=True, safe_move_box=box, right_extend=0.1, after_sleep=0.2)
+            if self.find_retry_btn():
+                self.send_key("r", after_sleep=0.2)
+            elif (btn := self.find_bottom_start_btn() or self.find_big_bottom_start_btn()):
+                self.click_btn_random(btn, safe_move_box=box, after_sleep=0.2)
             if self.wait_until(condition=lambda: self.find_drop_rate_btn() or self.find_letter_interface(), time_out=1):
                 break
             if self.find_retry_btn() and self.calculate_color_percentage(retry_btn_color,
@@ -142,9 +144,10 @@ class CommissionsTask(BaseDNATask):
                 raise_if_not_found=True,
             )
             self.sleep(0.5)
+            btn = self.find_start_btn(box=box)
             self.wait_until(
                 condition=lambda: not self.find_start_btn(box=box),
-                post_action=lambda: self.click_box_random(self.find_start_btn(box=box), right_extend=0.1, after_sleep=0.25),
+                post_action=lambda: self.click_btn_random(btn, after_sleep=0.25),
                 time_out=action_timeout,
                 raise_if_not_found=True,
             )
@@ -156,9 +159,10 @@ class CommissionsTask(BaseDNATask):
             return False
         action_timeout = self.action_timeout if timeout == 0 else timeout
         continue_btn = self.wait_until(self.find_ingame_continue_btn, time_out=action_timeout, raise_if_not_found=True)
+        left_extend = -continue_btn.width / self.width
         self.wait_until(
             condition=lambda: not self.find_ingame_continue_btn(),
-            post_action=lambda: self.click_box_random(continue_btn, right_extend=0.1, up_extend=-0.002, down_extend=-0.002, post_sleep=0, after_sleep=0.25),
+            post_action=lambda: self.click_box_random(continue_btn, left_extend=left_extend, right_extend=0.1, up_extend=-0.002, down_extend=-0.002, post_sleep=0, after_sleep=0.25),
             time_out=action_timeout,
             raise_if_not_found=True,
         )
@@ -168,8 +172,7 @@ class CommissionsTask(BaseDNATask):
     def choose_drop_rate(self, timeout=0):
         def click_drop_rate_btn():
             if (box:=self.find_drop_rate_btn()):
-                safe_box = self.box_of_screen(0.507, 0.647, 0.677, 0.697, name="safe_box", hcenter=True)
-                self.click_box_random(box, right_extend=0.1, after_sleep=0.25, use_safe_move=True, safe_move_box=safe_box)
+                self.click_btn_random(box, after_sleep=0.25)
         action_timeout = self.action_timeout if timeout == 0 else timeout
         self.sleep(0.5)
         self.choose_drop_rate_item()
@@ -507,7 +510,7 @@ class CommissionsTask(BaseDNATask):
             time_out=10,
         )
         safe_box = self.box_of_screen_scaled(2560, 1440, 1298, 772, 1735, 846, name="safe_box", hcenter=True)
-        if not self.wait_until(condition=self.in_team, post_action=lambda: self.click_relative_random(0.514, 0.547, 0.671, 0.578, after_sleep=0.5, use_safe_move=True, safe_move_box=safe_box),
+        if not self.wait_until(condition=self.in_team, post_action=lambda: self.click_relative_random(0.531, 0.547, 0.671, 0.578, after_sleep=0.5, use_safe_move=True, safe_move_box=safe_box),
                                time_out=10):
             self.ensure_main()
             return False

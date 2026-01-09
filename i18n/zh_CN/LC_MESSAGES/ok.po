@@ -533,3 +533,9 @@ msgstr ""
 
 msgid "任务设定"
 msgstr ""
+
+msgid "Aim X-axis sensitivity"
+msgstr "游戏内射击时水平灵敏度"
+
+msgid "Aim Y-axis sensitivity"
+msgstr "游戏内射击时垂直灵敏度"

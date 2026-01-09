@@ -536,3 +536,9 @@ msgstr "Ctrl+戰技（賽琪專屬）"
 
 msgid "任务设定"
 msgstr "任務設定"
+
+msgid "Aim X-axis sensitivity"
+msgstr "遊戲內射擊時水平靈敏度"
+
+msgid "Aim Y-axis sensitivity"
+msgstr "遊戲內射擊時垂直靈敏度"

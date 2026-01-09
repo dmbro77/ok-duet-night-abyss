@@ -536,3 +536,9 @@ msgstr "Ctrl+Habil. Combate (Solo Psyche)"
 
 msgid "任务设定"
 msgstr "Opc. Misión"
+
+msgid "Aim X-axis sensitivity"
+msgstr ""
+
+msgid "Aim Y-axis sensitivity"
+msgstr ""

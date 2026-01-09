@@ -222,7 +222,6 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 
                 self.last_scheduled_task = None
                 self._update_task_summary_ui()
-                self._update_task_ui(self.task_stats[-1])
                 return True
             return False
         
@@ -237,7 +236,6 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             if self.task_stats[-1]["end_time"] is None:
                 self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
                 self.task_stats[-1]["status"] = '已完成/被调度取消'
-            self._update_task_ui(self.task_stats[-1])
             self._update_task_summary_ui()
         
         def _cleanup_on_exit():
@@ -245,7 +243,6 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             if self.task_stats[-1]["end_time"] is None:
                 self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
                 self.task_stats[-1]["status"] = '已完成/被调度取消'
-            self._update_task_ui(self.task_stats[-1])
             self._update_task_summary_ui()
 
 
@@ -277,7 +274,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 if should_check:
                     task_class, module_key, task_name = self._calculate_target_task()
                     self.schedule_task(task_class, module_key, task_name)
-                    self._update_task_ui(self.task_stats[-1])
+                    self._update_task_summary_ui()
                     should_check = False
                     
                 time.sleep(1)  # 等待1秒后继续
@@ -504,32 +501,21 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             # 记录当前调度的任务，用于后续追踪完成状态
             self.last_scheduled_task = target_task
 
-    def _update_task_ui(self, current_stat):
-        """更新任务UI"""
-        module_key = current_stat["module_key"]
-        task_name = current_stat["task_name"]
-        status = current_stat["status"]
-        start_time = current_stat["start_time"]
-        end_time = current_stat["end_time"]
-        logger.info(f"当前任务: {self.last_scheduled_task.info_set}")
-        self.last_scheduled_task.info_set("自动密函：当前任务",f"{module_key}，{task_name}，{status}，{start_time}，{end_time if end_time else "--:--:--"}")
-    
+
     def _update_task_summary_ui(self):
         """更新任务汇总UI"""
         if not self.task_stats:
-            self.last_scheduled_task.info_set("自动密函：任务统计", "暂无任务记录")
+            self.last_scheduled_task.info_set("自动密函：历史记录", "暂无任务记录")
             return
             
-        summary_lines = []
-        for stat in self.task_stats:
+        for stat in self.task_stats[::-1]:
             name = f"{stat['module_key']}，{stat['task_name']}，{stat['status']}"
             if stat['end_time']:
                 time_range = f"{stat['start_time']}，{stat['end_time']}"
             else:
                 time_range = f"{stat['start_time']}，--:--:--"
-            summary_lines.append(f"{name}，{time_range}")
-        summary_text = "\n".join(summary_lines)
-        self.last_scheduled_task.info_set("自动密函：任务统计", summary_text)
+            self.last_scheduled_task.info_set("自动密函：历史记录", f"{name}，{time_range}")
+        
     
     def _reset_ui_state(self):
         """重置UI状态"""

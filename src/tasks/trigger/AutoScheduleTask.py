@@ -514,7 +514,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 time_range = f"{stat['start_time']}，{stat['end_time']}"
             else:
                 time_range = f"{stat['start_time']}，--:--:--"
-            self.last_scheduled_task.info_set("自动密函：历史记录", f"{name}，{time_range}")
+            self.last_scheduled_task.info_set(f"自动密函：历史记录{self.task_stats.index(stat)}", f"{name}，{time_range}")
         
     
     def _reset_ui_state(self):

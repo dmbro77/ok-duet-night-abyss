@@ -171,6 +171,11 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         self.finished_tasks.clear()
         logger.info("调度任务已停止")
 
+    def is_enable_running(self):
+        """检查当前是否可以运行"""
+        return self.enabled and not self.executor.exit_event.is_set()
+    
+
     def run(self):
         # 主线程轮询留空，因为逻辑在独立线程里
         return False
@@ -250,7 +255,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         
         # true 启动时立即检查一次
         should_check = True
-        while self.enabled and not self.executor.exit_event.is_set():
+        while self.is_enable_running():
             try:
                 # 确保执行器处于运行状态 (唤醒执行器)，否则OCR会卡住
                 if self.executor.paused:
@@ -290,22 +295,15 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
         def _fetch_api_data(api_url, headers, max_retries=5):
             """获取API数据（内部函数）"""
-            while self.enabled and not self.executor.exit_event.is_set() and max_retries > 0:
+            while self.is_enable_running() and max_retries > 0:
                 params = {"_t": int(time.time() * 1000)}
                 try:
                     response = requests.get(api_url, headers=headers, params=params, timeout=10)
                     response.raise_for_status()
                     json_data = response.json()
                     
-                    if json_data.get("code") != 0:
-                        logger.error(f"API返回错误代码: {json_data.get('code')}")
-                        max_retries -= 1
-                        time.sleep(60)
-                        continue
-                        
-                    current_data = json_data.get("data", [])
-                    if not isinstance(current_data, list):
-                        logger.error("API返回的data不是列表格式")
+                    if json_data.get("code") != 0 or not isinstance(current_data := json_data.get("data", []), list):
+                        logger.error(f"API返回错误代码: {json_data.get('code')}，或者data不是列表格式")
                         max_retries -= 1
                         time.sleep(60)
                         continue
@@ -385,9 +383,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         def _find_first_executable_task(tasks_to_execute):
             """找到第一个可执行的任务（内部函数）"""
             # 获取密函数量
-            rule_num, weapon_num, mod_num = 100, 100, 100
-            if self.find_lilian():
-                rule_num, weapon_num, mod_num = self.get_letter_num()
+            rule_num, weapon_num, mod_num = self.get_letter_num()
             logger.info(f"当前密函数量 - 角色: {rule_num}, 武器: {weapon_num}, MOD: {mod_num}")
             
             for task in tasks_to_execute:
@@ -537,18 +533,17 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
     
     def _reset_ui_state(self):
         """重置UI状态"""
-        logger.info(f"执行前置操作：重置UI状态 ({self.last_task_name}, 模块: {self.last_task_module})")
         try:
-            # 查找历练文本
-            lilian = self.find_lilian()
-            while not lilian:
-                lilian = self.find_lilian()
-                if lilian:
-                    break
+            timeout, time_start = 2 * 60 ,time.time()
+            logger.info(f"执行前置操作：重置UI状态 ({self.last_task_name}, 模块: {self.last_task_module}), 超时时间: {timeout}秒")
+            # 不再历练页面，则执行循环
+            while not self.find_lilian() and self.is_enable_running() and time.time() - time_start < timeout:
                 self.send_key("esc")
                 self.sleep(1)
+
                 if self.in_team():
                     self.give_up_mission()
+                
                 if (letter_btn := self.find_letter_interface()):
                     logger.info("处理密函耗尽：密函耗尽，点击确认后退出副本")
                     box = self.box_of_screen_scaled(
@@ -568,6 +563,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                         raise_if_not_found=True,
                     )
                     self.give_up_mission()
+                
                 if (quit_btn := self.find_ingame_quit_btn()):
                     logger.info("处理任务界面: 点击退出按钮")
                     self.click_box_random(quit_btn, right_extend=0.1, post_sleep=0, after_sleep=0.25)
@@ -617,10 +613,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             scroll_amount = int(self.height)
             max_attempts = 3
         
-        timeout = 20
-        now_time = time.time()
+        timeout, now_time, clicked = 20, time.time(), False
         # 查找任务
-        clicked = False
         while not clicked and time.time() - now_time < timeout:            
             # 双击，确保成功点击切换
             for _ in range(2):    
@@ -629,10 +623,12 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 self.sleep(0.02)
             self.sleep(1)
         
-            # 初始滚动
-            self.scroll_relative(*scroll_pos, scroll_amount)
+            # 确保滚动到初始位置
+            for _ in range(2):  
+                self.scroll_relative(*scroll_pos, scroll_amount)
+                self.sleep(0.2)
+
             self.sleep(1)
-        
             for attempt in range(max_attempts):
                 logger.info(f"尝试匹配任务: {task_name} (尝试{attempt+1}/{max_attempts})")
                 
@@ -656,8 +652,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
     def switch_to_task_level(self):
         """选择默认任务关卡等级"""
-        default_task_type = self.config.get("默认任务副本类型")
-        if not default_task_type:
+        
+        if not (default_task_type := self.config.get("默认任务副本类型")):
             logger.warning("未配置默认任务副本类型")
             return
         
@@ -673,10 +669,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             task_name = task_text.split('.')[-1]
             box_params = (2560 * 0.10, 1440 * 0.19, 2560 * 0.17, 1440 * 0.62)
         
-        timeout = 20
-        now_time = time.time()
-        clicked = False
-        attempt = 1
+        clicked, attempt, now_time, timeout = False, 1, time.time(), 20
         # 统一的匹配逻辑
         while not clicked and time.time() - now_time < timeout:
             logger.info(f"尝试匹配: {task_name} (第{attempt}次)")
@@ -685,7 +678,6 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     2560, 1440, *box_params, name="等级", hcenter=True
                 ),
                 match=re.compile(f'.*{task_name}.*')
-                # match=re.compile(f'.*')
             )
             logger.info(f"OCR匹配到的夜航副本或者任务等级: {match_box}")
             if match_box:
@@ -715,32 +707,24 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             raise Exception(f"未找到匹配的{type_task}副本: {task_name}")    
 
     def switch_to_letter(self):
-        """选择密函"""
+        """选择密函任务"""
         self.click_relative_random(0.34, 0.15, 0.41, 0.18)
         self.sleep(1) 
+        box_points = (2560 * 0.07, 1440 * 0.051, 2560 * 0.16, 1440 * 0.77)
         
         # 根据模块确定点击区域
         if self.last_task_module == '角色':
-            box = self.box_of_screen_scaled(
-                2560, 1440, 2560 * 0.07, 1440 * 0.051, 2560 * 0.16, 1440 * 0.77,
-                name='guan_qia', hcenter=True
-            )
+            box_points = (2560 * 0.07, 1440 * 0.051, 2560 * 0.16, 1440 * 0.77)
         elif self.last_task_module == '武器':
-            box = self.box_of_screen_scaled(
-                2560, 1440, 2560 * 0.28, 1440 * 0.051, 2560 * 0.38, 1440 * 0.77,
-                name='guan_qia', hcenter=True
-            )   
+            box_points = (2560 * 0.28, 1440 * 0.051, 2560 * 0.38, 1440 * 0.77) 
         elif self.last_task_module == 'MOD':
-            box = self.box_of_screen_scaled(
-                2560, 1440, 2560 * 0.48, 1440 * 0.051, 2560 * 0.59, 1440 * 0.77,
-                name='guan_qia', hcenter=True
-            )
+            box_points = (2560 * 0.48, 1440 * 0.051, 2560 * 0.59, 1440 * 0.77) 
         else:
-            logger.error(f"未知的模块: {self.last_task_module}")
-            return
-        
-        clicked  = False
-        flag = 0      
+            raise Exception(f"进入密函任务：未知的模块: {self.last_task_module}")
+        box = self.box_of_screen_scaled(
+            2560, 1440, *box_points, name='密函任务类型', hcenter=True
+        )
+        clicked, flag = False, 0
         while not clicked and flag < 3:    
             text = self.wait_ocr(
                 box=box,
@@ -750,10 +734,15 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             )
             self.click_box_random(text[0])
             clicked = True
+        if not clicked:
+            logger.warning(f"进入密函任务：未找到匹配的{type_task}任务: {task_name}，无法点击进入")
+            raise Exception(f"进入密函任务：未找到匹配的{type_task}任务: {task_name}，无法点击进入")       
 
     def get_letter_num(self):
-        """获取当前密函数量"""
-
+        """获取当前密函数量，如果不在历练页面，直接返回100, 100, 100"""
+  
+        if self.find_lilian():
+            return 100, 100, 100
         # 切换到密函委托
         for _ in range(2):
             self.click_relative_random(0.34, 0.15, 0.41, 0.18)
@@ -761,8 +750,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
         self.sleep(1) 
 
-        time_out = 5
-        now_time = time.time()
+        time_out, now_time = 5,time.time()
         rule_num, weapon_num, mod_num = None, None, None
         while (not isinstance(rule_num, (int, float)) or not isinstance(weapon_num, (int, float)) or not isinstance(mod_num, (int, float))) and time.time() - now_time < time_out:
 
@@ -788,19 +776,13 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
     def find_lilian(self):
         """查找历练文本"""
-        lilian = None
-        flag = 0
-        logger.debug("查找历练文本")
-        while not lilian and flag < 3:
+        logger.debug("检查是否在历练页面")
+        lilian, flag = None, 0
+        box = self.box_of_screen_scaled(
+            2560, 1440, 2560 * 0.05, 1440 * 0.001, 2560 * 0.09, 1440 * 0.05,
+            name="lilian", hcenter=True
+        )
+        while not (lilian := self.ocr(box=box, match='历练')) and flag < 3:
             logger.debug(f"查找历练文本第{flag+1}次尝试")
-            lilian = self.ocr(
-                box=self.box_of_screen_scaled(
-                    2560, 1440, 2560 * 0.05, 1440 * 0.001, 2560 * 0.09, 1440 * 0.05,
-                    name="lilian", hcenter=True
-                ),
-                match='历练',
-            )
-            if lilian:
-                break
             flag += 1
         return lilian

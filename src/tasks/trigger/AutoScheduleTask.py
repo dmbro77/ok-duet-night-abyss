@@ -619,12 +619,11 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             attempt = 0
             while attempt <= max_attempts and self.is_enable_running():
                 attempt += 1
-                self.sleep(1)
                 logger.info(f"尝试匹配任务: {task_name} (尝试{attempt}/{max_attempts})")
                 match_box = self.wait_ocr(
                     box=self.box_of_screen_scaled(*box_params, name="weituo", hcenter=True),
                     match=re.compile(f'.*{task_name}.*'),
-                    time_out=5,
+                    time_out=1,
                 )
                 if not match_box:
                     # 滚动

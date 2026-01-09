@@ -474,7 +474,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             self.executor.stop_current_task() # 发送停止信号
             
             # 等待当前任务退出 (最多等60秒)
-            for _ in range(60):
+            now_time = time.time()
+            while time.time() - now_time < 60 and self.is_enable_running():
                 if self.executor.current_task is None:
                     break
                 time.sleep(1)
@@ -485,7 +486,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             self._reset_ui_state()
         # 启动目标任务
         if not target_task.enabled:
-            logger.info(f"正在启动任务: {self.last_task_name}")
+            logger.info(f"正在启动任务: {self.last_task_name}-{target_task.name}")
+            # self.go_to_tab(target_task.name)
             target_task.enable()
             # 记录当前调度的任务，用于后续追踪完成状态
             self.last_scheduled_task = target_task
@@ -588,7 +590,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             # 委托搜索区域
             box_params = (2560, 1440, 2560*0.07, 1440*0.69, 2560*0.66, 1440*0.75)
             scroll_pos = (0.5, 0.4)
-            scroll_amount = 600
+            scroll_amount = -600
             max_attempts = 10
         else:
             # 点击切换到夜航手册
@@ -596,12 +598,12 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             # 夜航手册搜索区域
             box_params = (2560, 1440, 2560*0.07, 1440*0.22, 2560*0.12, 1440*0.84)
             scroll_pos = (0.1, 0.37)
-            scroll_amount = int(self.height)
+            scroll_amount = -600
             max_attempts = 3
         
         timeout, now_time, clicked = 20, time.time(), False
         # 查找任务
-        while not clicked and time.time() - now_time < timeout:            
+        while not clicked and time.time() - now_time < timeout and self.is_enable_running():            
             # 双击，确保成功点击切换
             for _ in range(2):    
                 # 点击切换到委托
@@ -614,23 +616,23 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 self.scroll_relative(*scroll_pos, scroll_amount)
                 self.sleep(0.2)
 
-            self.sleep(1)
-            for attempt in range(max_attempts):
-                logger.info(f"尝试匹配任务: {task_name} (尝试{attempt+1}/{max_attempts})")
-                
-                match_box = self.ocr(
+            attempt = 0
+            while attempt <= max_attempts and self.is_enable_running():
+                attempt += 1
+                self.sleep(1)
+                logger.info(f"尝试匹配任务: {task_name} (尝试{attempt}/{max_attempts})")
+                match_box = self.wait_ocr(
                     box=self.box_of_screen_scaled(*box_params, name="weituo", hcenter=True),
-                    match=re.compile(f'.*{task_name}.*')
+                    match=re.compile(f'.*{task_name}.*'),
+                    time_out=5,
                 )
-                
-                if match_box:
+                if not match_box:
+                    # 滚动
+                    self.scroll_relative(0.5, 0.4, 600)
+                else:
                     self.click_box_random(match_box[0])
                     clicked = True
                     break
-                else:
-                    # 滚动
-                    self.scroll_relative(0.5, 0.4, 600)
-                    self.sleep(1)
             
         if not clicked:
             logger.warning(f"未找到任务: {task_name}")
@@ -657,7 +659,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         
         clicked, attempt, now_time, timeout = False, 1, time.time(), 20
         # 统一的匹配逻辑
-        while not clicked and time.time() - now_time < timeout:
+        while not clicked and time.time() - now_time < timeout and self.is_enable_running():
             logger.info(f"尝试匹配: {task_name} (第{attempt}次)")
             match_box = self.ocr(
                 box=self.box_of_screen_scaled(
@@ -711,7 +713,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             2560, 1440, *box_points, name='密函任务类型', hcenter=True
         )
         clicked, flag = False, 0
-        while not clicked and flag < 3:    
+        while not clicked and flag < 3 and self.is_enable_running():    
             text = self.wait_ocr(
                 box=box,
                 match=self.last_task_name,
@@ -727,7 +729,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
     def get_letter_num(self):
         """获取当前密函数量，如果不在历练页面，直接返回100, 100, 100"""
   
-        if self.find_lilian():
+        if not self.find_lilian():
             return 100, 100, 100
         # 切换到密函委托
         for _ in range(2):
@@ -738,7 +740,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
         time_out, now_time = 5,time.time()
         rule_num, weapon_num, mod_num = None, None, None
-        while (not isinstance(rule_num, (int, float)) or not isinstance(weapon_num, (int, float)) or not isinstance(mod_num, (int, float))) and time.time() - now_time < time_out:
+        while (not isinstance(rule_num, (int, float)) or not isinstance(weapon_num, (int, float)) or not isinstance(mod_num, (int, float))) and time.time() - now_time < time_out and self.is_enable_running():
 
             rule_box_params = (2560, 1440, 2560*0.13, 1440*0.43, 2560*0.19, 1440*0.46)
             rule_box = self.box_of_screen_scaled(*rule_box_params, name="letter_num_rule", hcenter=True)
@@ -768,7 +770,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             2560, 1440, 2560 * 0.05, 1440 * 0.001, 2560 * 0.09, 1440 * 0.05,
             name="lilian", hcenter=True
         )
-        while not (lilian := self.ocr(box=box, match='历练')) and flag < 3:
+        while not (lilian := self.ocr(box=box, match='历练')) and flag < 3 and self.is_enable_running():
             logger.debug(f"查找历练文本第{flag+1}次尝试")
             flag += 1
         return lilian

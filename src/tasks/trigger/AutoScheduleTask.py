@@ -19,6 +19,7 @@ from src.tasks.fullauto.Auto70jjbTask import Auto70jjbTask
 from src.tasks.fullauto.AutoEscortTask import AutoEscortTask
 from src.tasks.fullauto.AutoEscortTask_Fast import AutoEscortTask_Fast
 from src.tasks.fullauto.ImportTask import ImportTask
+from src.tasks.fullauto.AutoDismantle import AutoDismantle
 
 logger = Logger.get_logger(__name__+'====>')
 
@@ -91,7 +92,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
         self.config_description = {
             "密函委托优先级": "使用 > 分隔优先级，越靠前优先级越高，只能填写角色、武器、MOD。\n例如：角色>武器>MOD",
-            "关卡类型优先级": "使用 > 分隔优先级，越靠前优先级越高，仅支持探险/无尽、驱离。\n例如：探险/无尽>驱离",
+            "关卡类型优先级": "使用 > 分隔优先级，越靠前优先级越高，仅支持探险/无尽、驱离、拆解。\n例如：探险/无尽>驱离>拆解",
             "默认任务": "当没有匹配的委托密函任务时，自动执行此任务\n任务基于已有的任务执行，请对设置的任务做好相应配置",
             "默认任务副本类型": "可选普通任务和夜航任务\n根据选择的默认任务进行设置即可",
             "副本等级【普通任务】": "副本类型为正常委托时生效\n选择需要刷取的副本等级，根据选择的默认任务和副本类型进行设置",
@@ -102,6 +103,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         self.TASK_MAPPING = {
             "探险/无尽": AutoExploration_Fast,
             "驱离": AutoExpulsion,
+            "拆解": AutoDismantle,
         }
         
         # 调度器核心状态

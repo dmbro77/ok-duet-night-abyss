@@ -25,7 +25,7 @@ logger = Logger.get_logger(__name__+'====>')
 class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = "自动密函委托"
+        self.name = "自动密函委托【有前台操作】"
         self.description = "整点自动检查密函任务并按照优先级匹配任务执行，未匹配到则执行默认任务\n1、需在历练->委托页面启动 2、需要停止其他正在运行的任务 3、需要设置好自动处理密函"
         self.group_icon = FluentIcon.CAFE
         
@@ -156,6 +156,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         self.last_check_hour = -1  # 上次检查的小时
         self.last_api_response_data = None # 上次 API 返回的数据
 
+        self.prev_task_is_force_stop = False  # 上一个任务是否被强制停止
+
     def enable(self):
         if self.enabled:
             return
@@ -212,13 +214,15 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 
                 # 更新任务统计信息
                 self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
-                self.task_stats[-1]["status"] = '已完成/被调度取消'
+                self.task_stats[-1]["status"] = '任务自行完成'
                 
-                # 如果是密函任务，添加到已完成集合
-                if hasattr(self, 'module_key') and self.module_key != "default":
-                    task_key = f"{self.module_key}_{self.task_name}_{self.last_scheduled_task.__class__.__name__}"
+                # 如果是密函任务且不是被强制停止（自行停止的任务需要添加），添加到已完成集合
+                if self.last_task_module != "default" and not self.prev_task_is_force_stop:
+                    task_key = f"{self.last_task_module}_{self.last_task_name}_{self.last_scheduled_task.__class__.__name__}"
                     self.finished_tasks.add(task_key)
                     logger.info(f"密函任务完成，加入已执行列表: {task_key}")
+                    # 重置状态
+                    self.prev_task_is_force_stop = True
                 
                 self._update_task_summary_ui()
                 self.last_scheduled_task = None
@@ -235,16 +239,22 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             """处理调度器异常"""
             if self.task_stats[-1]["end_time"] is None:
                 self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
-                self.task_stats[-1]["status"] = '已完成/被调度取消'
+                self.task_stats[-1]["status"] = f'异常关闭: {e}'
             self._update_task_summary_ui()
         
         def _cleanup_on_exit():
             """退出时清理"""
             if self.task_stats[-1]["end_time"] is None:
                 self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
-                self.task_stats[-1]["status"] = '已完成/被调度取消'
+                self.task_stats[-1]["status"] = '手动关闭自动密函任务'
             self._update_task_summary_ui()
 
+
+        # if self.executor.paused:
+        #     self.executor.start()
+        # a,b,c = self.get_letter_num()
+        # logger.info(f"当前密函数量: {a}个, {b}个, {c}个")
+        # return
 
         if not self._validate_config():
             return
@@ -260,8 +270,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     self.executor.start()
                     
                 now = datetime.now()
-                
-                # 1. 检查已完成的任务并更新状态
+                # 1. 检查已完成的任务并更新状态，返回是否需要执行标识
                 should_check = _check_and_update_completed_task()
                 
                 # 2. 整点检查（必须的）
@@ -282,7 +291,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 
             except Exception as e:
                 logger.error(f"调度器循环异常: {e}")
-                _handle_scheduler_error()
+                _handle_scheduler_error(e)
                 time.sleep(10)  # 出错后等待10秒
         
         _cleanup_on_exit()
@@ -454,59 +463,93 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
     def schedule_task(self, task_class, module_key, task_name):
         """执行任务,如果当前有任务在运行,强制停止当前任务"""
-        target_task = self.executor.get_task_by_class_name(task_class.__name__)
-        if not target_task:
-            logger.error(f"未找到任务: {task_class.__name__}")
-            return
 
-        is_same_task = (
-            self.last_task_module == module_key and
-            self.last_task_name == task_name and
-            isinstance(self.last_scheduled_task, task_class)
-        )
+        def _need_switch_task(target_task, module_key, task_name):
+            """检查是否需要切换任务"""
+            is_same_task = (
+                self.last_task_module == module_key and
+                self.last_task_name == task_name and
+                isinstance(self.last_scheduled_task, target_task.__class__)
+            )
             
-        if is_same_task:
-            logger.info(f"任务相同且正在运行，无需切换: {task_name}")
-            return    
+            logger.info(f"任务变化信息: {self.last_task_module}->{module_key}, "
+                        f"{self.last_task_name}->{task_name}, "
+                        f"{self.last_scheduled_task}->{target_task}")
+            
+            if is_same_task:
+                logger.info(f"任务相同且正在运行，无需切换: {task_name}")
+                return False
+            
+            # 更新任务记录
+            self.last_task_module = module_key
+            self.last_task_name = task_name
+            return True
 
-        self.last_task_module = module_key
-        self.last_task_name = task_name
-        current_task = self.executor.current_task
-        
-        # 如果当前有任务在运行，且不是目标任务
-        if current_task and current_task != target_task:
+        def _stop_current_task():
+            """停止当前正在运行的任务"""
+            current_task = self.executor.current_task
+            if current_task is None:
+                logger.info(f"当前没有正在运行的任务，不需要停止")
+                return
+            
             logger.info(f"正在强制停止当前任务: {current_task.name}")
-            self.executor.stop_current_task() # 发送停止信号
+            self.executor.stop_current_task()  # 发送停止信号
             
             # 等待当前任务退出 (最多等60秒)
             now_time = time.time()
             while time.time() - now_time < 60 and self.is_enable_running():
                 if self.executor.current_task is None:
+                    self.prev_task_is_force_stop = False
+                    # 更新任务统计信息
+                    self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
+                    self.task_stats[-1]["status"] = '被调度停止'
                     break
                 time.sleep(1)
-            raise Exception("当前任务停止超时")
+            
+            if self.executor.current_task is not None:
+                raise Exception("当前任务停止超时")
 
-        if not target_task.enabled or current_task and current_task != target_task and self.executor.current_task is None:
-            # 重置ui，回到历练页面
-            self._reset_ui_state()
-        # 启动目标任务
-        if not target_task.enabled:
-            logger.info(f"正在启动任务: {self.last_task_name}-{target_task.name}")
-            # self.go_to_tab(target_task.name)
-            target_task.enable()
-            # 记录当前调度的任务，用于后续追踪完成状态
-            self.last_scheduled_task = target_task
-            self.task_stats.append({
-                "module_key": module_key,
-                "task_name": task_name, 
-                "status": '运行中',
-                "start_time": time.strftime("%H:%M:%S", time.localtime()),
-                "end_time": None
-            })
-        else:
-            logger.info(f"任务 {self.last_task_name} 已经在运行中")
-            # 记录当前调度的任务，用于后续追踪完成状态
-            self.last_scheduled_task = target_task
+        def _start_target_task( target_task, module_key, task_name):
+            """启动目标任务"""
+            if not target_task.enabled or self.executor.current_task is None:
+                # 重置ui，回到历练页面
+                self._reset_ui_state()
+
+                logger.info(f"正在启动任务: {self.last_task_module}-{self.last_task_name}")
+                
+                target_task.enable()
+                logger.info(f"任务 {self.last_task_name} 已启用，target_task.name=>{target_task.name}")
+                self.go_to_tab(target_task.name)
+                
+                # 记录当前调度的任务，用于后续追踪完成状态
+                self.last_scheduled_task = target_task
+                self.task_stats.append({
+                    "module_key": module_key,
+                    "task_name": task_name,
+                    "status": '运行中',
+                    "start_time": time.strftime("%H:%M:%S", time.localtime()),
+                    "end_time": None
+                })
+            else:
+                logger.info(f"任务 {self.last_task_name} 已经在运行中")
+                # 记录当前调度的任务，用于后续追踪完成状态
+                self.last_scheduled_task = target_task
+
+        target_task = self.executor.get_task_by_class_name(task_class.__name__)
+
+        if not target_task:
+            logger.error(f"未找到任务: {task_class.__name__}")
+            return
+
+        # 1. 检查是否需要切换任务
+        if not _need_switch_task(target_task, module_key, task_name):
+            return
+        
+        # 2. 停止当前任务
+        _stop_current_task()
+        
+        # 3. 启动目标任务
+        _start_target_task(target_task, module_key, task_name)
 
 
     def _update_task_summary_ui(self):
@@ -532,11 +575,12 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             timeout, time_start = 2 * 60 ,time.time()
             logger.info(f"执行前置操作：重置UI状态 ({self.last_task_name}, 模块: {self.last_task_module}), 超时时间: {timeout}秒")
             # 不再历练页面，则执行循环
-            while not self.find_lilian() and self.is_enable_running() and time.time() - time_start < timeout:
+            while not self.find_lilian() and time.time() - time_start < timeout:
                 self.send_key("esc")
                 self.sleep(1)
 
                 if self.in_team():
+                    logger.info("处理任务界面: 退出任务")
                     self.give_up_mission()
                 
                 if (letter_btn := self.find_letter_interface()):
@@ -744,7 +788,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
         self.sleep(1) 
 
-        time_out, now_time = 5,time.time()
+        time_out, now_time = 3,time.time()
         rule_num, weapon_num, mod_num = None, None, None
         while (not isinstance(rule_num, (int, float)) or not isinstance(weapon_num, (int, float)) or not isinstance(mod_num, (int, float))) and time.time() - now_time < time_out and self.is_enable_running():
 
@@ -760,7 +804,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             if weapon_text and not isinstance(weapon_num, (int, float)):
                 weapon_num = int(re.sub(r'\D', '', weapon_text[0].name))
 
-            mod_box_params = (2560, 1440, 2560*0.54, 1440*0.43, 2560*0.59, 1440*0.46)
+            mod_box_params = (2560, 1440, 2560*0.54, 1440*0.43, 2560*0.60, 1440*0.46)
             mod_box = self.box_of_screen_scaled(*mod_box_params, name="letter_num_mod", hcenter=True)
             mod_text = self.ocr(box=mod_box,match=re.compile(r'\d+'))
             if mod_text and not isinstance(mod_num, (int, float)):

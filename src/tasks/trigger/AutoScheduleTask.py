@@ -21,13 +21,13 @@ from src.tasks.fullauto.AutoEscortTask_Fast import AutoEscortTask_Fast
 from src.tasks.fullauto.ImportTask import ImportTask
 from src.tasks.fullauto.AutoDismantle import AutoDismantle
 
-logger = Logger.get_logger(__name__+'====>')
+logger = Logger.get_logger(__name__)
 
 class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.name = "自动密函委托【有前台操作】"
-        self.description = "整点自动检查密函任务并按照优先级匹配任务执行，未匹配到则执行默认任务\n1、需在历练->委托页面启动 2、需要停止其他正在运行的任务 3、需要设置好自动处理密函"
+        self.description = "整点自动检查密函任务并按照优先级匹配任务执行，未匹配到则执行默认任务\n1、需在历练->委托页面启动 2、需要停止其他正在运行的任务 3、需要设置好自动处理密函\n整点切换任务的时候会有延迟，6分钟以内属于正常"
         self.group_icon = FluentIcon.CAFE
         
         # 默认配置（仅保留业务配置）
@@ -360,7 +360,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 return []
 
             # 解析关卡优先级
-            level_config = self.config.get("关卡类型优先级", "探险/无尽>驱离")
+            level_config = self.config.get("关卡类型优先级", "探险/无尽>驱离>拆解")
             level_order = [x.strip() for x in level_config.split(">") if x.strip()]
             task_priority_map = {name: i for i, name in enumerate(level_order)}
 

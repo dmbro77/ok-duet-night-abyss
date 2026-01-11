@@ -96,7 +96,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             "默认任务": "当没有匹配的委托密函任务时，自动执行此任务\n任务基于已有的任务执行，请对设置的任务做好相应配置",
             "默认任务副本类型": "可选普通任务和夜航任务\n根据选择的默认任务进行设置即可",
             "副本等级【普通任务】": "副本类型为正常委托时生效\n选择需要刷取的副本等级，根据选择的默认任务和副本类型进行设置",
-            "副本名称【夜航任务】": "副本类型为夜航手册时生效\n填写需要刷取的夜航手册名称，根据选择的默认任务和副本类型进行设置\n列如：霜狱野蜂暗箭(不需要空格)",
+            "副本名称【夜航任务】": "副本类型为夜航手册时生效\n填写需要刷取的夜航手册名称，根据选择的默认任务和副本类型进行设置\n列如：霜狱野蜂暗箭(不需要空格)，如果匹配不到，可以填写部分名称",
         }
 
         # 任务映射关系
@@ -108,6 +108,12 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         
         # 调度器核心状态
         self.init_param()
+
+    def _log_info(self, msg):
+        if self.last_scheduled_task:
+            self.last_scheduled_task.info_set('自动密函log',msg)
+        else:    
+         self.log_info(msg) 
 
     def scroll_relative(self, x, y, delta):
         # 保持原有的滚动逻辑
@@ -124,7 +130,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, 0, 0, 0, 0)
             self.sleep(0.05)
             target_wheel_delta = -int(delta)
-            logger.info(f"scroll_relative: pos={abs_pos}, input_delta={delta}, wheel_delta={target_wheel_delta}")
+            self._log_info(f"scroll_relative: pos={abs_pos}, input_delta={delta}, wheel_delta={target_wheel_delta}")
 
             step_size = 120
             if target_wheel_delta < 0:
@@ -143,7 +149,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 self.sleep(0.01)
                 
         except Exception as e:
-            logger.error(f"win32 scroll failed: {e}")
+            self._log_info(f"win32 scroll failed: {e}")
     
     def init_param(self):
         """初始化"""
@@ -153,6 +159,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         self.last_scheduled_task = None  # 最后一个任务
 
         self.finished_tasks = set()  # 已完成的任务标识（仅密函任务）
+        self.finished_tasks.clear()
         self.task_stats = []  # 任务统计信息
         
         self.last_check_hour = -1  # 上次检查的小时
@@ -165,7 +172,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             return
         super().enable()
         self.init_param()
-        logger.info("调度任务已启动")
+        self._log_info("调度任务已启动")
         self.thread_pool_executor.submit(self._scheduler_loop)
 
     def disable(self):
@@ -173,7 +180,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         if self.last_scheduled_task:
             self.executor.stop_current_task()
         self.finished_tasks.clear()
-        logger.info("调度任务已停止")
+        self._log_info("调度任务已停止")
 
     def is_enable_running(self):
         """检查当前是否可以运行"""
@@ -212,7 +219,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 
             # 如果任务被禁用了（说明执行完成了，或者被手动停止了）
             if not self.last_scheduled_task.enabled:
-                logger.info(f"检测到任务 {self.last_scheduled_task.name} 已结束")
+                self._log_info(f"检测到任务 {self.last_scheduled_task.name} 已结束")
                 
                 # 更新任务统计信息
                 self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
@@ -222,7 +229,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 if self.last_task_module != "default" and not self.prev_task_is_force_stop:
                     task_key = f"{self.last_task_module}_{self.last_task_name}_{self.last_scheduled_task.__class__.__name__}"
                     self.finished_tasks.add(task_key)
-                    logger.info(f"密函任务完成，加入已执行列表: {task_key}")
+                    self._log_info(f"密函任务完成，加入已执行列表: {task_key}")
                     # 重置状态
                     self.prev_task_is_force_stop = True
                 
@@ -255,12 +262,12 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         # if self.executor.paused:
         #     self.executor.start()
         # a,b,c = self.get_letter_num()
-        # logger.info(f"当前密函数量: {a}个, {b}个, {c}个")
+        # self._log_info(f"当前密函数量: {a}个, {b}个, {c}个")
         # return
 
         if not self._validate_config():
             return
-        logger.info("调度器循环开始")
+        self._log_info("调度器循环开始")
         
         # true 启动时立即检查一次
         should_check = True
@@ -277,7 +284,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 
                 # 2. 整点检查（必须的）
                 if _should_trigger_hourly_check(now):
-                    logger.info(f"整点触发检查: {now.hour}:00")
+                    self._log_info(f"整点触发检查: {now.hour}:00")
                     time.sleep(random.randint(5, 20))  # 随机延时5-20秒，避免请求过于集中
                     should_check = True
             
@@ -292,12 +299,12 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 time.sleep(1)  # 等待1秒后继续
                 
             except Exception as e:
-                logger.error(f"调度器循环异常: {e}")
+                self._log_info(f"调度器循环异常: {e}")
                 _handle_scheduler_error(e)
                 time.sleep(10)  # 出错后等待10秒
         
         _cleanup_on_exit()
-        logger.info("调度线程循环结束")
+        self._log_info("调度线程循环结束")
  
     def _calculate_target_task(self):
         """计算得出最终可执行任务"""
@@ -313,15 +320,15 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     json_data = response.json()
                     
                     if json_data.get("code") != 0 or not isinstance(current_data := json_data.get("data", []), list):
-                        logger.error(f"API返回错误代码: {json_data.get('code')}，或者data不是列表格式，{60*retries}s后重试 ({retries}/{max_retries})...")
+                        self._log_info(f"API返回错误代码: {json_data.get('code')}，或者data不是列表格式，{60*retries}s后重试 ({retries}/{max_retries})...")
                         if retries < max_retries:
                             time.sleep(60)
                         retries += 1
                         continue
-                    logger.info(f"API返回数据: {current_data}")
+                    self._log_info(f"API返回数据: {current_data}")
                     # 检查是否与上次数据相同
                     if _is_same_as_last_data(current_data):
-                        logger.info(f"API返回数据与上次相同，60s后重试 ({retries}/{max_retries})...")
+                        self._log_info(f"API返回数据与上次相同，60s后重试 ({retries}/{max_retries})...")
                         if retries < max_retries:
                             time.sleep(60)
                         retries += 1
@@ -329,12 +336,12 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     
                     # 数据已更新
                     if self.last_api_response_data is not None:
-                        logger.info("API数据已更新")
+                        self._log_info("API数据已更新")
                     self.last_api_response_data = current_data
                     return True
                     
                 except Exception as req_err:
-                    logger.warning(f"请求API失败 ({retries}): {req_err}")
+                    self._log_info(f"请求API失败 ({retries}): {req_err}")
                     if retries < max_retries:
                         time.sleep(60)
                     retries += 1
@@ -356,7 +363,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             sorted_modules = [name for name in commission_order if name in module_index_map]
             
             if not sorted_modules:
-                logger.info("未配置有效的密函委托优先级")
+                self._log_info("未配置有效的密函委托优先级")
                 return []
 
             # 解析关卡优先级
@@ -366,7 +373,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
             tasks_to_execute = []
 
-            # 遍历模块寻找任务
+            # 遍历模块寻找任务 - 先按密函委托优先级排序
             for module_key in sorted_modules:
                 index = module_index_map.get(module_key)
                 if index is None or index >= len(instance_info_list):
@@ -382,22 +389,25 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     mapped_name = task_info.get("name") 
                     if mapped_name and mapped_name in self.TASK_MAPPING:
                         priority = task_priority_map.get(mapped_name, 999)
+                        # 添加模块优先级作为主要排序键
+                        module_priority = sorted_modules.index(module_key)
                         tasks_to_execute.append({
                             "name": mapped_name,
                             "class": self.TASK_MAPPING[mapped_name],
                             "priority": priority,
                             "module_key": module_key,
+                            "module_priority": module_priority  # 添加模块优先级
                         })
 
-            # 按优先级排序
-            tasks_to_execute.sort(key=lambda x: x["priority"])
+            # 按优先级排序 - 先按模块优先级，再按关卡优先级
+            tasks_to_execute.sort(key=lambda x: (x["module_priority"], x["priority"]))
             return tasks_to_execute
 
         def _find_first_executable_task(tasks_to_execute):
             """找到第一个可执行的任务（内部函数）"""
             # 获取密函数量
             rule_num, weapon_num, mod_num = self.get_letter_num()
-            logger.info(f"当前密函数量 - 角色: {rule_num}, 武器: {weapon_num}, MOD: {mod_num}")
+            logger.debug(f"当前密函数量 - 角色: {rule_num}, 武器: {weapon_num}, MOD: {mod_num}")
             
             for task in tasks_to_execute:
                 task_key = f"{task['module_key']}_{task['name']}_{task['class'].__name__}"
@@ -405,10 +415,11 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 # 检查密函数量
                 if not _has_enough_letters(task['module_key'], rule_num, weapon_num, mod_num):
                     continue
-                    
+
+                logger.debug(f"已完成任务: {self.finished_tasks}")    
                 # 检查是否已完成
                 if task_key not in self.finished_tasks:
-                    logger.info(f"匹配到任务: {task['name']} (模块: {task['module_key']})")
+                    self._log_info(f"匹配到任务: {task['name']} (模块: {task['module_key']})")
                     return task['class'], task['module_key'], task['name']
                     
             return None
@@ -416,13 +427,13 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         def _has_enough_letters(module_key, rule_num, weapon_num, mod_num):
             """检查是否有足够的密函（内部函数）"""
             if module_key == "角色" and rule_num == 0:
-                logger.info(f"角色任务 密函数量为0，跳过")
+                self._log_info(f"角色任务 密函数量为0，跳过")
                 return False
             if module_key == "武器" and weapon_num == 0:
-                logger.info(f"武器任务 密函数量为0，跳过")
+                self._log_info(f"武器任务 密函数量为0，跳过")
                 return False
             if module_key == "MOD" and mod_num == 0:
-                logger.info(f"MOD任务 密函数量为0，跳过")
+                self._log_info(f"MOD任务 密函数量为0，跳过")
                 return False
             return True
 
@@ -437,30 +448,30 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         HEADERS = {"game-alias": "dna"}
         
         try:
-            logger.info(f"请求API获取任务数据，小时信息：{self.last_check_hour}，{datetime.now().hour}，将最多执行{1 if self.last_check_hour == datetime.now().hour else 5}次")
+            self._log_info(f"请求API获取任务数据，小时信息：{self.last_check_hour}，{datetime.now().hour}，将最多执行{1 if self.last_check_hour == datetime.now().hour else 5}次")
             
             # 获取API数据
             if not _fetch_api_data(API_URL, HEADERS, 1 if self.last_check_hour == datetime.now().hour else 5):
                 return _get_default_task_info()
                 
             instance_info_list = self.last_api_response_data
-            logger.info(f"最终API数据: {instance_info_list}")
+            self._log_info(f"最终API数据: {instance_info_list}")
             
             # 获取任务列表并排序
             tasks_to_execute = _get_sorted_tasks(instance_info_list)
-            logger.info(f"api返回的可执行任务列表: {tasks_to_execute}")
+            self._log_info(f"api返回的可执行任务列表: {tasks_to_execute}")
             
             # 找到第一个可执行的任务
             result = _find_first_executable_task(tasks_to_execute)
             if result:
                 return result
                 
-            logger.info(f"已完成的任务: {self.finished_tasks}")
-            logger.info("未匹配到可执行的密函任务，执行默认任务")
+            self._log_info(f"已完成的任务: {self.finished_tasks}")
+            self._log_info("未匹配到可执行的密函任务，执行默认任务")
             return _get_default_task_info()
             
         except Exception as e:
-            logger.error(f"请求API或处理数据失败: {e}")
+            self._log_info(f"请求API或处理数据失败: {e}")
             return _get_default_task_info()
 
     def schedule_task(self, task_class, module_key, task_name):
@@ -474,12 +485,12 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 isinstance(self.last_scheduled_task, target_task.__class__)
             )
             
-            logger.info(f"任务变化信息: {self.last_task_module}->{module_key}, "
+            self._log_info(f"任务变化信息: {self.last_task_module}->{module_key}, "
                         f"{self.last_task_name}->{task_name}, "
                         f"{self.last_scheduled_task}->{target_task}")
             
             if is_same_task:
-                logger.info(f"任务相同且正在运行，无需切换: {task_name}")
+                self._log_info(f"任务相同且正在运行，无需切换: {task_name}")
                 return False
             
             # 更新任务记录
@@ -491,10 +502,10 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             """停止当前正在运行的任务"""
             current_task = self.executor.current_task
             if current_task is None:
-                logger.info(f"当前没有正在运行的任务，不需要停止")
+                self._log_info(f"当前没有正在运行的任务，不需要停止")
                 return
             
-            logger.info(f"正在强制停止当前任务: {current_task.name}")
+            self._log_info(f"正在强制停止当前任务: {current_task.name}")
             self.executor.stop_current_task()  # 发送停止信号
             
             # 等待当前任务退出 (最多等60秒)
@@ -517,10 +528,10 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 # 重置ui，回到历练页面
                 self._reset_ui_state()
 
-                logger.info(f"正在启动任务: {self.last_task_module}-{self.last_task_name}")
+                self._log_info(f"正在启动任务: {self.last_task_module}-{self.last_task_name}")
                 
                 target_task.enable()
-                logger.info(f"任务 {self.last_task_name} 已启用，target_task.name=>{target_task.name}")
+                self._log_info(f"任务 {self.last_task_name} 已启用，target_task.name=>{target_task.name}")
                 self.go_to_tab(target_task.name)
                 
                 # 记录当前调度的任务，用于后续追踪完成状态
@@ -533,24 +544,30 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     "end_time": None
                 })
             else:
-                logger.info(f"任务 {self.last_task_name} 已经在运行中")
+                self._log_info(f"任务 {self.last_task_name} 已经在运行中")
                 # 记录当前调度的任务，用于后续追踪完成状态
                 self.last_scheduled_task = target_task
 
         target_task = self.executor.get_task_by_class_name(task_class.__name__)
 
         if not target_task:
-            logger.error(f"未找到任务: {task_class.__name__}")
+            self._log_info(f"未找到任务: {task_class.__name__}")
             return
 
         # 1. 检查是否需要切换任务
         if not _need_switch_task(target_task, module_key, task_name):
             return
+
+        # 2 如果当前没有正在运行的任务，且有任务统计记录，更新任务统计信息
+        if self.executor.current_task is None and self.task_stats:
+            self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
+            self.task_stats[-1]["status"] = '任务自行完成'
         
-        # 2. 停止当前任务
+
+        # 3. 停止当前任务
         _stop_current_task()
         
-        # 3. 启动目标任务
+        # 4. 启动目标任务
         _start_target_task(target_task, module_key, task_name)
 
 
@@ -575,18 +592,18 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         """重置UI状态"""
         try:
             timeout, time_start = 2 * 60 ,time.time()
-            logger.info(f"执行前置操作：重置UI状态 ({self.last_task_name}, 模块: {self.last_task_module}), 超时时间: {timeout}秒")
+            self._log_info(f"执行前置操作：重置UI状态 ({self.last_task_name}, 模块: {self.last_task_module}), 超时时间: {timeout}秒")
             # 不再历练页面，则执行循环
             while not self.find_lilian() and time.time() - time_start < timeout:
                 self.send_key("esc")
                 self.sleep(1)
 
                 if self.in_team():
-                    logger.info("处理任务界面: 退出任务")
+                    self._log_info("处理任务界面: 退出任务")
                     self.give_up_mission()
                 
                 if (letter_btn := self.find_letter_interface()):
-                    logger.info("处理密函耗尽：密函耗尽，点击确认后退出副本")
+                    self._log_info("处理密函耗尽：密函耗尽，点击确认后退出副本")
                     box = self.box_of_screen_scaled(
                         2560, 1440, 1190, 610, 2450, 820, 
                         name="letter_drag_area", hcenter=True
@@ -606,11 +623,11 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     self.give_up_mission()
                 
                 if (quit_btn := self.find_ingame_quit_btn()):
-                    logger.info("处理任务界面: 点击退出按钮")
+                    self._log_info("处理任务界面: 点击退出按钮")
                     self.click_box_random(quit_btn, right_extend=0.1, post_sleep=0, after_sleep=0.25)
                 
                 if self.find_letter_reward_btn():
-                    logger.info("处理任务界面: 选择密函奖励")
+                    self._log_info("处理任务界面: 选择密函奖励")
                     self.choose_letter_reward()   
                 self.sleep(1)
 
@@ -624,16 +641,16 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 self.switch_to_letter()
             
             self.sleep(0.3)
-            logger.info("UI状态重置完成")
+            self._log_info("UI状态重置完成")
         except Exception as e:
-            logger.warning(f"UI状态重置可能未完全成功: {e}")
+            self._log_info(f"UI状态重置可能未完全成功: {e}")
             raise e
 
     def switch_to_default_task(self):
         """切换到默认任务副本"""
         default_task_type = self.config.get("默认任务副本类型")
         if not default_task_type:
-            logger.warning("未配置默认任务副本类型")
+            self._log_info("未配置默认任务副本类型")
             return
         
         type_task, task_name = default_task_type.split(':')
@@ -672,7 +689,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             attempt = 0
             while attempt <= max_attempts and self.is_enable_running():
                 attempt += 1
-                logger.info(f"尝试匹配任务: {task_name} (尝试{attempt}/{max_attempts})")
+                self._log_info(f"尝试匹配任务: {task_name} (尝试{attempt}/{max_attempts})")
                 match_box = self.wait_ocr(
                     box=self.box_of_screen_scaled(*box_params, name="weituo", hcenter=True),
                     match=re.compile(f'.*{task_name}.*'),
@@ -687,14 +704,14 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     break
             
         if not clicked:
-            logger.warning(f"未找到任务: {task_name}")
+            self._log_info(f"未找到任务: {task_name}")
             raise Exception(f"未找到任务: {task_name}")    
 
     def switch_to_task_level(self):
         """选择默认任务关卡等级"""
         
         if not (default_task_type := self.config.get("默认任务副本类型")):
-            logger.warning("未配置默认任务副本类型")
+            self._log_info("未配置默认任务副本类型")
             return
         
         type_task, task_name = default_task_type.split(':')
@@ -712,21 +729,21 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         clicked, attempt, now_time, timeout = False, 1, time.time(), 20
         # 统一的匹配逻辑
         while not clicked and time.time() - now_time < timeout and self.is_enable_running():
-            logger.info(f"尝试匹配: {task_name} (第{attempt}次)")
+            self._log_info(f"尝试匹配: {task_name} (第{attempt}次)")
             match_box = self.ocr(
                 box=self.box_of_screen_scaled(
                     2560, 1440, *box_params, name="等级", hcenter=True
                 ),
                 match=re.compile(f'.*{task_name}.*')
             )
-            logger.info(f"OCR匹配到的夜航副本或者任务等级: {match_box}")
+            self._log_info(f"OCR匹配到的夜航副本或者任务等级: {match_box}")
             if match_box:
-                logger.info(f"匹配成功: {match_box}")
+                self._log_info(f"匹配成功: {match_box}")
                 if type_task == "夜航手册":
                     box = match_box[0]
                     y= box.y
                     to_y= y+box.height
-                    logger.info(f"夜航手册匹配到的框: {self.width*0.55}, {(y+0.1)}, {box.width}, {box.height}")
+                    self._log_info(f"夜航手册匹配到的框: {self.width*0.55}, {(y+0.1)}, {box.width}, {box.height}")
                     box = Box(self.width*0.55, y+(0.016*self.height), box.width, box.height)
                     self.draw_boxes(boxes=box)
                     for _ in range(2):
@@ -743,7 +760,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 self.sleep(1)
             attempt += 1
         if not clicked:
-            logger.warning(f"未找到匹配的{type_task}副本: {task_name}")
+            self._log_info(f"未找到匹配的{type_task}副本: {task_name}")
             raise Exception(f"未找到匹配的{type_task}副本: {task_name}")    
 
     def switch_to_letter(self):
@@ -775,7 +792,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             self.click_box_random(text[0])
             clicked = True
         if not clicked:
-            logger.warning(f"进入密函任务：未找到匹配的{self.last_task_module}任务: {self.last_task_name}，无法点击进入")
+            self._log_info(f"进入密函任务：未找到匹配的{self.last_task_module}任务: {self.last_task_name}，无法点击进入")
             raise Exception(f"进入密函任务：未找到匹配的{self.last_task_module}任务: {self.last_task_name}，无法点击进入")       
 
     def get_letter_num(self):

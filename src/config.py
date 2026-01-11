@@ -164,6 +164,7 @@ config = {
         # ["src.tasks.fullauto.AutoAllFishTask", "AutoAllFishTask"],
         ["src.tasks.fullauto.AutoRogueTask", "AutoRogueTask"],
         ["src.tasks.fullauto.AutoExploration_Fast", "AutoExploration_Fast"],
+        ["src.tasks.fullauto.AutoDismantle", "AutoDismantle"],
         ["src.tasks.fullauto.AutoEscortTask", "AutoEscortTask"],
         ["src.tasks.fullauto.AutoEscortTask_Fast", "AutoEscortTask_Fast"],
         ["src.tasks.fullauto.Auto65ArtifactTask_Fast", "Auto65ArtifactTask_Fast"],

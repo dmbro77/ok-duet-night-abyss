@@ -113,7 +113,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         if self.last_scheduled_task:
             self.last_scheduled_task.info_set('自动密函log',msg)
         else:    
-         self.log_info(msg) 
+            self.log_info(msg) 
 
     def scroll_relative(self, x, y, delta):
         # 保持原有的滚动逻辑
@@ -315,9 +315,9 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             while self.is_enable_running() and retries <= max_retries:
                 params = {"_t": int(time.time() * 1000)}
                 try:
-                    response = requests.get(api_url, headers=headers, params=params, timeout=10)
-                    response.raise_for_status()
-                    json_data = response.json()
+                    with requests.get(api_url, headers=headers, params=params, timeout=10) as response:
+                        response.raise_for_status()
+                        json_data = response.json()
                     
                     if json_data.get("code") != 0 or not isinstance(current_data := json_data.get("data", []), list):
                         self._log_info(f"API返回错误代码: {json_data.get('code')}，或者data不是列表格式，{60*retries}s后重试 ({retries}/{max_retries})...")
@@ -500,27 +500,42 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
         def _stop_current_task():
             """停止当前正在运行的任务"""
-            current_task = self.executor.current_task
-            if current_task is None:
-                self._log_info(f"当前没有正在运行的任务，不需要停止")
-                return
-            
-            self._log_info(f"正在强制停止当前任务: {current_task.name}")
-            self.executor.stop_current_task()  # 发送停止信号
-            
-            # 等待当前任务退出 (最多等60秒)
-            now_time = time.time()
-            while time.time() - now_time < 60 and self.is_enable_running():
-                if self.executor.current_task is None:
-                    self.prev_task_is_force_stop = False
-                    # 更新任务统计信息
+            # 1. 停止我们追踪的最后调度任务
+            if self.last_scheduled_task and self.last_scheduled_task.enabled:
+                self._log_info(f"正在停止上一个调度任务: {self.last_scheduled_task.name}")
+                self.last_scheduled_task.disable()
+                
+                # 标记为强制停止
+                self.prev_task_is_force_stop = True
+                
+                # 更新任务统计信息 (如果还没结束)
+                if self.task_stats and self.task_stats[-1]["end_time"] is None:
                     self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
                     self.task_stats[-1]["status"] = '被调度停止'
-                    break
-                time.sleep(1)
+
+            # 2. 停止Executor当前任务
+            current_task = self.executor.current_task
+            if current_task:
+                self._log_info(f"正在强制停止当前任务: {current_task.name}")
+                self.executor.stop_current_task()  # 发送停止信号
+                
+                # 等待当前任务退出 (最多等60秒)
+                now_time = time.time()
+                while time.time() - now_time < 60 and self.is_enable_running():
+                    if self.executor.current_task is None:
+                        self.prev_task_is_force_stop = False
+                        # 更新任务统计信息
+                        if self.task_stats and self.task_stats[-1]["end_time"] is None:
+                            self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
+                            self.task_stats[-1]["status"] = '被调度停止'
+                        break
+                    time.sleep(1)
+                
+                if self.executor.current_task is not None:
+                    self._log_info("警告: Executor当前任务停止超时")
             
-            if self.executor.current_task is not None:
-                raise Exception("当前任务停止超时")
+            # 稍微等待一下，确保资源释放
+            self.sleep(1)
 
         def _start_target_task( target_task, module_key, task_name):
             """启动目标任务"""
@@ -543,6 +558,9 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     "start_time": time.strftime("%H:%M:%S", time.localtime()),
                     "end_time": None
                 })
+                # 限制统计列表长度，防止内存泄漏
+                if len(self.task_stats) > 50:
+                    self.task_stats.pop(0)
             else:
                 self._log_info(f"任务 {self.last_task_name} 已经在运行中")
                 # 记录当前调度的任务，用于后续追踪完成状态

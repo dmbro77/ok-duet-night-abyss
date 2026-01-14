@@ -179,6 +179,7 @@ config = {
         ["ok", "DiagnosisTask"],
     ],
     'trigger_tasks':[
+        ["src.tasks.trigger.AutoScheduleTask", "AutoScheduleTask"],
         ["src.tasks.trigger.AutoRouletteTask", "AutoRouletteTask"],
         ["src.tasks.trigger.AutoMazeTask", "AutoMazeTask"],
         ["src.tasks.trigger.AutoPickTask", "AutoPickTask"],

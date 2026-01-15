@@ -43,6 +43,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.default_config.update({
             '外部文件夹': "",
             '副本类型': "默认",
+            "快速继续挑战": True,
             '关闭抖动': False,
             # '使用内建机关解锁': False,
         })
@@ -59,6 +60,7 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.config_description.update({
             '轮次': '如果是无尽关卡，选择打几个轮次',
             '外部文件夹': '选择mod目录下的外部逻辑',
+            "快速继续挑战": "R键快速继续挑战，跳过结算动画。",
             '关闭抖动': '使用飞枪等存在视角移动的外部逻辑时可以启用',
             # '使用内建解密': '使用ok内建解密功能',
         })
@@ -123,6 +125,13 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                     self.runtime_state["delay_task_start"] += 1
                     if self.match_map(self.delay_index):
                         self.walk_to_aim(self.delay_index)
+            
+            elif (self.config.get("快速继续挑战", False) 
+                and self.current_round ==0
+                and not self.wait_until(lambda: self.in_team(), time_out=0.3)
+            ):
+                self.send_key(key="r", down_time=0.050)
+                
             _status = self.handle_mission_interface(stop_func=self.stop_func)
             if _status == Mission.START or _status == Mission.STOP:
                 if _status == Mission.STOP:
@@ -223,11 +232,15 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
     def walk_to_aim(self, former_index=None, delay=0):
         try:
-            self.hold_lalt = True
-            self.sleep(delay)
+            self.fidget_params.update({"skip_jitter": True})
+            self.sleep(1)
+            self.fidget_params.update({"hold_lalt": True})
+            self.sleep(0.5)
+            self.fidget_params.update({"skip_jitter": False})
+            self.sleep(delay-1.5)
             ret = self._walk_to_aim(former_index)
         finally:
-            self.hold_lalt = False
+            self.fidget_params.update({"hold_lalt": False})
         return ret
 
     def _walk_to_aim(self, former_index=None):

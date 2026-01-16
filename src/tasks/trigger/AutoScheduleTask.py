@@ -500,42 +500,27 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
         def _stop_current_task():
             """停止当前正在运行的任务"""
-            # 1. 停止我们追踪的最后调度任务
-            if self.last_scheduled_task and self.last_scheduled_task.enabled:
-                self._log_info(f"正在停止上一个调度任务: {self.last_scheduled_task.name}")
-                self.last_scheduled_task.disable()
-                
-                # 标记为强制停止
-                self.prev_task_is_force_stop = True
-                
-                # 更新任务统计信息 (如果还没结束)
-                if self.task_stats and self.task_stats[-1]["end_time"] is None:
+            current_task = self.executor.current_task
+            if current_task is None:
+                self._log_info(f"当前没有正在运行的任务，不需要停止")
+                return
+            
+            self._log_info(f"正在强制停止当前任务: {current_task.name}")
+            self.executor.stop_current_task()  # 发送停止信号
+            
+            # 等待当前任务退出 (最多等60秒)
+            now_time = time.time()
+            while time.time() - now_time < 60 and self.is_enable_running():
+                if self.executor.current_task is None:
+                    self.prev_task_is_force_stop = False
+                    # 更新任务统计信息
                     self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
                     self.task_stats[-1]["status"] = '被调度停止'
-
-            # 2. 停止Executor当前任务
-            current_task = self.executor.current_task
-            if current_task:
-                self._log_info(f"正在强制停止当前任务: {current_task.name}")
-                self.executor.stop_current_task()  # 发送停止信号
-                
-                # 等待当前任务退出 (最多等60秒)
-                now_time = time.time()
-                while time.time() - now_time < 60 and self.is_enable_running():
-                    if self.executor.current_task is None:
-                        self.prev_task_is_force_stop = False
-                        # 更新任务统计信息
-                        if self.task_stats and self.task_stats[-1]["end_time"] is None:
-                            self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
-                            self.task_stats[-1]["status"] = '被调度停止'
-                        break
-                    time.sleep(1)
-                
-                if self.executor.current_task is not None:
-                    self._log_info("警告: Executor当前任务停止超时")
+                    break
+                time.sleep(1)
             
-            # 稍微等待一下，确保资源释放
-            self.sleep(1)
+            if self.executor.current_task is not None:
+                raise Exception("当前任务停止超时")
 
         def _start_target_task( target_task, module_key, task_name):
             """启动目标任务"""
@@ -744,7 +729,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             task_name = task_text.split('.')[-1]
             box_params = (2560 * 0.10, 1440 * 0.19, 2560 * 0.17, 1440 * 0.62)
         
-        clicked, attempt, now_time, timeout = False, 1, time.time(), 20
+        clicked, attempt, now_time, timeout, flag = False, 1, time.time(), 20, 0
         # 统一的匹配逻辑
         while not clicked and time.time() - now_time < timeout and self.is_enable_running():
             self._log_info(f"尝试匹配: {task_name} (第{attempt}次)")
@@ -774,7 +759,10 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             
             # 仅夜航手册在匹配失败后滚动
             if type_task == "夜航手册" and not clicked:
-                self.scroll_relative(0.5, 0.4, 600)
+                flag+=1
+                if flag > 2:
+                    self.scroll_relative(0.5, 0.4, 600)
+                    flag = 0
                 self.sleep(1)
             attempt += 1
         if not clicked:

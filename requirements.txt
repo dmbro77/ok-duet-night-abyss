@@ -80,3 +80,5 @@ typing-extensions==4.15.0
     # via ok-script
 urllib3==2.6.3
     # via requests
+cryptography==46.0.3
+    # via -r requirements.in

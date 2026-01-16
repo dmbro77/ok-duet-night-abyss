@@ -41,6 +41,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             "默认任务副本类型": "角色技能材料:扼守/无尽",
             "副本等级【普通任务】": "lv.70",
             "副本名称【夜航任务】": "霜狱野蜂暗箭",
+            "token": "",
         }
            # 默认任务映射
         self.DEFAULT_TASK_MAPPING = {
@@ -97,6 +98,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             "默认任务副本类型": "可选普通任务和夜航任务\n根据选择的默认任务进行设置即可",
             "副本等级【普通任务】": "副本类型为正常委托时生效\n选择需要刷取的副本等级，根据选择的默认任务和副本类型进行设置",
             "副本名称【夜航任务】": "副本类型为夜航手册时生效\n填写需要刷取的夜航手册名称，根据选择的默认任务和副本类型进行设置\n列如：霜狱野蜂暗箭(不需要空格)，如果匹配不到，可以填写部分名称",
+            "token":"接口请求密钥"
         }
 
         # 任务映射关系
@@ -309,17 +311,28 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
     def _calculate_target_task(self):
         """计算得出最终可执行任务"""
 
-        def _fetch_api_data(api_url, headers, max_retries=5):
+        def _fetch_api_data(dev_code, token, max_retries=5):
             """获取API数据（内部函数）"""
             retries = 1
             while self.is_enable_running() and retries <= max_retries:
                 params = {"_t": int(time.time() * 1000)}
                 try:
-                    with requests.get(api_url, headers=headers, params=params, timeout=10) as response:
-                        response.raise_for_status()
-                        json_data = response.json()
+                    api = GameAPI(dev_code, token)
+                    result = api.default_role_for_tool()
+                    if result['code'] == 200:
+                        json_data = result['data']['instanceInfo']
+                    else:    
+                        self._log_info(f"API请求错误，60s后重试 ({retries}/{max_retries})...")
+                        if retries < max_retries:
+                            time.sleep(60)
+                        retries += 1
+                        continue
+
+                    # with requests.get(api_url, headers=headers, params=params, timeout=10) as response:
+                    #     response.raise_for_status()
+                    #     json_data = response.json()
                     
-                    if json_data.get("code") != 0 or not isinstance(current_data := json_data.get("data", []), list):
+                    if  not isinstance(current_data := json_data, list):
                         self._log_info(f"API返回错误代码: {json_data.get('code')}，或者data不是列表格式，{60*retries}s后重试 ({retries}/{max_retries})...")
                         if retries < max_retries:
                             time.sleep(60)
@@ -444,14 +457,14 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 return self.DEFAULT_TASK_MAPPING[default_task_name], "default", default_task_name
             return None, None, default_task_name
 
-        API_URL = "https://wiki.ldmnq.com/v1/dna/instanceInfo"
-        HEADERS = {"game-alias": "dna"}
+        # API_URL = "https://wiki.ldmnq.com/v1/dna/instanceInfo"
+        # HEADERS = {"game-alias": "dna"}
         
         try:
             self._log_info(f"请求API获取任务数据，小时信息：{self.last_check_hour}，{datetime.now().hour}，将最多执行{1 if self.last_check_hour == datetime.now().hour else 5}次")
             
             # 获取API数据
-            if not _fetch_api_data(API_URL, HEADERS, 1 if self.last_check_hour == datetime.now().hour else 5):
+            if not _fetch_api_data("", self.config.get("token"), 1 if self.last_check_hour == datetime.now().hour else 5):
                 return _get_default_task_info()
                 
             instance_info_list = self.last_api_response_data
@@ -849,3 +862,230 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             logger.debug(f"查找历练文本第{flag+1}次尝试")
             flag += 1
         return lilian
+
+
+# import requests
+import time
+import random
+import hashlib
+import base64
+import json
+from urllib.parse import urlencode
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.backends import default_backend
+
+
+class DNABaseAPI:
+    RSA_PUBLIC_KEY = (
+        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDGpdbezK+eknQZQzPOjp8mr/dP+QHwk8CRkQh6C6qFnfLH3tiyl0pnt3dePuFDnM1PUXGhCkQ157ePJCQgkDU2+mimDmXh0oLFn9zuWSp+U8uLSLX3t3PpJ8TmNCROfUDWvzdbnShqg7JfDmnrOJz49qd234W84nrfTHbzdqeigQIDAQAB"
+    )
+    BASE_URL = "https://dnabbs-api.yingxiong.com/"
+
+    def __init__(self, dev_code, token=""):
+        self.dev_code = dev_code
+        self.token = token
+        self.session = requests.Session()
+
+    def _rsa_encrypt(self, text):
+        try:
+            pem_key = f"-----BEGIN PUBLIC KEY-----\n{self.RSA_PUBLIC_KEY}\n-----END PUBLIC KEY-----"
+            public_key = serialization.load_pem_public_key(
+                pem_key.encode('utf-8'),
+                backend=default_backend()
+            )
+            encrypted = public_key.encrypt(
+                text.encode('utf-8'),
+                padding.PKCS1v15()
+            )
+            return base64.b64encode(encrypted).decode('utf-8')
+        except Exception as e:
+            raise Exception(f"[DNA] RSA Encryption failed: {str(e)}")
+
+    def _rand_str(self, length=16):
+        chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        return "".join(random.choice(chars) for _ in range(length))
+
+    def _md5_upper(self, text):
+        return hashlib.md5(text.encode('utf-8')).hexdigest().upper()
+
+    def _signature_hash(self, text):
+        md5_hash = self._md5_upper(text)
+        chars = list(md5_hash)
+        positions = [1, 13, 5, 17, 7, 23]
+        
+        # Swap positions
+        # TS: for (let i = 1; i < positions.length; i += 2)
+        for i in range(1, len(positions), 2):
+            p1 = positions[i-1]
+            p2 = positions[i]
+            if 0 <= p1 < len(chars) and 0 <= p2 < len(chars):
+                chars[p1], chars[p2] = chars[p2], chars[p1]
+        
+        return "".join(chars)
+
+    def _sign_fI(self, data, secret):
+        # Sort keys
+        sorted_keys = sorted(data.keys())
+        pairs = []
+        for k in sorted_keys:
+            v = data[k]
+            # TS: if (v !== null && v !== undefined && v !== "")
+            if v is not None and v != "":
+                pairs.append(f"{k}={v}")
+        
+        qs = "&".join(pairs)
+        return self._signature_hash(f"{qs}&{secret}")
+
+    def _xor_encode(self, text, key):
+        tb = text.encode('utf-8')
+        kb = key.encode('utf-8')
+        out = []
+        for i, b in enumerate(tb):
+            # TS: (b & 255) + (kb[i % kb.length] & 255)
+            # Python bytes are already ints 0-255
+            k_byte = kb[i % len(kb)]
+            e = b + k_byte
+            out.append(f"@{e}")
+        return "".join(out)
+
+    def _build_signature(self, data, token=""):
+        ts = int(time.time() * 1000)
+        sign_data = data.copy()
+        sign_data['timestamp'] = ts
+        if token:
+            sign_data['token'] = token
+        elif 'token' in sign_data:
+             # Ensure token is treated consistently if passed in data but we want to use empty string for signing if token arg is empty?
+             # TS: build_signature(payload, tokenSig ? token : "")
+             # If token is passed as argument, it overrides/sets 'token' in sign_data for calculation
+             pass
+        else:
+             # If token not passed, set to empty?
+             # TS: const sign_data = { ...data, timestamp: ts, token }
+             # If token is undefined in TS call, it's undefined in object.
+             # But here build_signature receives token from caller.
+             sign_data['token'] = token
+
+        sec = self._rand_str(16)
+        sig = self._sign_fI(sign_data, sec)
+        enc = self._xor_encode(sig, sec)
+        
+        return {'s': enc, 't': ts, 'k': sec}
+
+    def _get_headers(self, payload, options=None):
+        if options is None:
+            options = {}
+        
+        token = options.get('token', self.token)
+        tokenSig = options.get('tokenSig', False)
+        dev_code = options.get('dev_code', self.dev_code)
+        
+        content_type = "application/x-www-form-urlencoded; charset=utf-8"
+        headers = {
+            "version": "1.1.3",
+            "source": "ios",
+            "Content-Type": content_type,
+            "User-Agent": "DoubleHelix/4 CFNetwork/3860.100.1 Darwin/25.0.0"
+        }
+        
+        if dev_code:
+            headers['devCode'] = dev_code
+        if token:
+            headers['token'] = token
+            
+        if isinstance(payload, dict):
+            # Sign the payload
+            # TS: build_signature(payload, tokenSig ? token : "")
+            sign_token = token if tokenSig else ""
+            si = self._build_signature(payload, sign_token)
+            
+            payload['sign'] = si['s']
+            payload['timestamp'] = si['t']
+            
+            # Encrypt key
+            rk = si['k']
+            ek = self._rsa_encrypt(rk)
+            
+            headers['rk'] = rk
+            headers['key'] = ek
+            
+            # Convert payload to urlencoded string
+            # TS: params.append(key, String(value))
+            # We need to ensure values are strings
+            payload_str_dict = {k: str(v) for k, v in payload.items()}
+            payload_encoded = urlencode(payload_str_dict)
+            
+            return headers, payload_encoded
+            
+        return headers, payload
+
+    def _dna_request(self, endpoint, data=None, options=None):
+        if options is None:
+            options = {}
+            
+        method = options.get('method', 'POST')
+        sign = options.get('sign', False)
+        token_sig = options.get('tokenSig', False)
+        
+        url = f"{self.BASE_URL}{endpoint}"
+        
+        if data is None:
+            data = {}
+            
+        headers = {}
+        request_body = data
+        
+        if sign:
+            h, p = self._get_headers(
+                payload=data, 
+                options={'token': self.token, 'tokenSig': token_sig}
+            )
+            headers = h
+            request_body = p
+        else:
+            # If not signing, just basic headers
+            h, _ = self._get_headers(payload=None, options={'token': self.token})
+            headers = h
+            if isinstance(data, dict):
+                request_body = urlencode(data)
+
+        try:
+            response = self.session.request(
+                method=method,
+                url=url,
+                headers=headers,
+                data=request_body,
+                timeout=10
+            )
+            
+            # Handle response
+            if "text/" in response.headers.get('Content-Type', ''):
+                return {'code': -1, 'data': response.text}
+            
+            res_json = response.json()
+            
+            # TS: if (typeof raw_res.data === "string") { raw_res.data = JSON.parse(raw_res.data) }
+            if isinstance(res_json.get('data'), str):
+                try:
+                    res_json['data'] = json.loads(res_json['data'])
+                except:
+                    pass
+                    
+            return res_json
+            
+        except Exception as e:
+            print(f"Request failed: {str(e)}")
+            return {'code': -1, 'msg': str(e)}
+
+class GameAPI(DNABaseAPI):
+    def default_role_for_tool(self, type_val=1, other_user_id=None):
+        data = {'type': type_val}
+        if other_user_id:
+            data['otherUserId'] = other_user_id
+            
+        return self._dna_request(
+            "role/defaultRoleForTool",
+            data,
+            {'sign': True, 'token': True, 'tokenSig': True}
+        )

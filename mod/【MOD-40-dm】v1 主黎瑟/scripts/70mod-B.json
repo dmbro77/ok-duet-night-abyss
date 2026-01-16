@@ -8,23 +8,13 @@
   "actions": [
     {
       "type": "key_down",
-      "key": "q",
-      "time": 1.2793018999509513
-    },
-    {
-      "type": "key_up",
-      "key": "q",
-      "time": 1.3942895999643952
-    },
-    {
-      "type": "key_down",
       "key": "shift",
-      "time": 4.591365200001746
+      "time": 0.591365200001746
     },
     {
       "type": "key_up",
       "key": "shift",
-      "time": 6.881348600029014
+      "time": 0.881348600029014
     }
   ],
   "stats": {

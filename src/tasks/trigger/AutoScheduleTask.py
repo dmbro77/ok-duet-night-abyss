@@ -23,6 +23,12 @@ from src.tasks.fullauto.AutoDismantle import AutoDismantle
 
 logger = Logger.get_logger(__name__)
 
+
+class UiResetException(Exception):
+    def __init__(self, message="UI重置异常"):
+        self.message = message
+        super().__init__(self.message)
+
 class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -538,8 +544,24 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         def _start_target_task( target_task, module_key, task_name):
             """启动目标任务"""
             if not target_task.enabled or self.executor.current_task is None:
-                # 重置ui，回到历练页面
-                self._reset_ui_state()
+                try:
+                    # 重置ui，回到历练页面
+                    self._reset_ui_state()
+                except UiResetException as e:
+                    self._log_info(f"UI重置异常: {e},等待10秒后重试3次")
+                    self.sleep(10)
+                    retries = 0
+                    while retries < 3:
+                        try:
+                            self._reset_ui_state()
+                            break
+                        except UiResetException as e:
+                            self._log_info(f"UI重置异常: {e},等待10秒后重试3次")
+                            self.sleep(10)
+                            retries += 1
+                    if retries == 3:
+                        raise UiResetException("UI重置失败3次")
+
 
                 self._log_info(f"正在启动任务: {self.last_task_module}-{self.last_task_name}")
                 
@@ -616,7 +638,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
                 if self.in_team():
                     self._log_info("处理任务界面: 退出任务")
-                    self.give_up_mission()
+                    self.give_up_mission(timeout=60)
                 
                 if (letter_btn := self.find_letter_interface()):
                     self._log_info("处理密函耗尽：密函耗尽，点击确认后退出副本")
@@ -636,7 +658,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                         time_out=5,
                         raise_if_not_found=True,
                     )
-                    self.give_up_mission()
+                    self.give_up_mission(timeout=60)
                 
                 if (quit_btn := self.find_ingame_quit_btn()):
                     self._log_info("处理任务界面: 点击退出按钮")
@@ -660,7 +682,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             self._log_info("UI状态重置完成")
         except Exception as e:
             self._log_info(f"UI状态重置可能未完全成功: {e}")
-            raise e
+            raise UiResetException(f"UI重置异常: {e}")
 
     def switch_to_default_task(self):
         """切换到默认任务副本"""

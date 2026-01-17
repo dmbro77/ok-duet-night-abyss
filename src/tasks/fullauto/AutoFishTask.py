@@ -119,36 +119,36 @@ class AutoFishTask(DNAOneTimeTask, CommissionsTask, BaseDNATask):
         self.info_set("阶段总计", info_str)
 
     def click_relative_random(self, x1, y1, x2, y2, down_time=0.02, post_sleep=0.0, after_sleep=0.0, use_safe_move=False, safe_move_box=None):
-        # # 生成随机相对坐标
-        # rx = random.uniform(x1, x2)
-        # ry = random.uniform(y1, y2)
+        # 生成随机相对坐标
+        rx = random.uniform(x1, x2)
+        ry = random.uniform(y1, y2)
         
-        # # 转换为游戏内像素坐标
-        # game_x = self.width_of_screen(rx)
-        # game_y = self.height_of_screen(ry)
+        # 转换为游戏内像素坐标
+        game_x = self.width_of_screen(rx)
+        game_y = self.height_of_screen(ry)
         
-        # if post_sleep > 0:
-        #     self.sleep(post_sleep)
+        if post_sleep > 0:
+            self.sleep(post_sleep)
 
-        # # 移动物理鼠标到目标位置
-        # if hasattr(self, 'executor') and hasattr(self.executor, 'interaction'):
-        #     abs_pos = self.executor.interaction.capture.get_abs_cords(game_x, game_y)
-        #     win32api.SetCursorPos(abs_pos)
+        # 移动物理鼠标到目标位置
+        if hasattr(self, 'executor') and hasattr(self.executor, 'interaction'):
+            abs_pos = self.executor.interaction.capture.get_abs_cords(game_x, game_y)
+            win32api.SetCursorPos(abs_pos)
 
-        # self.sleep(0.1)    
-        # # 执行点击
-        # self.click(int(game_x), int(game_y), down_time=down_time)
-        # self.sleep(0.01)  
-        # self.click(int(game_x), int(game_y), down_time=down_time)
+        self.sleep(0.1)    
+        # 执行点击
+        self.click(int(game_x), int(game_y), down_time=down_time)
+        self.sleep(0.01)  
+        self.click(int(game_x), int(game_y), down_time=down_time)
         
-        # # 点击后随机移动鼠标
-        # curr_x, curr_y = win32api.GetCursorPos()
-        # offset_x = random.randint(1, 10)
-        # offset_y = random.randint(1, 10)
-        # win32api.SetCursorPos((curr_x + offset_x, curr_y + offset_y))
-        # self.sleep(after_sleep)
-        for i in range(2):
-            super().click_relative_random(x1, y1, x2, y2, down_time, post_sleep, after_sleep, use_safe_move, safe_move_box)
+        # 点击后随机移动鼠标
+        curr_x, curr_y = win32api.GetCursorPos()
+        offset_x = random.randint(1, 10)
+        offset_y = random.randint(1, 10)
+        win32api.SetCursorPos((curr_x + offset_x, curr_y + offset_y))
+        self.sleep(after_sleep)
+        # for i in range(2):
+        #     super().click_relative_random(x1, y1, x2, y2, down_time, post_sleep, after_sleep, use_safe_move, safe_move_box)
         
        
 

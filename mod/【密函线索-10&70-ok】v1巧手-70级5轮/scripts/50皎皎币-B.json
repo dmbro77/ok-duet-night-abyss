@@ -1,0 +1,107 @@
+{
+  "name": "50皎皎币-B",
+  "version": "2.1",
+  "created_time": "2025-11-10 17:58:12",
+  "total_time": 14.546804428100586,
+  "action_count": 18,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 0.800060510635376
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 0.909780740737915
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.9082450866699219
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.202110767364502
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.36385178565979
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 4.332277059555054
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.525888681411743
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 8.032804250717163
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 8.315310955047607
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 8.807828426361084
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.220173358917236
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 9.704991579055786
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 10.662185192108154
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 10.718858480453491
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 11.602189540863037
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 11.663777828216553
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 14.477095127105713
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 14.546804428100586
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 6,
+    "key_presses": 18,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

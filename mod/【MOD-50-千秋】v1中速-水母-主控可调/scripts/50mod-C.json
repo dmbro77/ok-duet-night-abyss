@@ -1,0 +1,147 @@
+{
+  "name": "50-C",
+  "version": "2.1",
+  "created_time": "2025-11-19 17:33:30",
+  "total_time": 33.452696800231934,
+  "action_count": 26,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.0401086807250977
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.422053337097168
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 2.504065990447998
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.608039617538452
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 2.6100282669067383
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 3.218057870864868
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.418036937713623
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 3.616075277328491
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 5.356073379516602
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 9.092057943344116
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.938058614730835
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 10.096033096313477
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 10.490055084228516
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 10.576081991195679
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 10.896065950393677
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 10.978096723556519
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 21.774025678634644
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 23.906047821044922
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 24.190077543258667
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 25.05810022354126
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 27.23611855506897
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 27.50404143333435
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 28.696062803268433
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 32.882078409194946
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 33.45002770423889
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 33.452696800231934
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 6,
+    "key_presses": 26,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

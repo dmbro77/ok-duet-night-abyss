@@ -1,0 +1,107 @@
+{
+  "name": "60驱离-B电梯井",
+  "version": "2.1",
+  "created_time": "2025-11-11 17:54:56",
+  "total_time": 15.57608151435852,
+  "action_count": 18,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.368086576461792
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 0.8800551891326904
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 1.0320730209350586
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.3121185302734375
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.1759753227233887
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 9.424063920974731
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 9.480063676834106
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 10.512063264846802
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 10.888095140457153
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 12.240114450454712
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 12.504079341888428
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 12.984077215194702
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 13.592017650604248
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 14.08812427520752
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 14.264047384262085
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 14.816096544265747
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 15.48008131980896
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 15.57608151435852
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 4,
+    "key_presses": 18,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

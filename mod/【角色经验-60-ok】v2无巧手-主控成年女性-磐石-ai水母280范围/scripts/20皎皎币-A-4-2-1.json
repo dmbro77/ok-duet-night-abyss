@@ -1,0 +1,229 @@
+{
+  "name": "2-1-1",
+  "version": "1.0",
+  "created_time": "2025-11-06 15:12:07",
+  "total_time": 19.882320880889893,
+  "action_count": 44,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 0.830888032913208
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 1.3655121326446533
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 1.497199296951294
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.718493938446045
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 1.9056694507598877
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 2.7381248474121094
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 2.877614736557007
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 3.1209845542907715
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.239180088043213
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 4.047826528549194
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 4.0751354694366455
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 4.8371570110321045
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.9483489990234375
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 5.134992361068726
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 5.1596410274505615
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 6.759536266326904
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 7.143479347229004
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 7.432287931442261
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 7.559317588806152
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 7.896502256393433
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 8.092806577682495
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 8.99849796295166
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.138403415679932
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 9.366436004638672
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 9.490155220031738
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 10.12095332145691
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 10.32777714729309
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 10.694249868392944
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 10.827120542526245
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 13.235383033752441
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 13.829569578170776
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 15.21145248413086
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 15.287281513214111
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 15.626734256744385
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 15.678995609283447
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 16.020428895950317
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 16.15871024131775
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 16.344114780426025
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 16.595415353775024
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 17.538
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 17.75106382369995
+    },
+    {
+      "type": "key_down",
+      "time": 17.8,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 18.0,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 19.882320880889893
+    }
+  ]
+}

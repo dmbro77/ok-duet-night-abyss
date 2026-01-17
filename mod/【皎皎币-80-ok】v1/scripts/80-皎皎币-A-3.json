@@ -1,0 +1,77 @@
+{
+  "name": "80-皎皎币-A-3",
+  "version": "2.1",
+  "created_time": "2025-11-10 20:10:05",
+  "total_time": 42.01943373680115,
+  "action_count": 12,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.7660713195800781
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 1.9875006675720215
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 2.7194972038269043
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 3.0835444927215576
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 3.9992098808288574
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 4.105023384094238
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 16.333420276641846
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 17.784695863723755
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 18.41454553604126
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 18.522571325302124
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 29.842920541763306
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 42.01943373680115
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 12,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

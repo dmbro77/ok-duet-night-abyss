@@ -1,0 +1,47 @@
+{
+  "name": "60mod",
+  "version": "2.1",
+  "created_time": "2025-12-30 12:32:49",
+  "total_time": 3.647513675689697,
+  "action_count": 6,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.707676649093628
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.603692531585693
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 2.720543146133423
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 2.974520921707153
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.062477827072144
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 3.647513675689697
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 6,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

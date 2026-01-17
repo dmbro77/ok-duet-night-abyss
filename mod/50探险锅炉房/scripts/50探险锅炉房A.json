@@ -1,0 +1,702 @@
+{
+  "name": "50探险锅炉房A",
+  "version": "1.0",
+  "created_time": "2025-12-30 02:52:43",
+  "total_time": 38.374291800006176,
+  "action_count": 111,
+  "actions": [
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 0.906199100005324,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 0,
+      "dy": -100,
+      "time": 1.236940600007074,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 1.5010409000096843,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 1.7536702000070363,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 0,
+      "dy": -100,
+      "time": 2.095144100007019,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 2.317042800001218,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 2.5694628000055673,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 0,
+      "dy": 100,
+      "time": 3.0523644000058994,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 3.2579748000134714,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 3.5109189000068,
+      "source": "flying_gun"
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 4.850285900000017
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 6.303197300003376
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 6.421286100012367
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 6.550285800010897
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 6.866268500001752
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 7.040280000001076
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 7.386321600002702
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 7.486294100002851
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 7.639276700007031
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 7.775272600003518
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 9.268157600003178,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 9.508997300014016,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 9.780117100002826,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 10.029007600009209,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 11.188531300009345,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 0,
+      "dy": -100,
+      "time": 11.904280100003234,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 12.550014100008411,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 12.803073200004292,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 13.311041900000419,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 13.567318200002774,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 13.971330400003353,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 14.125974800001131,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 14.382123400006094,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 14.897571100009372,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 0,
+      "dy": 100,
+      "time": 15.206592700007604,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 15.658689700008836,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 15.826029600008042,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 16.081696300010663,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 17.159049100009724,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 17.414427700001397,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 17.953980800011777,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 18.209570200007875,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 18.693992200001958,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 18.949400500001502,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 19.45504310000979,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 19.711121800006367,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 20.000958500007982,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 20.198746800000663,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 5,
+      "dy": 0,
+      "time": 20.21250050001254,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 20.505595500013442,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 20.69203700000071,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 20.94792960000632,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 21.36301210000238,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 21.61868840000534,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 22.14202950001345,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 22.397760800013202,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 22.84433840001293,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 23.073684000002686,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 23.264923500013538,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -5,
+      "dy": 0,
+      "time": 23.279969200011692,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 23.41503270000976,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 23.670467000003555,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 24.256965500011574,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 24.512508600004367,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 24.93099630001234,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 25.186623500005226,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 25.90439010001137,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 26.074003600006108,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 26.329633800007286,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 26.649581500008935,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 26.803381700010505,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 5,
+      "dy": 0,
+      "time": 26.855709800001932,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 26.95963210001355,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 5,
+      "dy": 0,
+      "time": 27.056417200001306,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 27.113471300006495,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 5,
+      "dy": 0,
+      "time": 27.257102700008545,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 27.269987400009995,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 5,
+      "dy": 0,
+      "time": 27.45803560000786,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 27.473016900010407,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 27.728801500008558,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 28.224235500005307,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 28.384977300011087,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 28.64069080000627,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 29.158628700010013,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 29.346064500001376,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -5,
+      "dy": 0,
+      "time": 29.36451460000535,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 29.573988400006783,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 29.82958800000779,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 30.173358400003053,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -100,
+      "dy": 0,
+      "time": 30.344676800013985,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": -5,
+      "dy": 0,
+      "time": 30.37981270000455,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 31.014989500006777,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 31.27065190000576,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 31.833834000004572,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 32.34202820000064,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 32.59782390001055,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 33.019703500001924,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 33.1967324000143,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 5,
+      "dy": 0,
+      "time": 33.225555600001826,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 100,
+      "dy": 0,
+      "time": 33.423506600011024,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 5,
+      "dy": 0,
+      "time": 33.436860600006185,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 33.638970300002256,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 33.89441080001416,
+      "source": "flying_gun"
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 35.6643735000107
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 35.85331980000774
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 35.9705083000008
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 37.45733420000761
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 37.72235230001388
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 38.08027890000085
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 38.30527690000599
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 38.374291800006176
+    }
+  ]
+}

@@ -1,0 +1,463 @@
+{
+  "name": "新脚本11212",
+  "version": "4.2",
+  "mode": "hybrid",
+  "created_time": "2025-11-25 23:11:40",
+  "total_time": 88.75980820000404,
+  "action_count": 84,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 0.3935753999976441
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 0.5020974000217393
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.220457500021439
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 2.977214400016237
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 5.280372000008356
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 5.488623000041116
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 5.63935340003809
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 7.4371449000318535
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 7.810425600036979
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 8.012100300053135
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 8.121205900039058
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 8.926940700039268
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.699429900036193
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 10.206455100036692
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 11.107149000046775
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 11.384994300024118
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 11.525367100024596
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 12.713014200038742
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 12.957498300005682
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 13.283752600022126
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 13.417960300052073
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 15.238171800039709
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 15.396479600050952
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 15.682151000015438
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 15.806535600044299
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 16.366677700018045
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 17.77525600005174
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 17.860368000052404
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 18.324367300025187
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 18.411110600049142
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 19.970941100036725
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 20.15294180001365
+    },
+    {
+      "type": "key_down",
+      "key": "q",
+      "time": 20.46125240001129
+    },
+    {
+      "type": "key_up",
+      "key": "q",
+      "time": 20.574159600015264
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 22.650341800006572
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 22.8211262000259
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 23.104993500048295
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 23.549414700013585
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 24.31712670001434
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 24.571201500017196
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 26.77196450001793
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 27.349258200032637
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 27.71017080004094
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 27.86639570002444
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 28.32527349999873
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 28.467360400012694
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 29.954064200050198
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 30.340357700013556
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 30.727311100054067
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 30.968721200013533
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 31.131116000004113
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 31.387282900046557
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 31.552080499997828
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 31.75318680005148
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 33.15518040000461
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 33.16696890001185
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 33.73725840001134
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 34.16816160001326
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 34.94659380003577
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 36.17204820003826
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 36.82427500002086
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 39.48621140001342
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 73.68387720000464
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 73.69085250003263
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 75.02609350002604
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 75.29285860003438
+    },
+    {
+      "type": "key_down",
+      "key": "q",
+      "time": 76.35020740004256
+    },
+    {
+      "type": "key_up",
+      "key": "q",
+      "time": 76.45100160001311
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 78.84431260003475
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 79.31089890003204
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 80.45121270004893
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 80.55205250001745
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 80.9801482000039
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 83.66382460005116
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 83.97515520005254
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 85.18548300000839
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 85.8828363000066
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 85.95428600005107
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 86.12785150000127
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 86.52288130001398
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 86.81309720000718
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 87.34402390004834
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 88.73066080000717
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 88.75980820000404
+    }
+  ],
+  "stats": {
+    "keyboard": 84,
+    "mouse_move": 0,
+    "mouse_click": 0,
+    "mouse_scroll": 0,
+    "arrow_key": 0,
+    "mouse_track": 0,
+    "hotkey_offset": 0,
+    "flying_gun": 0,
+    "reset_process": 0
+  },
+  "game_mode": true,
+  "movement_scale": 1.0,
+  "offset_hotkeys": {
+    "add_x": "numpad_6",
+    "sub_x": "numpad_4",
+    "add_y": "numpad_2",
+    "sub_y": "numpad_8"
+  },
+  "offset_steps": {
+    "x": 50,
+    "y": 50
+  },
+  "flying_gun": {
+    "enabled": true,
+    "hotkey": "f5",
+    "hold_time": 1000
+  },
+  "reset_process": {
+    "enabled": true,
+    "hotkey": "f7",
+    "images_dir": "D:\\桌面\\EMT改-小鱼004-新录制\\img"
+  }
+}

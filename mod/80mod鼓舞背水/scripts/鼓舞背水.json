@@ -1,0 +1,49 @@
+{
+  "name": "鼓舞背水",
+  "version": "2.0",
+  "created_time": "2025-12-27 13:14:02",
+  "total_time": 9.2485,
+  "action_count": 8,
+  "actions": [
+    {
+      "type": "key_down",
+      "time": 0.7675,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "time": 1.0275,
+      "key": "shift"
+    },
+    {
+      "type": "key_down",
+      "time": 3.6685,
+      "key": "a"
+    },
+    {
+      "type": "key_up",
+      "time": 5.4986,
+      "key": "a"
+    },
+    {
+      "type": "key_down",
+      "time": 8.1575,
+      "key": "a"
+    },
+    {
+      "type": "key_up",
+      "time": 9.1675,
+      "key": "a"
+    },
+    {
+      "type": "key_up",
+      "time": 9.2275,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 9.2485,
+      "key": "w"
+    }
+  ]
+}

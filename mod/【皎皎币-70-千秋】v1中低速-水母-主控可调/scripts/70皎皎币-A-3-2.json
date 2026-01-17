@@ -1,0 +1,57 @@
+{
+  "name": "70皎皎币-A-3-2",
+  "version": "2.1",
+  "created_time": "2025-11-13 18:51:10",
+  "total_time": 12.880040884017944,
+  "action_count": 8,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 1.2699599266052246
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 2.4479482173919678
+    },
+    {
+      "type": "key_down",
+      "key": "s",
+      "time": 2.6400012969970703
+    },
+    {
+      "type": "key_up",
+      "key": "s",
+      "time": 6.289896011352539
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 6.734176874160767
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 12.512017250061035
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 12.815972566604614
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 12.880040884017944
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 8,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

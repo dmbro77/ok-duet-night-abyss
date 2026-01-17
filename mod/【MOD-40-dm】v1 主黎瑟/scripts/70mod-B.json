@@ -1,0 +1,53 @@
+{
+  "name": "新脚本",
+  "version": "4.2",
+  "mode": "hybrid",
+  "created_time": "2025-12-31 14:54:20",
+  "total_time": 8.3492812999757,
+  "action_count": 8,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 0.591365200001746
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 0.881348600029014
+    }
+  ],
+  "stats": {
+    "keyboard": 8,
+    "mouse_move": 0,
+    "mouse_click": 0,
+    "mouse_scroll": 0,
+    "arrow_key": 0,
+    "mouse_track": 0,
+    "hotkey_offset": 0,
+    "flying_gun": 0,
+    "reset_process": 0
+  },
+  "game_mode": true,
+  "movement_scale": 1.0,
+  "offset_hotkeys": {
+    "add_x": "numpad_6",
+    "sub_x": "numpad_4",
+    "add_y": "numpad_2",
+    "sub_y": "numpad_8"
+  },
+  "offset_steps": {
+    "x": 50,
+    "y": 50
+  },
+  "flying_gun": {
+    "enabled": true,
+    "hotkey": "f5",
+    "hold_time": 950
+  },
+  "reset_process": {
+    "enabled": true,
+    "hotkey": "f7",
+    "images_dir": "C:\\Users\\dmm\\AppData\\Local\\ok-dna\\data\\apps\\ok-dna\\working\\mod\\示例-脚本工具\\回放和录制软件\\img"
+  }
+}

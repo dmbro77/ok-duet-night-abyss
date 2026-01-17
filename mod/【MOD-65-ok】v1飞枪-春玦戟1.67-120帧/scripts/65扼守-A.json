@@ -1,0 +1,156 @@
+{
+  "name": "900扼守-A",
+  "version": "4.2",
+  "created_time": "2025-11-16 12:46:05",
+  "total_time": 6.6,
+  "action_count": 26,
+  "actions": [
+    {
+      "type": "mouse_move",
+      "time": 0.0,
+      "dx": -258,
+      "dy": 0,
+      "source": "arrow_key"
+    },
+    {
+      "type": "key_down",
+      "time": 0.01,
+      "key": "space"
+    },
+    {
+      "type": "key_up",
+      "time": 0.06,
+      "key": "space"
+    },
+    {
+      "type": "mouse_down",
+      "time": 0.16,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 0.4,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 0.92,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 1.15,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 1.68,
+      "dx": 0,
+      "dy": 80,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "time": 1.72,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 1.77,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 1.9,
+      "dx": 0,
+      "dy": -80,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_move",
+      "time": 1.95,
+      "dx": -258,
+      "dy": -156,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "time": 2.0,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 2.22,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 2.77,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 2.988,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 3.5,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 3.72,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 4.26,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 4.32,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 5.1,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 5.32,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 5.84,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 6.06,
+      "button": "left"
+    },
+    {
+      "type": "key_down",
+      "time": 6.5,
+      "key": "f4"
+    },
+    {
+      "type": "key_up",
+      "time": 6.6,
+      "key": "f4"
+    }
+  ],
+  "flying_gun": {
+    "enabled": true,
+    "hotkey": "f5",
+    "hold_time": 1000
+  },
+  "reset_process": {
+    "enabled": true,
+    "hotkey": "f7"
+  }
+}

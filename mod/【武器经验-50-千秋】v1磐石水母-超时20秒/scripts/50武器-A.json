@@ -1,0 +1,117 @@
+{
+  "name": "40武器经验-A",
+  "version": "2.1",
+  "created_time": "2025-11-14 17:49:52",
+  "total_time": 15.304003238677979,
+  "action_count": 20,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.48607444763183594
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 1.6620283126831055
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 1.8909649848937988
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.172286033630371
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 2.786078453063965
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 2.9941694736480713
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 3.266911268234253
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 3.5519943237304688
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 4.706028699874878
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 4.896089792251587
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 5.396084547042847
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 5.470232009887695
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 10.526118278503418
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 10.876131057739258
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 11.282093048095703
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 11.442068338394165
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 11.752024173736572
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 11.754262685775757
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 12.376477479934692
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 15.304003238677979
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 4,
+    "key_presses": 20,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

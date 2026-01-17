@@ -1,0 +1,29 @@
+{
+  "name": "rec_165006",
+  "version": "2.0",
+  "created_time": "2025-12-26 16:50:06",
+  "total_time": 7.5597,
+  "action_count": 4,
+  "actions": [
+    {
+      "type": "key_down",
+      "time": 0.3696,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "time": 0.4896,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 7.2206,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 7.5597,
+      "key": "w"
+    }
+  ]
+}

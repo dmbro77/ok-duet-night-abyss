@@ -1,0 +1,49 @@
+{
+  "name": "30皎皎币-A-12",
+  "version": "1.0",
+  "created_time": "2025-11-06 10:58:28",
+  "total_time": 5.383451223373413,
+  "action_count": 8,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "esc",
+      "time": 0.9922342300415039
+    },
+    {
+      "type": "key_up",
+      "key": "esc",
+      "time": 1.1121265888214111
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 2.707150936126709
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 2.799238681793213
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 3.5
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 3.7
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 5.291098117828369
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 5.383451223373413
+    }
+  ]
+}

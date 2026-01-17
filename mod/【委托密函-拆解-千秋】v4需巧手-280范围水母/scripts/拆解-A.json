@@ -1,0 +1,57 @@
+{
+  "name": "拆解-A",
+  "version": "2.1",
+  "created_time": "2025-11-20 08:30:46",
+  "total_time": 3.48807692527771,
+  "action_count": 8,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.5721218585968018
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.0042150020599365
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 1.4581620693206787
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 1.7701294422149658
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.1840646266937256
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 2.8061137199401855
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 3.0542209148406982
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 3.48807692527771
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 8,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

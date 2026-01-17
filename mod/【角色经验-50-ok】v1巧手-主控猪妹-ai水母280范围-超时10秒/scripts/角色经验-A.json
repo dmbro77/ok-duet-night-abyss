@@ -1,0 +1,121 @@
+{
+  "name": "角色经验-A",
+  "version": "1.0",
+  "created_time": "2025-11-04 12:12:54",
+  "total_time": 22.2,
+  "action_count": 22,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.5
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 2.585
+    },
+    
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 4.785
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 8.519
+    },
+   
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 8.619
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.707
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 9.737
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 11.147
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 11.289
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 11.575
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 11.754
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 11.845
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 11.957
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 12.737
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 13.704
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 15.459
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 15.559
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 17.509
+    },
+    {
+      "type": "key_down",
+      "time": 18.891,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 18.991,
+      "key": "f"
+    },
+    {
+      "type": "key_down",
+      "time": 22,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 22.2,
+      "key": "f"
+    }
+  ]
+}

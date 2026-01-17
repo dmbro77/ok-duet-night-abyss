@@ -1,0 +1,137 @@
+{
+  "name": "70皎皎币-A-3",
+  "version": "2.1",
+  "created_time": "2025-11-13 18:31:21",
+  "total_time": 36.52002549171448,
+  "action_count": 24,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.748039722442627
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 1.2980766296386719
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 1.462003469467163
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 2.7820205688476562
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 2.933990478515625
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 6.32002329826355
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 6.376008987426758
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 9.080014705657959
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 12.558037996292114
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 16.818003177642822
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 17.102072715759277
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 20.734272480010986
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 20.76825976371765
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 26.282005310058594
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 26.318058967590332
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 27.43207859992981
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 27.8080632686615
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 29.40744376182556
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 29.66202735900879
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 31.03001308441162
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 31.18404197692871
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 33.4781699180603
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 33.897971868515015
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 36.52002549171448
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 24,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

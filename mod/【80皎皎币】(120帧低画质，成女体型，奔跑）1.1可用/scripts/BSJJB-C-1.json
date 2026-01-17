@@ -1,0 +1,63 @@
+{
+  "name": "BSJJB-C-1",
+  "version": "4.2",
+  "mode": "hybrid",
+  "created_time": "2025-12-31 11:18:44",
+  "total_time": 6.960298799996963,
+  "action_count": 4,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 0.6402491000044392
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.1403317999938736
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.720241899995017
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 6.960298799996963
+    }
+  ],
+  "stats": {
+    "keyboard": 4,
+    "mouse_move": 0,
+    "mouse_click": 0,
+    "mouse_scroll": 0,
+    "arrow_key": 0,
+    "mouse_track": 0,
+    "hotkey_offset": 0,
+    "flying_gun": 0,
+    "reset_process": 0
+  },
+  "game_mode": true,
+  "movement_scale": 1.0,
+  "offset_hotkeys": {
+    "add_x": "numpad_6",
+    "sub_x": "numpad_4",
+    "add_y": "numpad_2",
+    "sub_y": "numpad_8"
+  },
+  "offset_steps": {
+    "x": 50,
+    "y": 50
+  },
+  "flying_gun": {
+    "enabled": true,
+    "hotkey": "f5",
+    "hold_time": 1000
+  },
+  "reset_process": {
+    "enabled": true,
+    "hotkey": "f7",
+    "images_dir": "F:\\EMT-录制器2.1\\4.2录制\\img"
+  }
+}

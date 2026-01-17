@@ -1,0 +1,119 @@
+{
+  "name": "30皎皎币-A-13",
+  "version": "1.0",
+  "created_time": "2025-11-05 03:28:58",
+  "total_time": 12.8,
+  "action_count": 22,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "esc",
+      "time": 1.0380966663360596
+    },
+    {
+      "type": "key_up",
+      "key": "esc",
+      "time": 1.150109052658081
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 2.489215135574341
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 2.5851521492004395
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 3.0
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 3.2
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 4.0711424350738525
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 4.121090650558472
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 4.431137323379517
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 4.497114658355713
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 5.53217077255249
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 5.638062238693237
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 5.886136293411255
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 5.956117391586304
+    },
+    {
+      "type": "key_down",
+      "time": 7.5,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 7.7,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_down",
+      "time": 9.2,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_up",
+      "time": 9.4,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_down",
+      "time": 10.9,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_up",
+      "time": 11.1,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_down",
+      "time": 12.6,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_up",
+      "time": 12.8,
+      "key": "SHIFT"
+    }
+  ]
+}

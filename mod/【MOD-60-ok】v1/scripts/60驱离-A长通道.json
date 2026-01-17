@@ -1,0 +1,67 @@
+{
+  "name": "60驱离-A",
+  "version": "2.1",
+  "created_time": "2025-11-11 17:53:15",
+  "total_time": 6.59215521812439,
+  "action_count": 10,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.280109167098999
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.360059976577759
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.5360922813415527
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 3.800063371658325
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.936058521270752
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 4.224159002304077
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 4.600054979324341
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 6.368009567260742
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 6.472091913223267
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 6.59215521812439
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 10,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

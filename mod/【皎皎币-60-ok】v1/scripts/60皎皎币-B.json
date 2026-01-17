@@ -1,0 +1,187 @@
+{
+  "name": "60皎皎币-B-出门",
+  "created_time": "2025-11-01 00:28:25",
+  "total_time": 34.511754274368286,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.6626980304718018
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 2.6767518520355225
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 3.322136878967285
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 5.652700424194336
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 6.180685520172119
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 7.629667282104492
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 8.19991683959961
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 9.097986698150635
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.736687183380127
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 11.727781057357788
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 12.502915382385254
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 12.619797468185425
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 12.852702856063843
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 12.957744359970093
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 13.298812866210938
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 13.323915243148804
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 13.444785118103027
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 13.462766408920288
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 14.483842849731445
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 14.614802360534668
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 14.900736570358276
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 15.020867109298706
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 15.431710481643677
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 15.447702169418335
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 15.57517957687378
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 15.578859806060791
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 16.94072699546814
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 17.73869228363037
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 18.09671378135681
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 23.649738788604736
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 24.145774364471436
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 29.355720043182373
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 30.02069401741028
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 30.255791664123535
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 31.066243886947632
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 34.511754274368286
+    }
+  ]
+}

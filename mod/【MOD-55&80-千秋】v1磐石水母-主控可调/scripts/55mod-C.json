@@ -1,0 +1,77 @@
+{
+  "name": "驱离-E",
+  "version": "2.1",
+  "created_time": "2025-11-19 07:46:28",
+  "total_time": 8.45202088356018,
+  "action_count": 12,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.5841238498687744
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 2.242143392562866
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 4.36203932762146
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 4.74812650680542
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 4.972147464752197
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 5.77011251449585
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 6.042147874832153
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 6.216135263442993
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 6.796070575714111
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 7.238081693649292
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 8.148142337799072
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 8.45202088356018
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 2,
+    "key_presses": 12,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

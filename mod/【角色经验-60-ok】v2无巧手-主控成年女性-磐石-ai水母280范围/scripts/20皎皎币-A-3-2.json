@@ -1,0 +1,284 @@
+{
+  "name": "20皎皎币-A-1-2",
+  "version": "1.0",
+  "created_time": "2025-11-06 21:54:54",
+  "total_time": 56,
+  "action_count": 55,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.1282763481140137
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 1.7558717727661133
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 1.9388325214385986
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.1908178329467773
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.2783427238464355
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 2.5833847522735596
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 3.2648229598999023
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 3.653437614440918
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.8013110160827637
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 4.564946174621582
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.726438522338867
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 6.076012134552002
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 6.21687650680542
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 8.03397274017334
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 8.047386884689331
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.38103437423706
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 9.411581039428711
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 9.649661540985107
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 9.780693769454956
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 10.499951601028442
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 10.65842866897583
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 11.65371322631836
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 11.701117515563965
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 12.748871803283691
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 12.845547676086426
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 13.19190526008606
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 13.320896625518799
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 15.479263544082642
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 15.606778383255005
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 17.642937183380127
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 17.66054391860962
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 18.367152452468872
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 18.380009651184082
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 18.6484112739563
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 18.806900024414062
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 19.960013389587402
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 20.07332444190979
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 21.116581201553345
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 21.232184886932373
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 21.415608882904053
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 21.556394577026367
+    },
+    {
+      "type": "key_down",
+      "time": 21.732,
+      "key": "space"
+    },
+    {
+      "type": "key_up",
+      "time": 21.832,
+      "key": "space"
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 24.121745109558105
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 24.348361253738403
+    },
+    {
+      "type": "key_down",
+      "time": 24.648,
+      "key": "space"
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 24.704678297042847
+    },
+    {
+      "type": "key_up",
+      "time": 24.748,
+      "key": "space"
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 24.82014012336731
+    },
+    {
+      "type": "key_down",
+      "time": 25.3,
+      "key": "space"
+    },
+    {
+      "type": "key_up",
+      "time": 26.0,
+      "key": "space"
+    },
+    {
+      "type": "key_down",
+      "time": 27.5,
+      "key": "d"
+    },
+    {
+      "type": "key_up",
+      "time": 28.5,
+      "key": "d"
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 43.145
+    },
+    {
+      "type": "delay",
+      "time": 56,
+      "delay": 1000
+    }
+  ]
+}

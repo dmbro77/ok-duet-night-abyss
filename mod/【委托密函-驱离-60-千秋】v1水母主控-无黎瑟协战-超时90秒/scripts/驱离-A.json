@@ -1,0 +1,67 @@
+{
+  "name": "密函驱离-A",
+  "version": "2.1",
+  "created_time": "2025-11-19 04:43:56",
+  "total_time": 7.149937868118286,
+  "action_count": 12,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.7762026786804199
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.244114398956299
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 2.342071294784546
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 2.999974012374878
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 3.7319891452789307
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 4.595974683761597
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 4.707961320877075
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 5.206012439727783
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 5.997980356216431
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 6.3016717910767
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 12,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

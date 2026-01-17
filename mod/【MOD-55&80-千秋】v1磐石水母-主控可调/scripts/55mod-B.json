@@ -1,0 +1,77 @@
+{
+  "name": "55mod-B",
+  "version": "2.1",
+  "created_time": "2025-11-17 05:09:16",
+  "total_time": 5.6380696296691895,
+  "action_count": 12,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.314251184463501
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 0.7601137161254883
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 3.1941070556640625
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 3.286195993423462
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 4.088090181350708
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 4.398165941238403
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 4.734683990478516
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 4.86413311958313
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 5.16809344291687
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 5.284815073013306
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 5.508159399032593
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 5.6380696296691895
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 4,
+    "key_presses": 12,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

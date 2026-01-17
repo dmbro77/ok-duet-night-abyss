@@ -1,0 +1,695 @@
+{
+  "name": "80武器突破，水母飞枪-A",
+  "version": "2.0",
+  "created_time": "2025-12-30 22:47:40",
+  "total_time": 38.6,
+  "action_count": 120,
+  "actions": [
+    {
+      "type": "mouse_move",
+      "time": 0.001,
+      "dx": 0,
+      "dy": -200,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "time": 0.5,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 0.85,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 1.1439877000040726,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 1.4460728000005476,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 1.7580193999994664,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 2.0608431000029666,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 2.5280069000029473,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 2.831013799997163,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "time": 3.0370000000000004,
+      "dx": 0,
+      "dy": 100,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "time": 3.6000000000000005,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 3.9817261000032884,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "time": 4.497,
+      "dx": -100,
+      "dy": -100,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "time": 4.55,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 4.9621854999975765,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 5.405010699997365,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 5.711727500002598,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "time": 6.093,
+      "dx": 100,
+      "dy": 135,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "time": 6.199,
+      "dx": 0,
+      "dy": 5,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "time": 6.605,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 7.0,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 7.299999999999997,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 7.599999999999998,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 7.8999999999999995,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 8.2,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 8.5,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 8.799999999999999,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 9.385,
+      "dx": -320,
+      "dy": 0,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 9.438021400000432,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 9.743807699999886,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 10.27102200000372,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 10.576866600003266,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "time": 11.536,
+      "dx": 520,
+      "dy": 0,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "dx": 5,
+      "dy": 0,
+      "time": 11.549857799999879,
+      "source": "arrow_key"
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 11.680315899997364
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 11.819368299999038
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 11.91827880000346
+    },
+    {
+      "type": "key_down",
+      "time": 12.879999999999999,
+      "key": "space"
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 12.962381600002114
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 13.741300300003783
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 13.940275599998127
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 14.054543799997187
+    },
+    {
+      "type": "key_down",
+      "time": 14.170999999999998,
+      "key": "f"
+    },
+    {
+      "type": "key_up",
+      "time": 14.269999999999996,
+      "key": "f"
+    },
+    {
+      "type": "mouse_move",
+      "time": 15.559,
+      "dx": -200,
+      "dy": 0,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 15.747302399997716
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 15.855278800000088
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 15.950983499997529,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 16.256588900001955,
+      "source": "flying_gun"
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 16.817338699997347
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 16.902314099998332
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 17.4162410999983
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 17.519284100001098
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 17.97933140000387
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 18.069303000002403
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 18.557253299999868
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 18.656337600003464
+    },
+    {
+      "type": "key_down",
+      "key": "e",
+      "time": 19.21925120000233
+    },
+    {
+      "type": "key_up",
+      "key": "e",
+      "time": 19.303420100003134
+    },
+    {
+      "type": "mouse_move",
+      "time": 19.797000000000004,
+      "dx": -1000,
+      "dy": 0,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "time": 19.85,
+      "dx": -5,
+      "dy": 0,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_move",
+      "time": 19.900000000000002,
+      "dx": -5,
+      "dy": 0,
+      "source": "arrow_key"
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 20.00542590000405
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 20.110303600000044
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 20.288005600000908,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 20.5941026000015,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "time": 21.195,
+      "dx": 505,
+      "dy": 0,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 21.20899529999733,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 21.514919000002553,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 21.983049600000957,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 22.28864939999912,
+      "source": "flying_gun"
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 22.919312400002674
+    },
+    {
+      "type": "key_down",
+      "time": 23.0,
+      "key": "w"
+    },
+    {
+      "type": "key_up",
+      "time": 23.55,
+      "key": "d"
+    },
+    {
+      "type": "key_up",
+      "time": 23.6,
+      "key": "w"
+    },
+    {
+      "type": "mouse_move",
+      "time": 24.179000000000002,
+      "dx": -870,
+      "dy": 15,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 24.413091999998148,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 24.718497199998826,
+      "source": "flying_gun"
+    },
+    {
+      "type": "key_down",
+      "time": 25.0,
+      "key": "space"
+    },
+    {
+      "type": "key_up",
+      "time": 25.1,
+      "key": "space"
+    },
+    {
+      "type": "mouse_move",
+      "time": 25.3,
+      "dx": 605,
+      "dy": 0,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "time": 25.358,
+      "dx": 5,
+      "dy": 0,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 25.5499998000014,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 25.85542110000098,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "time": 26.100000000000005,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 26.43961040000142,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "time": 26.989,
+      "dx": 620,
+      "dy": -15,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_move",
+      "time": 27.049999999999997,
+      "dx": 5,
+      "dy": 0,
+      "source": "arrow_key"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 27.181026400001446,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 27.48632879999788,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 28.138017400000553,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 28.443367599997163,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "time": 28.849,
+      "dx": -465,
+      "dy": -10,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 28.923034099997327,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "time": 29.239,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 29.772027900003035,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "time": 30.081000000000003,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 30.443,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 30.759,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 31.158,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 31.551000000000002,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 32.198871900002445,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 32.50210279999973,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "time": 32.6,
+      "dx": 0,
+      "dy": 170,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "time": 32.7,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 33.0,
+      "button": "left"
+    },
+    {
+      "type": "mouse_move",
+      "time": 34.108000000000004,
+      "dx": 0,
+      "dy": -100,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 34.313935800000934,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 34.621066400006555,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 35.15280310000179,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 35.45848580000546,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_move",
+      "time": 35.928000000000004,
+      "dx": -5,
+      "dy": -110,
+      "source": "hotkey_offset"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 36.08482990000283,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "button": "left",
+      "time": 36.39143680000069,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_down",
+      "button": "left",
+      "time": 36.70484260000029,
+      "source": "flying_gun"
+    },
+    {
+      "type": "mouse_up",
+      "time": 37.01,
+      "button": "left"
+    },
+    {
+      "type": "mouse_down",
+      "time": 37.31,
+      "button": "left"
+    },
+    {
+      "type": "mouse_up",
+      "time": 37.41,
+      "button": "left"
+    },
+    {
+      "type": "key_down",
+      "time": 38.1,
+      "key": "w"
+    },
+    {
+      "type": "key_up",
+      "time": 38.6,
+      "key": "w"
+    }
+  ]
+}

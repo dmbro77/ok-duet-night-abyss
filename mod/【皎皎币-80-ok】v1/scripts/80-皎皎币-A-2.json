@@ -1,0 +1,117 @@
+{
+  "name": "80-皎皎币-A-2",
+  "version": "2.1",
+  "created_time": "2025-11-10 20:02:46",
+  "total_time": 26.736591577529907,
+  "action_count": 20,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 1.658212661743164
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 1.8284423351287842
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 2.2274746894836426
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 2.9829137325286865
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 3.5996174812316895
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 3.829792022705078
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 4.1422364711761475
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 4.291995525360107
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 4.5201520919799805
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 9.219573736190796
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 9.444462060928345
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 12.03245210647583
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 12.217259645462036
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 14.861846446990967
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 15.144097328186035
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 16.17884135246277
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 16.51611614227295
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 26.15027379989624
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 26.501794815063477
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 26.736591577529907
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 20,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "name": "30皎皎币-A-6",
+  "version": "1.0",
+  "created_time": "2025-11-05 03:20:05",
+  "total_time": 12.8,
+  "action_count": 20,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "esc",
+      "time": 0.7520759105682373
+    },
+    {
+      "type": "key_up",
+      "key": "esc",
+      "time": 0.8822054862976074
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 2.189605951309204
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 2.275085210800171
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 2.8
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 3.0
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 3.9250574111938477
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 4.000074148178101
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 4.98012375831604
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 5.036084175109863
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 5.986150503158569
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 6.046128749847412
+    },
+    {
+      "type": "key_down",
+      "time": 8.5,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 8.7,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_down",
+      "time": 9.2,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_up",
+      "time": 9.4,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_down",
+      "time": 10.9,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_up",
+      "time": 11.1,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_down",
+      "time": 12.6,
+      "key": "SHIFT"
+    },
+    {
+      "type": "key_up",
+      "time": 12.8,
+      "key": "SHIFT"
+    }
+  ]
+}

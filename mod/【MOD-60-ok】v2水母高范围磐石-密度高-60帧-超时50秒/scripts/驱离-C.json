@@ -1,0 +1,99 @@
+{
+  "name": "驱离-C",
+  "version": "2.0",
+  "created_time": "2025-11-24 13:50:27",
+  "total_time": 14.5,
+  "action_count": 18,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.6981935999938287
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 1.021889200026635
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 1.2549856000114232
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 2.924193600018043
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 3.347955900011584
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 9.584344199975021
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 9.77606200001901
+    },
+    {
+      "type": "key_down",
+      "key": "space",
+      "time": 10.398221699986607
+    },
+    {
+      "type": "key_up",
+      "key": "space",
+      "time": 10.474162700003944
+    },
+    {
+      "type": "key_up",
+      "time": 11.0,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 11.395174100005534
+    },
+    {
+      "type": "key_down",
+      "key": "shift",
+      "time": 11.91928899998311
+    },
+    {
+      "type": "key_up",
+      "key": "shift",
+      "time": 12.099279200017918
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 12.587095400027465
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 13.025215699977707
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 13.32994329999201
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 13.5
+    },
+    {
+      "type": "key_up",
+      "time": 14.5,
+      "key": "w"
+    }
+  ]
+}

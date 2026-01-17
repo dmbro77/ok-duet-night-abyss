@@ -1,0 +1,39 @@
+{
+  "name": "羽蛇背水",
+  "version": "2.0",
+  "created_time": "2025-12-27 12:05:33",
+  "total_time": 5.0177,
+  "action_count": 6,
+  "actions": [
+    {
+      "type": "key_down",
+      "time": 0.4377,
+      "key": "w"
+    },
+    {
+      "type": "key_down",
+      "time": 0.5577,
+      "key": "shift"
+    },
+    {
+      "type": "key_down",
+      "time": 4.1477,
+      "key": "a"
+    },
+    {
+      "type": "key_up",
+      "time": 4.2087,
+      "key": "w"
+    },
+    {
+      "type": "key_up",
+      "time": 4.9776,
+      "key": "shift"
+    },
+    {
+      "type": "key_up",
+      "time": 5.0177,
+      "key": "a"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "name": "80-皎皎币-B-3",
+  "version": "2.1",
+  "created_time": "2025-11-10 20:18:54",
+  "total_time": 28.916526794433594,
+  "action_count": 18,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.6516354084014893
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 0.890028715133667
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 1.139976978302002
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 2.3640975952148438
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 2.7956275939941406
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 7.85519552230835
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 8.294549942016602
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 10.77804946899414
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 11.105181217193604
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 13.37554144859314
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 13.630475759506226
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 14.92835521697998
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 15.183363199234009
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 20.961803436279297
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 21.707985401153564
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 28.470459461212158
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 28.84220051765442
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 28.916526794433594
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 18,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

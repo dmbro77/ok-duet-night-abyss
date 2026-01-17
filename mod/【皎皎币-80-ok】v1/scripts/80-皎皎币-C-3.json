@@ -1,0 +1,107 @@
+{
+  "name": "80-皎皎币-C-3",
+  "version": "2.1",
+  "created_time": "2025-11-10 19:57:58",
+  "total_time": 28.797668933868408,
+  "action_count": 18,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 0.48601531982421875
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 3.620948553085327
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 4.076848268508911
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 4.1703712940216064
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 16.439692974090576
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 16.554766178131104
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 16.912400722503662
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 20.072999238967896
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 20.196861267089844
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 20.376381874084473
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 20.734824657440186
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 22.122085094451904
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 22.193151473999023
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 25.490904331207275
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 25.642598867416382
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 28.258456230163574
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 28.642533540725708
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 28.797668933868408
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 3,
+    "key_presses": 18,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "name": "80-皎皎币-B-2",
+  "version": "2.1",
+  "created_time": "2025-11-10 20:15:16",
+  "total_time": 35.513617515563965,
+  "action_count": 18,
+  "pause_duration": 0,
+  "actions": [
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.6026334762573242
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 3.562825918197632
+    },
+    {
+      "type": "key_down",
+      "key": "f",
+      "time": 4.248245716094971
+    },
+    {
+      "type": "key_up",
+      "key": "f",
+      "time": 4.341632843017578
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 16.88219690322876
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 17.090651988983154
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 17.75524640083313
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 18.290160655975342
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 18.841371774673462
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 18.991073608398438
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 19.942346334457397
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 25.133310794830322
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 25.499502658843994
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 30.136509895324707
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 30.848028898239136
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 34.75662875175476
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 34.913817405700684
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 35.513617515563965
+    }
+  ],
+  "metadata": {
+    "play_speed": 1.0,
+    "unique_keys": 4,
+    "key_presses": 18,
+    "mouse_actions": 0,
+    "has_mouse_control": false
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "name": "角色经验-A-1",
+  "version": "1.0",
+  "created_time": "2025-11-04 00:14:42",
+  "total_time": 90.003,
+  "action_count": 28,
+  "actions": [
+  
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 0.5
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 0.613
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 0.681
+    },
+    {
+      "type": "key_down",
+      "key": "q",
+      "time": 1.888
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 1.92
+    },
+    {
+      "type": "key_up",
+      "key": "q",
+      "time": 1.985
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 2.496
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 4.655
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 7.371
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 8.608
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 8.638
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 9.35
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 9.447
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 10.392
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 10.775
+    },
+    {
+      "type": "key_down",
+      "key": "d",
+      "time": 11.609
+    },
+    {
+      "type": "key_up",
+      "key": "d",
+      "time": 12.305
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 12.77
+    },
+    {
+      "type": "key_down",
+      "time": 13.203,
+      "key": "q"
+    },
+    {
+      "type": "key_up",
+      "time": 13.403,
+      "key": "q"
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 13.503
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 13.703
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 15.503
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 15.603
+    },
+    {
+      "type": "key_down",
+      "key": "w",
+      "time": 16.703
+    },
+    {
+      "type": "key_down",
+      "key": "a",
+      "time": 18.903
+    },
+    {
+      "type": "key_up",
+      "key": "w",
+      "time": 89.803
+    },
+    {
+      "type": "key_up",
+      "key": "a",
+      "time": 90.003
+    }
+  ]
+}

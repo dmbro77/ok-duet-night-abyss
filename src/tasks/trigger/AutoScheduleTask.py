@@ -180,8 +180,9 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             return
         super().enable()
         self.init_param()
-        self._log_info("调度任务已启动")
-        self.thread_pool_executor.submit(self._scheduler_loop)
+        self._log_info(f"调度任务已启动")
+        # 使用 submit_periodic_task 提交任务，间隔 1 秒
+        self.submit_periodic_task(1, self._scheduler_loop)
 
     def disable(self):
         super().disable()
@@ -196,7 +197,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
     
 
     def run(self):
-        # 主线程轮询留空，因为逻辑在独立线程里
+        # 主线程轮询留空，逻辑在独立线程里
         return False
 
     def _validate_config(self):
@@ -217,413 +218,270 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         
         return True
     
+    def _check_and_update_completed_task(self):
+        """检查并更新已完成的任务状态"""
+        if self.last_scheduled_task is None:
+            return True
+            
+        # 如果任务被禁用了（说明执行完成了，或者被手动停止了）
+        if not self.last_scheduled_task.enabled:
+            self._log_info(f"检测到任务 {self.last_scheduled_task.name} 已结束")
+            
+            # 更新任务统计信息
+            self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
+            self.task_stats[-1]["status"] = '任务自行完成'
+            
+            # 如果是密函任务且不是被强制停止（自行停止的任务需要添加），添加到已完成集合
+            if self.last_task_module != "default" and not self.prev_task_is_force_stop:
+                task_key = f"{self.last_task_module}_{self.last_task_name}_{self.last_scheduled_task.__class__.__name__}"
+                self.finished_tasks.add(task_key)
+                self._log_info(f"密函任务完成，加入已执行列表: {task_key}")
+                # 重置状态
+                self.prev_task_is_force_stop = True
+            
+            self._update_task_summary_ui()
+            self.last_scheduled_task = None
+            return True
+        return False
+    
+    def _should_trigger_hourly_check(self, now):
+        """判断是否应该触发整点检查"""
+        return (now.minute == 0 and now.second >= 10 and now.hour != self.last_check_hour)
+    
+    def _handle_scheduler_error(self, e):
+        """处理调度器异常"""
+        if self.task_stats and self.task_stats[-1]["end_time"] is None:
+            self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
+            self.task_stats[-1]["status"] = f'异常关闭: {e}'
+        self._update_task_summary_ui()
+    
+    def _cleanup_on_exit(self):
+        """退出时清理"""
+        if self.task_stats and self.task_stats[-1]["end_time"] is None:
+            self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
+            self.task_stats[-1]["status"] = '手动关闭自动密函任务'
+        self._update_task_summary_ui()
+
     def _scheduler_loop(self):
-        """调度器主循环 - 仅负责检查统计"""
-            
-        def _check_and_update_completed_task():
-            """检查并更新已完成的任务状态"""
-            if self.last_scheduled_task is None:
-                return True
-                
-            # 如果任务被禁用了（说明执行完成了，或者被手动停止了）
-            if not self.last_scheduled_task.enabled:
-                self._log_info(f"检测到任务 {self.last_scheduled_task.name} 已结束")
-                
-                # 更新任务统计信息
-                self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
-                self.task_stats[-1]["status"] = '任务自行完成'
-                
-                # 如果是密函任务且不是被强制停止（自行停止的任务需要添加），添加到已完成集合
-                if self.last_task_module != "default" and not self.prev_task_is_force_stop:
-                    task_key = f"{self.last_task_module}_{self.last_task_name}_{self.last_scheduled_task.__class__.__name__}"
-                    self.finished_tasks.add(task_key)
-                    self._log_info(f"密函任务完成，加入已执行列表: {task_key}")
-                    # 重置状态
-                    self.prev_task_is_force_stop = True
-                
-                self._update_task_summary_ui()
-                self.last_scheduled_task = None
-                return True
+        """调度器主循环 - 每次执行一次迭代"""
+
+        # 1. 检查是否启用
+        if not self.is_enable_running():
+            self._cleanup_on_exit()
             return False
-        
-        def _should_trigger_hourly_check(now):
-            """判断是否应该触发整点检查"""
-            return (now.minute == 0 and 
-                    now.second >= 10 and 
-                    now.hour != self.last_check_hour)
-        
-        def _handle_scheduler_error():
-            """处理调度器异常"""
-            if self.task_stats[-1]["end_time"] is None:
-                self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
-                self.task_stats[-1]["status"] = f'异常关闭: {e}'
-            self._update_task_summary_ui()
-        
-        def _cleanup_on_exit():
-            """退出时清理"""
-            if self.task_stats[-1]["end_time"] is None:
-                self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
-                self.task_stats[-1]["status"] = '手动关闭自动密函任务'
-            self._update_task_summary_ui()
 
-
-        # if self.executor.paused:
-        #     self.executor.start()
-        # a,b,c = self.get_letter_num()
-        # self._log_info(f"当前密函数量: {a}个, {b}个, {c}个")
-        # return
-
+        # 2. 验证配置
         if not self._validate_config():
-            return
-        self._log_info("调度器循环开始")
-        
-        # true 启动时立即检查一次
-        should_check = True
-        self.last_check_hour = datetime.now().hour
-        while self.is_enable_running():
-            try:
-                # 确保执行器处于运行状态 (唤醒执行器)，否则OCR会卡住
-                if self.executor.paused:
-                    self.executor.start()
-                    
-                now = datetime.now()
-                # 1. 检查已完成的任务并更新状态，返回是否需要执行标识
-                should_check = _check_and_update_completed_task()
+            return False
+
+        try:
+            # 确保执行器处于运行状态 (唤醒执行器)，否则OCR会卡住
+            if self.executor.paused:
+                self.executor.start()
                 
-                # 2. 整点检查（必须的）
-                if _should_trigger_hourly_check(now):
-                    self._log_info(f"整点触发检查: {now.hour}:00")
-                    time.sleep(random.randint(5, 20))  # 随机延时5-20秒，避免请求过于集中
-                    should_check = True
+            now = datetime.now()
             
-                # 3. 执行检查
-                if should_check:
-                    task_class, module_key, task_name = self._calculate_target_task()
-                    self.last_check_hour = now.hour
-                    self.schedule_task(task_class, module_key, task_name)
-                    self._update_task_summary_ui()
-                    should_check = False
-                    
-                time.sleep(1)  # 等待1秒后继续
-                
-            except Exception as e:
-                self._log_info(f"调度器循环异常: {e}")
-                _handle_scheduler_error(e)
-                time.sleep(10)  # 出错后等待10秒
+            # 3. 检查已完成的任务并更新状态
+            should_check = self._check_and_update_completed_task()
+            
+            # 4. 整点检查
+            if self._should_trigger_hourly_check(now):
+                self._log_info(f"整点触发检查: {now.hour}:00")
+                time.sleep(random.randint(5, 20))  # 随机延时5-20秒
+                should_check = True
         
-        _cleanup_on_exit()
-        self._log_info("调度线程循环结束")
+            # 5. 执行检查
+            if should_check:
+                task_class, module_key, task_name = self._calculate_target_task()
+                self.last_check_hour = now.hour
+                self.schedule_task(task_class, module_key, task_name)
+                self._update_task_summary_ui()
+                
+            return True # 返回 True 继续下一次循环
+            
+        except Exception as e:
+            self._log_info(f"调度器循环异常: {e}")
+            self._handle_scheduler_error(e)
+            time.sleep(10)  # 出错后等待10秒
+            return True # 异常后继续尝试
  
     def _calculate_target_task(self):
         """计算得出最终可执行任务"""
 
         def _fetch_api_data(dev_code, token, max_retries=5):
-            """获取API数据（内部函数）"""
-            retries = 1
-            while self.is_enable_running() and retries <= max_retries:
-                params = {"_t": int(time.time() * 1000)}
+            """获取API数据"""
+            for retries in range(1, max_retries + 1):
+                if not self.is_enable_running(): break
                 try:
-                    api = GameAPI(dev_code, token)
-                    result = api.default_role_for_tool()
-                    if result['code'] == 200:
-                        json_data = result['data']['instanceInfo']
-                    else:    
+                    result = GameAPI(dev_code, token).default_role_for_tool()
+                    if result.get('code') != 200:
                         self._log_info(f"API请求错误，60s后重试 ({retries}/{max_retries})...")
-                        if retries < max_retries:
-                            time.sleep(60)
-                        retries += 1
-                        continue
-
-                    # with requests.get(api_url, headers=headers, params=params, timeout=10) as response:
-                    #     response.raise_for_status()
-                    #     json_data = response.json()
-                    
-                    if  not isinstance(current_data := json_data, list):
-                        self._log_info(f"API返回错误代码: {json_data.get('code')}，或者data不是列表格式，{60*retries}s后重试 ({retries}/{max_retries})...")
-                        if retries < max_retries:
-                            time.sleep(60)
-                        retries += 1
-                        continue
-                    self._log_info(f"API返回数据: {current_data}")
-                    # 检查是否与上次数据相同
-                    if _is_same_as_last_data(current_data):
+                    elif not isinstance(data := result.get('data', {}).get('instanceInfo'), list):
+                        self._log_info(f"API返回数据异常，{60*retries}s后重试 ({retries}/{max_retries})...")
+                    elif self.last_api_response_data == data:
                         self._log_info(f"API返回数据与上次相同，60s后重试 ({retries}/{max_retries})...")
-                        if retries < max_retries:
-                            time.sleep(60)
-                        retries += 1
-                        continue
-                    
-                    # 数据已更新
-                    if self.last_api_response_data is not None:
-                        self._log_info("API数据已更新")
-                    self.last_api_response_data = current_data
-                    return True
-                    
-                except Exception as req_err:
-                    self._log_info(f"请求API失败 ({retries}): {req_err}")
-                    if retries < max_retries:
-                        time.sleep(60)
-                    retries += 1
-                    
+                    else:
+                        self._log_info(f"API返回数据: {data}")
+                        if self.last_api_response_data: self._log_info("API数据已更新")
+                        self.last_api_response_data = data
+                        return True
+                except Exception as e:
+                    self._log_info(f"请求API失败 ({retries}): {e}")
+                
+                if retries < max_retries: time.sleep(60)
             return False
 
-        def _is_same_as_last_data(current_data):
-            """检查数据是否与上次相同（内部函数）"""
-            return (self.last_api_response_data is not None and 
-                    current_data == self.last_api_response_data)
-
-        def _get_sorted_tasks(instance_info_list):
-            """获取排序后的任务列表（内部函数）"""
-            # 解析优先级配置
-            commission_config = self.config.get("密函委托优先级", "角色>武器>MOD")
-            commission_order = [x.strip() for x in commission_config.split(">") if x.strip()]
+        def _get_sorted_tasks(instance_info):
+            """获取排序后的任务列表"""
+            # 解析配置
+            mod_order = [x.strip() for x in self.config.get("密函委托优先级", "角色>武器>MOD").split(">") if x.strip()]
+            mod_map = {"角色": 0, "武器": 1, "MOD": 2}
+            valid_mods = [m for m in mod_order if m in mod_map]
             
-            module_index_map = {"角色": 0, "武器": 1, "MOD": 2}
-            sorted_modules = [name for name in commission_order if name in module_index_map]
-            
-            if not sorted_modules:
+            if not valid_mods:
                 self._log_info("未配置有效的密函委托优先级")
                 return []
 
-            # 解析关卡优先级
-            level_config = self.config.get("关卡类型优先级", "探险/无尽>驱离>拆解")
-            level_order = [x.strip() for x in level_config.split(">") if x.strip()]
-            task_priority_map = {name: i for i, name in enumerate(level_order)}
+            lvl_order = [x.strip() for x in self.config.get("关卡类型优先级", "探险/无尽>驱离>拆解").split(">") if x.strip()]
+            lvl_map = {name: i for i, name in enumerate(lvl_order)}
 
-            tasks_to_execute = []
-
-            # 遍历模块寻找任务 - 先按密函委托优先级排序
-            for module_key in sorted_modules:
-                index = module_index_map.get(module_key)
-                if index is None or index >= len(instance_info_list):
-                    continue
-
-                module_data_item = instance_info_list[index]
-                module_instances = module_data_item.get("instances", [])
+            tasks = []
+            for mod_key in valid_mods:
+                idx = mod_map[mod_key]
+                if idx >= len(instance_info): continue
                 
-                if not module_instances:
-                    continue
-
-                for task_info in module_instances:
-                    mapped_name = task_info.get("name") 
-                    if mapped_name and mapped_name in self.TASK_MAPPING:
-                        priority = task_priority_map.get(mapped_name, 999)
-                        # 添加模块优先级作为主要排序键
-                        module_priority = sorted_modules.index(module_key)
-                        tasks_to_execute.append({
-                            "name": mapped_name,
-                            "class": self.TASK_MAPPING[mapped_name],
-                            "priority": priority,
-                            "module_key": module_key,
-                            "module_priority": module_priority  # 添加模块优先级
+                for task in instance_info[idx].get("instances", []):
+                    name = task.get("name")
+                    if name in self.TASK_MAPPING:
+                        tasks.append({
+                            "name": name,
+                            "class": self.TASK_MAPPING[name],
+                            "priority": lvl_map.get(name, 999),
+                            "module_key": mod_key,
+                            "module_priority": valid_mods.index(mod_key)
                         })
 
-            # 按优先级排序 - 先按模块优先级，再按关卡优先级
-            tasks_to_execute.sort(key=lambda x: (x["module_priority"], x["priority"]))
-            return tasks_to_execute
+            return sorted(tasks, key=lambda x: (x["module_priority"], x["priority"]))
 
-        def _find_first_executable_task(tasks_to_execute):
-            """找到第一个可执行的任务（内部函数）"""
-            # 获取密函数量
-            rule_num, weapon_num, mod_num = self.get_letter_num()
-            logger.debug(f"当前密函数量 - 角色: {rule_num}, 武器: {weapon_num}, MOD: {mod_num}")
+        def _get_default_task():
+            name = self.config.get("默认任务")
+            return (self.DEFAULT_TASK_MAPPING.get(name), "default", name) if name else (None, None, None)
+
+        try:
+            now_hour = datetime.now().hour
+            self._log_info(f"请求API获取任务数据，小时信息：{self.last_check_hour}，{now_hour}")
             
-            for task in tasks_to_execute:
-                task_key = f"{task['module_key']}_{task['name']}_{task['class'].__name__}"
-                
-                # 检查密函数量
-                if not _has_enough_letters(task['module_key'], rule_num, weapon_num, mod_num):
+            if not _fetch_api_data("", self.config.get("token"), 1 if self.last_check_hour == now_hour else 5):
+                return _get_default_task()
+            
+            tasks = _get_sorted_tasks(self.last_api_response_data)
+            self._log_info(f"api返回的可执行任务列表: {tasks}")
+            self._log_info(f"已完成的任务列表: {self.finished_tasks}")
+            # 查找首个可执行任务
+            rule, weapon, mod = self.get_letter_num()
+            logger.debug(f"当前密函数量 - 角色: {rule}, 武器: {weapon}, MOD: {mod}")
+            
+            letter_counts = {"角色": rule, "武器": weapon, "MOD": mod}
+            
+            for task in tasks:
+                mod_key = task['module_key']
+                if letter_counts.get(mod_key, 0) == 0:
+                    self._log_info(f"{mod_key}任务 密函数量为0，跳过")
                     continue
 
-                logger.debug(f"已完成任务: {self.finished_tasks}")    
-                # 检查是否已完成
+                task_key = f"{mod_key}_{task['name']}_{task['class'].__name__}"
                 if task_key not in self.finished_tasks:
-                    self._log_info(f"匹配到任务: {task['name']} (模块: {task['module_key']})")
-                    return task['class'], task['module_key'], task['name']
-                    
-            return None
+                    self._log_info(f"匹配到任务: {task['name']} (模块: {mod_key})")
+                    return task['class'], mod_key, task['name']
 
-        def _has_enough_letters(module_key, rule_num, weapon_num, mod_num):
-            """检查是否有足够的密函（内部函数）"""
-            if module_key == "角色" and rule_num == 0:
-                self._log_info(f"角色任务 密函数量为0，跳过")
-                return False
-            if module_key == "武器" and weapon_num == 0:
-                self._log_info(f"武器任务 密函数量为0，跳过")
-                return False
-            if module_key == "MOD" and mod_num == 0:
-                self._log_info(f"MOD任务 密函数量为0，跳过")
-                return False
-            return True
-
-        def _get_default_task_info():
-            """获取默认任务信息"""
-            default_task_name = self.config.get("默认任务")
-            if default_task_name and default_task_name in self.DEFAULT_TASK_MAPPING:
-                return self.DEFAULT_TASK_MAPPING[default_task_name], "default", default_task_name
-            return None, None, default_task_name
-
-        # API_URL = "https://wiki.ldmnq.com/v1/dna/instanceInfo"
-        # HEADERS = {"game-alias": "dna"}
-        
-        try:
-            self._log_info(f"请求API获取任务数据，小时信息：{self.last_check_hour}，{datetime.now().hour}，将最多执行{1 if self.last_check_hour == datetime.now().hour else 5}次")
-            
-            # 获取API数据
-            if not _fetch_api_data("", self.config.get("token"), 1 if self.last_check_hour == datetime.now().hour else 5):
-                return _get_default_task_info()
-                
-            instance_info_list = self.last_api_response_data
-            self._log_info(f"最终API数据: {instance_info_list}")
-            
-            # 获取任务列表并排序
-            tasks_to_execute = _get_sorted_tasks(instance_info_list)
-            self._log_info(f"api返回的可执行任务列表: {tasks_to_execute}")
-            
-            # 找到第一个可执行的任务
-            result = _find_first_executable_task(tasks_to_execute)
-            if result:
-                return result
-                
-            self._log_info(f"已完成的任务: {self.finished_tasks}")
             self._log_info("未匹配到可执行的密函任务，执行默认任务")
-            return _get_default_task_info()
-            
+            return _get_default_task()
+
         except Exception as e:
             self._log_info(f"请求API或处理数据失败: {e}")
-            return _get_default_task_info()
+            return _get_default_task()
 
     def schedule_task(self, task_class, module_key, task_name):
         """执行任务,如果当前有任务在运行,强制停止当前任务"""
-
-        def _need_switch_task(target_task, module_key, task_name):
-            """检查是否需要切换任务"""
-            is_same_task = (
-                self.last_task_module == module_key and
-                self.last_task_name == task_name and
-                isinstance(self.last_scheduled_task, target_task.__class__)
-            )
-            
-            self._log_info(f"任务变化信息: {self.last_task_module}->{module_key}, "
-                        f"{self.last_task_name}->{task_name}, "
-                        f"{self.last_scheduled_task}->{target_task}")
-            
-            if is_same_task:
-                self._log_info(f"任务相同且正在运行，无需切换: {task_name}")
-                return False
-            
-            # 更新任务记录
-            self.last_task_module = module_key
-            self.last_task_name = task_name
-            return True
-
-        def _stop_current_task():
-            """停止当前正在运行的任务"""
-            current_task = self.executor.current_task
-            if current_task is None:
-                self._log_info(f"当前没有正在运行的任务，不需要停止")
-                return
-            
-            self._log_info(f"正在强制停止当前任务: {current_task.name}")
-            self.executor.stop_current_task()  # 发送停止信号
-            
-            # 等待当前任务退出 (最多等60秒)
-            now_time = time.time()
-            while time.time() - now_time < 60 and self.is_enable_running():
-                if self.executor.current_task is None:
-                    self.prev_task_is_force_stop = False
-                    # 更新任务统计信息
-                    self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
-                    self.task_stats[-1]["status"] = '被调度停止'
-                    break
-                time.sleep(1)
-            
-            if self.executor.current_task is not None:
-                raise Exception("当前任务停止超时")
-
-        def _start_target_task( target_task, module_key, task_name):
-            """启动目标任务"""
-            if not target_task.enabled or self.executor.current_task is None:
-                try:
-                    # 重置ui，回到历练页面
-                    self._reset_ui_state()
-                except UiResetException as e:
-                    self._log_info(f"UI重置异常: {e},等待10秒后重试3次")
-                    self.sleep(10)
-                    retries = 0
-                    while retries < 3:
-                        try:
-                            self._reset_ui_state()
-                            break
-                        except UiResetException as e:
-                            self._log_info(f"UI重置异常: {e},等待10秒后重试3次")
-                            self.sleep(10)
-                            retries += 1
-                    if retries == 3:
-                        raise UiResetException("UI重置失败3次")
-
-
-                self._log_info(f"正在启动任务: {self.last_task_module}-{self.last_task_name}")
-                
-                target_task.enable()
-                self._log_info(f"任务 {self.last_task_name} 已启用，target_task.name=>{target_task.name}")
-                self.go_to_tab(target_task.name)
-                
-                # 记录当前调度的任务，用于后续追踪完成状态
-                self.last_scheduled_task = target_task
-                self.task_stats.append({
-                    "module_key": module_key,
-                    "task_name": task_name,
-                    "status": '运行中',
-                    "start_time": time.strftime("%H:%M:%S", time.localtime()),
-                    "end_time": None
-                })
-                # 限制统计列表长度，防止内存泄漏
-                if len(self.task_stats) > 50:
-                    self.task_stats.pop(0)
-            else:
-                self._log_info(f"任务 {self.last_task_name} 已经在运行中")
-                # 记录当前调度的任务，用于后续追踪完成状态
-                self.last_scheduled_task = target_task
-
         target_task = self.executor.get_task_by_class_name(task_class.__name__)
-
         if not target_task:
             self._log_info(f"未找到任务: {task_class.__name__}")
             return
 
         # 1. 检查是否需要切换任务
-        if not _need_switch_task(target_task, module_key, task_name):
+        self._log_info(f"任务变化信息: {self.last_task_module}->{module_key}, {self.last_task_name}->{task_name}, {self.last_scheduled_task}->{target_task}")
+        
+        if (self.last_task_module == module_key and 
+            self.last_task_name == task_name and 
+            isinstance(self.last_scheduled_task, target_task.__class__)):
+            self._log_info(f"任务相同且正在运行，无需切换: {task_name}")
             return
 
-        # 2 如果当前没有正在运行的任务，且有任务统计记录，更新任务统计信息
+        self.last_task_module, self.last_task_name = module_key, task_name
+
+        # 2. 更新自行完成的任务状态
         if self.executor.current_task is None and self.task_stats:
-            self.task_stats[-1]["end_time"] = time.strftime("%H:%M:%S", time.localtime())
-            self.task_stats[-1]["status"] = '任务自行完成'
-        
+            self.task_stats[-1].update({"end_time": time.strftime("%H:%M:%S", time.localtime()), "status": '任务自行完成'})
 
         # 3. 停止当前任务
-        _stop_current_task()
-        
+        if current := self.executor.current_task:
+            self._log_info(f"正在强制停止当前任务: {current.name}")
+            self.executor.stop_current_task()
+            
+            start_time = time.time()
+            while self.executor.current_task and time.time() - start_time < 60 and self.is_enable_running():
+                time.sleep(1)
+            
+            if self.executor.current_task:
+                raise Exception("当前任务停止超时")
+            
+            self.prev_task_is_force_stop = False
+            if self.task_stats:
+                self.task_stats[-1].update({"end_time": time.strftime("%H:%M:%S", time.localtime()), "status": '被调度停止'})
+        else:
+            self._log_info("当前没有正在运行的任务，不需要停止")
+
         # 4. 启动目标任务
-        _start_target_task(target_task, module_key, task_name)
+        if not target_task.enabled or self.executor.current_task is None:
+            # 重置UI (1次尝试 + 3次重试)
+            for i in range(4):
+                try:
+                    self._reset_ui_state()
+                    break
+                except UiResetException as e:
+                    if i == 3: raise UiResetException("UI重置失败3次")
+                    self._log_info(f"UI重置异常: {e},等待10秒后重试3次")
+                    self.sleep(10)
+
+            self._log_info(f"正在启动任务: {module_key}-{task_name}")
+            target_task.enable()
+            self._log_info(f"任务 {task_name} 已启用，target_task.name=>{target_task.name}")
+            self.go_to_tab(target_task.name)
+            
+            self.last_scheduled_task = target_task
+            self.task_stats.append({
+                "module_key": module_key, "task_name": task_name, "status": '运行中',
+                "start_time": time.strftime("%H:%M:%S", time.localtime()), "end_time": None
+            })
+            if len(self.task_stats) > 50: self.task_stats.pop(0)
+        else:
+            self._log_info(f"任务 {task_name} 已经在运行中")
+            self.last_scheduled_task = target_task
 
 
     def _update_task_summary_ui(self):
         """更新任务汇总UI"""
-        if not self.last_scheduled_task:
-            return
+        if not self.last_scheduled_task: return
         if not self.task_stats:
             self.last_scheduled_task.info_set("自动密函：历史记录", "暂无任务记录")
             return
             
-        for stat in self.task_stats[::-1]:
-            name = f"{stat['module_key']}，{stat['task_name']}，{stat['status']}"
-            if stat['end_time']:
-                time_range = f"{stat['start_time']}，{stat['end_time']}"
-            else:
-                time_range = f"{stat['start_time']}，--:--:--"
-            self.last_scheduled_task.info_set(f"自动密函：历史记录{self.task_stats.index(stat)}", f"{name}，{time_range}")
+        for i, stat in enumerate(self.task_stats[::-1]):
+            time_range = f"{stat['start_time']}，{stat['end_time'] or '--:--:--'}"
+            self.last_scheduled_task.info_set(
+                f"自动密函：历史记录{len(self.task_stats)-1-i}", 
+                f"{stat['module_key']}，{stat['task_name']}，{stat['status']}，{time_range}"
+            )
         
     
     def _reset_ui_state(self):
@@ -686,204 +544,156 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
     def switch_to_default_task(self):
         """切换到默认任务副本"""
-        default_task_type = self.config.get("默认任务副本类型")
-        if not default_task_type:
-            self._log_info("未配置默认任务副本类型")
-            return
-        
-        type_task, task_name = default_task_type.split(':')
-        
-        if type_task != "夜航手册":
-            click_pos = (0.11, 0.16, 0.19, 0.18)
-            # 委托搜索区域
-            box_params = (2560, 1440, 2560*0.07, 1440*0.69, 2560*0.66, 1440*0.75)
-            scroll_pos = (0.5, 0.4)
-            scroll_amount = -600
-            max_attempts = 10
-        else:
-            # 点击切换到夜航手册
-            click_pos = (0.23, 0.16, 0.30, 0.18)
-            # 夜航手册搜索区域
-            box_params = (2560, 1440, 2560*0.07, 1440*0.22, 2560*0.12, 1440*0.84)
-            scroll_pos = (0.1, 0.37)
-            scroll_amount = -600
-            max_attempts = 3
-        
-        timeout, now_time, clicked = 20, time.time(), False
-        # 查找任务
-        while not clicked and time.time() - now_time < timeout and self.is_enable_running():            
-            # 双击，确保成功点击切换
-            for _ in range(2):    
-                # 点击切换到委托
-                self.click_relative_random(*click_pos)
-                self.sleep(0.02)
-            self.sleep(1)
-        
-            # 确保滚动到初始位置
-            for _ in range(2):  
-                self.scroll_relative(*scroll_pos, scroll_amount)
-                self.sleep(0.2)
-
-            attempt = 0
-            while attempt <= max_attempts and self.is_enable_running():
-                attempt += 1
-                self._log_info(f"尝试匹配任务: {task_name} (尝试{attempt}/{max_attempts})")
-                match_box = self.wait_ocr(
-                    box=self.box_of_screen_scaled(*box_params, name="weituo", hcenter=True),
-                    match=re.compile(f'.*{task_name}.*'),
-                    time_out=1,
-                )
-                if not match_box:
-                    # 滚动
-                    self.scroll_relative(0.5, 0.4, 600)
-                else:
-                    self.click_box_random(match_box[0])
-                    clicked = True
-                    break
-            
-        if not clicked:
-            self._log_info(f"未找到任务: {task_name}")
-            raise Exception(f"未找到任务: {task_name}")    
-
-    def switch_to_task_level(self):
-        """选择默认任务关卡等级"""
-        
         if not (default_task_type := self.config.get("默认任务副本类型")):
             self._log_info("未配置默认任务副本类型")
             return
         
         type_task, task_name = default_task_type.split(':')
+        is_night = type_task == "夜航手册"
         
-        # 夜航手册处理
-        if type_task == "夜航手册":
-            task_name = self.config.get("副本名称【夜航任务】")
-            box_params = (2560 * 0.18, 1440 * 0.22, 2560 * 0.30, 1440 * 0.69)
-        # 普通任务处理
+        if is_night:
+            click_pos, box_params = (0.23, 0.16, 0.30, 0.18), (0.07, 0.22, 0.12, 0.84)
+            scroll_pos, max_attempts = (0.1, 0.37), 3
         else:
-            task_text = self.config.get("副本等级【普通任务】")
-            task_name = task_text.split('.')[-1]
-            box_params = (2560 * 0.10, 1440 * 0.19, 2560 * 0.17, 1440 * 0.62)
-        
-        clicked, attempt, now_time, timeout, flag = False, 1, time.time(), 20, 0
-        # 统一的匹配逻辑
-        while not clicked and time.time() - now_time < timeout and self.is_enable_running():
-            self._log_info(f"尝试匹配: {task_name} (第{attempt}次)")
-            match_box = self.ocr(
-                box=self.box_of_screen_scaled(
-                    2560, 1440, *box_params, name="等级", hcenter=True
-                ),
-                match=re.compile(f'.*{task_name}.*')
-            )
-            self._log_info(f"OCR匹配到的夜航副本或者任务等级: {match_box}")
-            if match_box:
-                self._log_info(f"匹配成功: {match_box}")
-                if type_task == "夜航手册":
-                    box = match_box[0]
-                    y= box.y
-                    to_y= y+box.height
-                    self._log_info(f"夜航手册匹配到的框: {self.width*0.55}, {(y+0.1)}, {box.width}, {box.height}")
-                    box = Box(self.width*0.55, y+(0.016*self.height), box.width, box.height)
-                    self.draw_boxes(boxes=box)
-                    for _ in range(2):
-                        # 点击进入副本开始界面
-                        self.click_box_random(box)
-                        self.sleep(0.02)
-                else:
-                    self.click_box_random(match_box[0])
-                clicked = True
+            click_pos, box_params = (0.11, 0.16, 0.19, 0.18), (0.07, 0.69, 0.66, 0.75)
+            scroll_pos, max_attempts = (0.5, 0.4), 10
             
-            # 仅夜航手册在匹配失败后滚动
-            if type_task == "夜航手册" and not clicked:
-                flag+=1
+        start_time = time.time()
+        while time.time() - start_time < 20 and self.is_enable_running():
+            # 双击切换，并确保滚动到初始位置
+            for _ in range(2): 
+                self.click_relative_random(*click_pos)
+                self.sleep(0.02)
+            self.sleep(1)
+            
+            for _ in range(2): 
+                self.scroll_relative(*scroll_pos, -600)
+                self.sleep(0.2)
+
+            for attempt in range(1, max_attempts + 1):
+                if not self.is_enable_running(): return
+                self._log_info(f"尝试匹配任务: {task_name} (尝试{attempt}/{max_attempts})")
+                
+                box = self.box_of_screen_scaled(2560, 1440, 2560*box_params[0], 1440*box_params[1], 2560*box_params[2], 1440*box_params[3], name="weituo", hcenter=True)
+                if match_box := self.wait_ocr(box=box, match=re.compile(f'.*{task_name}.*'), time_out=1):
+                    self.click_box_random(match_box[0])
+                    return
+                
+                self.scroll_relative(0.5, 0.4, 600)
+            
+        msg = f"未找到任务: {task_name}"
+        self._log_info(msg)
+        raise Exception(msg)    
+
+    def switch_to_task_level(self):
+        """选择默认任务关卡等级"""
+        if not (default_task_type := self.config.get("默认任务副本类型")):
+            self._log_info("未配置默认任务副本类型")
+            return
+        
+        type_task, task_name = default_task_type.split(':')
+        is_night = type_task == "夜航手册"
+        
+        if is_night:
+            task_name = self.config.get("副本名称【夜航任务】")
+            box_params = (0.18, 0.22, 0.30, 0.69)
+        else:
+            task_name = self.config.get("副本等级【普通任务】").split('.')[-1]
+            box_params = (0.10, 0.19, 0.17, 0.62)
+        
+        attempt, flag, start_time = 1, 0, time.time()
+        
+        while time.time() - start_time < 20 and self.is_enable_running():
+            self._log_info(f"尝试匹配: {task_name} (第{attempt}次)")
+            box = self.box_of_screen_scaled(2560, 1440, 2560*box_params[0], 1440*box_params[1], 2560*box_params[2], 1440*box_params[3], name="等级", hcenter=True)
+            
+            if match_box := self.ocr(box=box, match=re.compile(f'.*{task_name}.*')):
+                self._log_info(f"匹配成功: {match_box}")
+                target_box = match_box[0]
+                if is_night:
+                    self._log_info(f"夜航手册匹配到的框: {self.width*0.55}, {(target_box.y+0.1)}, {target_box.width}, {target_box.height}")
+                    target_box = Box(self.width*0.55, target_box.y+(0.016*self.height), target_box.width, target_box.height)
+                    self.draw_boxes(boxes=target_box)
+                    self.click_box_random(target_box)
+                    self.sleep(0.02)
+                
+                self.click_box_random(target_box)
+                return
+
+            if is_night:
+                flag += 1
                 if flag > 2:
                     self.scroll_relative(0.5, 0.4, 600)
                     flag = 0
                 self.sleep(1)
             attempt += 1
-        if not clicked:
-            self._log_info(f"未找到匹配的{type_task}副本: {task_name}")
-            raise Exception(f"未找到匹配的{type_task}副本: {task_name}")    
+
+        msg = f"未找到匹配的{type_task}副本: {task_name}"
+        self._log_info(msg)
+        raise Exception(msg)    
 
     def switch_to_letter(self):
         """选择密函任务"""
         self.click_relative_random(0.34, 0.15, 0.41, 0.18)
         self.sleep(1) 
-        box_points = (2560 * 0.07, 1440 * 0.051, 2560 * 0.16, 1440 * 0.77)
         
-        # 根据模块确定点击区域
-        if self.last_task_module == '角色':
-            box_points = (2560 * 0.07, 1440 * 0.051, 2560 * 0.16, 1440 * 0.77)
-        elif self.last_task_module == '武器':
-            box_points = (2560 * 0.28, 1440 * 0.051, 2560 * 0.38, 1440 * 0.77) 
-        elif self.last_task_module == 'MOD':
-            box_points = (2560 * 0.48, 1440 * 0.051, 2560 * 0.59, 1440 * 0.77) 
-        else:
+        module_points = { '角色': (0.07, 0.16), '武器': (0.28, 0.38), 'MOD': (0.48, 0.59) }
+        
+        if self.last_task_module not in module_points:
             raise Exception(f"进入密函任务：未知的模块: {self.last_task_module}")
-        box = self.box_of_screen_scaled(
-            2560, 1440, *box_points, name='密函任务类型', hcenter=True
-        )
-        clicked, flag = False, 0
-        while not clicked and flag < 3 and self.is_enable_running():    
-            text = self.wait_ocr(
-                box=box,
-                match=self.last_task_name,
-                time_out=5,
-                raise_if_not_found=True,
-            )
-            self.click_box_random(text[0])
-            clicked = True
-        if not clicked:
-            self._log_info(f"进入密函任务：未找到匹配的{self.last_task_module}任务: {self.last_task_name}，无法点击进入")
-            raise Exception(f"进入密函任务：未找到匹配的{self.last_task_module}任务: {self.last_task_name}，无法点击进入")       
+            
+        x1, x2 = module_points[self.last_task_module]
+        box = self.box_of_screen_scaled(2560, 1440, 2560 * x1, 1440 * 0.051, 2560 * x2, 1440 * 0.77, name='密函任务类型', hcenter=True)
+        
+        for _ in range(3):
+            if not self.is_enable_running(): break
+            if text := self.wait_ocr(box=box, match=self.last_task_name, time_out=5, raise_if_not_found=True):
+                self.click_box_random(text[0])
+                return
+
+        msg = f"进入密函任务：未找到匹配的{self.last_task_module}任务: {self.last_task_name}，无法点击进入"
+        self._log_info(msg)
+        raise Exception(msg) 
 
     def get_letter_num(self):
         """获取当前密函数量，如果不在历练页面，直接返回100, 100, 100"""
-  
-        if not self.find_lilian():
-            return 100, 100, 100
+        if not self.find_lilian(): return 100, 100, 100
+        
         # 切换到密函委托
         for _ in range(2):
             self.click_relative_random(0.34, 0.15, 0.41, 0.18)
-            self.sleep(0.02) 
+            self.sleep(0.02)
+        self.sleep(1)
 
-        self.sleep(1) 
+        time_out, now_time = 3, time.time()
+        nums = [None, None, None]  # rule, weapon, mod
+        
+        # 定义OCR区域参数
+        configs = [
+            (0.13, 0.19, "letter_num_rule"),   # rule
+            (0.33, 0.39, "letter_num_weapon"), # weapon
+            (0.54, 0.60, "letter_num_mod")     # mod
+        ]
 
-        time_out, now_time = 3,time.time()
-        rule_num, weapon_num, mod_num = None, None, None
-        while (not isinstance(rule_num, (int, float)) or not isinstance(weapon_num, (int, float)) or not isinstance(mod_num, (int, float))) and time.time() - now_time < time_out and self.is_enable_running():
+        while any(n is None for n in nums) and time.time() - now_time < time_out and self.is_enable_running():
+            for i, (x1, x2, name) in enumerate(configs):
+                if nums[i] is not None: continue
+                
+                box = self.box_of_screen_scaled(2560, 1440, 2560*x1, 1440*0.43, 2560*x2, 1440*0.46, name=name, hcenter=True)
+                if text := self.ocr(box=box, match=re.compile(r'\d+')):
+                    nums[i] = int(re.sub(r'\D', '', text[0].name))
 
-            rule_box_params = (2560, 1440, 2560*0.13, 1440*0.43, 2560*0.19, 1440*0.46)
-            rule_box = self.box_of_screen_scaled(*rule_box_params, name="letter_num_rule", hcenter=True)
-            rule_text = self.ocr(box=rule_box,match=re.compile(r'\d+'))
-            if rule_text and not isinstance(rule_num, (int, float)):
-                rule_num = int(re.sub(r'\D', '', rule_text[0].name))
-
-            weapon_box_params = (2560, 1440, 2560*0.33, 1440*0.43, 2560*0.39, 1440*0.46)
-            weapon_box = self.box_of_screen_scaled(*weapon_box_params, name="letter_num_weapon", hcenter=True)
-            weapon_text = self.ocr(box=weapon_box,match=re.compile(r'\d+'))
-            if weapon_text and not isinstance(weapon_num, (int, float)):
-                weapon_num = int(re.sub(r'\D', '', weapon_text[0].name))
-
-            mod_box_params = (2560, 1440, 2560*0.54, 1440*0.43, 2560*0.60, 1440*0.46)
-            mod_box = self.box_of_screen_scaled(*mod_box_params, name="letter_num_mod", hcenter=True)
-            mod_text = self.ocr(box=mod_box,match=re.compile(r'\d+'))
-            if mod_text and not isinstance(mod_num, (int, float)):
-                mod_num = int(re.sub(r'\D', '', mod_text[0].name))
-
-        return rule_num, weapon_num, mod_num
+        return tuple(nums)
 
     def find_lilian(self):
         """查找历练文本"""
         logger.debug("检查是否在历练页面")
-        lilian, flag = None, 0
-        box = self.box_of_screen_scaled(
-            2560, 1440, 2560 * 0.05, 1440 * 0.001, 2560 * 0.09, 1440 * 0.05,
-            name="lilian", hcenter=True
-        )
-        while not (lilian := self.ocr(box=box, match='历练')) and flag < 3 and self.is_enable_running():
+        box = self.box_of_screen_scaled(2560, 1440, 2560 * 0.05, 1440 * 0.001, 2560 * 0.09, 1440 * 0.05, name="lilian", hcenter=True)
+        for flag in range(3):
+            if not self.is_enable_running(): break
+            if lilian := self.ocr(box=box, match='历练'): return lilian
             logger.debug(f"查找历练文本第{flag+1}次尝试")
-            flag += 1
-        return lilian
+        return None
 
 
 # import requests

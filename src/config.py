@@ -166,6 +166,9 @@ config = {
         ["src.tasks.fullauto.Auto65ArtifactTask_Fast", "Auto65ArtifactTask_Fast"],
         ["src.tasks.fullauto.Auto70jjbTask", "Auto70jjbTask"],
         ["src.tasks.fullauto.ImportTask", "ImportTask"],
+        ["src.tasks.fullauto.AutoDismantle", "AutoDismantle"],
+        ["src.tasks.fullauto.AutoRogueTask", "AutoRogueTask"],
+        ["src.tasks.fullauto.CustomCommandTask", "CustomCommandTask"],
         ["src.tasks.AutoSkill", "AutoSkill"],
         ["src.tasks.AutoGeneral", "AutoGeneral"],
         ["src.tasks.AutoExpulsion", "AutoExpulsion"],
@@ -176,6 +179,7 @@ config = {
         ["ok", "DiagnosisTask"],
     ],
     'trigger_tasks':[
+        ["src.tasks.trigger.AutoScheduleTask", "AutoScheduleTask"],
         ["src.tasks.trigger.AutoRouletteTask", "AutoRouletteTask"],
         ["src.tasks.trigger.AutoMazeTask", "AutoMazeTask"],
         ["src.tasks.trigger.AutoPickTask", "AutoPickTask"],

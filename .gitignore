@@ -69,12 +69,7 @@ pip-delete-this-directory.txt
 autohelper
 working_images/
 .vscode
-# 忽略mod文件夹下的所有内容
-mod/*
-# 但不忽略这个特定的文件夹
-!mod/示例-./
-!mod/builtin/
-!mod/使用须知.md
+
 
 # 忽略vscode插件文件
 .history/

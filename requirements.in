@@ -3,3 +3,4 @@ onnxocr-ppocrv4==0.0.5
 openvino
 opencv-python
 pynput==1.8.1
+cryptography

@@ -208,7 +208,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             "副本名称【夜航任务】", 
             "默认任务",
             "密函委托优先级",
-            "关卡类型优先级"
+            "关卡类型优先级",
+            "token"
         ]
         
         for config_key in required_configs:
@@ -308,12 +309,13 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
     def _calculate_target_task(self):
         """计算得出最终可执行任务"""
 
-        def _fetch_api_data(dev_code, token, max_retries=5):
+        def _fetch_api_data(max_retries=5):
             """获取API数据"""
             for retries in range(1, max_retries + 1):
                 if not self.is_enable_running(): break
                 try:
-                    result = GameAPI(dev_code, token).default_role_for_tool()
+                    result = DNAAPI(token=self.config.get("token")).default_role_for_tool()
+                    # logger.info(f"API返回数据: {result}")
                     if result.get('code') != 200:
                         self._log_info(f"API请求错误，60s后重试 ({retries}/{max_retries})...")
                     elif not isinstance(data := result.get('data', {}).get('instanceInfo'), list):
@@ -371,7 +373,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             now_hour = datetime.now().hour
             self._log_info(f"请求API获取任务数据，小时信息：{self.last_check_hour}，{now_hour}")
             
-            if not _fetch_api_data("", self.config.get("token"), 1 if self.last_check_hour == now_hour else 5):
+            if not _fetch_api_data( 1 if self.last_check_hour == now_hour else 5):
                 return _get_default_task()
             
             tasks = _get_sorted_tasks(self.last_api_response_data)
@@ -702,222 +704,232 @@ import random
 import hashlib
 import base64
 import json
-from urllib.parse import urlencode
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from urllib.parse import urlencode
 
+# 需要安装依赖:
+# pip install requests cryptography
 
-class DNABaseAPI:
-    RSA_PUBLIC_KEY = (
-        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDGpdbezK+eknQZQzPOjp8mr/dP+QHwk8CRkQh6C6qFnfLH3tiyl0pnt3dePuFDnM1PUXGhCkQ157ePJCQgkDU2+mimDmXh0oLFn9zuWSp+U8uLSLX3t3PpJ8TmNCROfUDWvzdbnShqg7JfDmnrOJz49qd234W84nrfTHbzdqeigQIDAQAB"
-    )
-    BASE_URL = "https://dnabbs-api.yingxiong.com/"
-
-    def __init__(self, dev_code, token=""):
-        self.dev_code = dev_code
+class DNAAPI:
+    def __init__(self, token="", dev_code=""):
         self.token = token
-        self.session = requests.Session()
+        self.dev_code = dev_code
+        self.base_url = "https://dnabbs-api.yingxiong.com/"
+        self.rsa_public_key = (
+            "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDGpdbezK+eknQZQzPOjp8mr/dP+QHwk8CRkQh6C6qFnfLH3tiyl0pnt3dePuFDnM1PUXGhCkQ157ePJCQgkDU2+mimDmXh0oLFn9zuWSp+U8uLSLX3t3PpJ8TmNCROfUDWvzdbnShqg7JfDmnrOJz49qd234W84nrfTHbzdqeigQIDAQAB"
+        )
+        self.upload_key = ""
 
-    def _rsa_encrypt(self, text):
+    def default_role_for_tool(self, type_val=1, other_user_id=None):
+        """
+        获取工具默认角色
+        """
+        data = {'type': type_val}
+        if other_user_id:
+            data['otherUserId'] = other_user_id
+        
+        # URL 自动去除了开头的 /
+        return self._dna_request("role/defaultRoleForTool", data, sign=True)
+
+    def _dna_request(self, url, data=None, sign=False):
+        if url.startswith("/"):
+            url = url[1:]
+        
+        # 构造 headers
+        headers = {}
+        payload = data if data else {}
+
+        if sign:
+            # 签名逻辑
+            headers_payload = self._get_headers(payload=payload, token=self.token)
+            headers.update(headers_payload['headers'])
+            payload = headers_payload['payload'] # 这里 payload 可能变成 string (URL encoded)
+        else:
+             # 非签名请求的基础 header
+             h = self._get_base_headers()
+             headers.update(h)
+
+        # 发送请求
+        full_url = self.base_url + url
+        
+        # data 处理: 如果是 GET 请求通常放 params，POST 放 data
+        # 原代码中 _dna_request 似乎总是 POST (默认 method="POST")
+        # 且 body 处理逻辑:
+        # if (data && typeof data === "object" && !(data instanceof FormData)) {
+        #     const p = new URLSearchParams() ... body = p.toString()
+        # }
+        # 即 Content-Type 是 application/x-www-form-urlencoded
+        
         try:
-            pem_key = f"-----BEGIN PUBLIC KEY-----\n{self.RSA_PUBLIC_KEY}\n-----END PUBLIC KEY-----"
-            public_key = serialization.load_pem_public_key(
-                pem_key.encode('utf-8'),
-                backend=default_backend()
-            )
-            encrypted = public_key.encrypt(
-                text.encode('utf-8'),
-                padding.PKCS1v15()
-            )
-            return base64.b64encode(encrypted).decode('utf-8')
+            # 如果 payload 是字典，requests 的 data 参数会自动转为 form-urlencoded
+            # 但如果签名过程中 payload 已经被转为 string (sign=True 时)，则直接传 string
+            
+            resp = requests.post(full_url, headers=headers, data=payload, timeout=10)
+            resp_json = resp.json()
+            
+            # 处理可能的 JSON 字符串嵌套
+            if isinstance(resp_json, dict) and 'data' in resp_json and isinstance(resp_json['data'], str):
+                try:
+                    resp_json['data'] = json.loads(resp_json['data'])
+                except:
+                    pass
+            
+            return resp_json
         except Exception as e:
-            raise Exception(f"[DNA] RSA Encryption failed: {str(e)}")
+            return {"code": -1, "msg": f"请求失败: {str(e)}"}
+
+    def _get_headers(self, payload, token):
+        # 基础 headers
+        headers = self._get_base_headers()
+        if token:
+            headers['token'] = token
+            
+        # 签名逻辑
+        # build_signature
+        rk, tn, sa = self._build_signature(self.rsa_public_key, payload, token)
+        
+        headers['rk'] = rk
+        headers['tn'] = tn
+        headers['sa'] = sa
+        
+        # payload 转字符串
+        # 类似于 new URLSearchParams(payload).toString()
+        # requests 库 data 传 dict 时会自动 encode，但这里我们需要手动 encode 吗？
+        # 原 JS 代码: if (typeof payload === "object") ... payload = params.toString()
+        # 并且返回了修改后的 payload。
+        # 签名的 payload 是包含 exparams 的，这里简化不考虑 exparams
+        
+        # 转换为 form-urlencoded 字符串
+        str_payload = urlencode(payload)
+        
+        return {'headers': headers, 'payload': str_payload}
+
+    def _get_base_headers(self):
+        return {
+            "version": "1.2.0",
+            "source": "ios",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "DoubleHelix/3 CFNetwork/3860.300.31 Darwin/25.2.0",
+        }
+
+    def _build_signature(self, pk, payload, token):
+        rk = self._rand_str(16)
+        raw_sa, shuffled_sa = self._generate_sa()
+        
+        str_params = {}
+        for k, v in payload.items():
+            str_params[k] = str(v)
+            
+        sign_params = str_params.copy()
+        if token:
+            sign_params['token'] = token
+        sign_params['sa'] = raw_sa
+        
+        # 生成签名
+        sign_val = self._sign_shuffled(sign_params, rk)
+        sign_encoded = self._xor_encode(sign_val, rk)
+        
+        # 对 rk 进行 RSA 加密
+        rk_encrypted = self._rsa_encrypt(rk, pk)
+        
+        # 生成 tn
+        tn = f"{rk_encrypted},{sign_encoded}"
+        
+        return rk, tn, shuffled_sa
+
+    def _rsa_encrypt(self, text, public_key_b64):
+        # 格式化 PEM 公钥
+        lines = []
+        for i in range(0, len(public_key_b64), 64):
+            lines.append(public_key_b64[i:i+64])
+        pem = "-----BEGIN PUBLIC KEY-----\n" + "\n".join(lines) + "\n-----END PUBLIC KEY-----"
+        
+        # 加载公钥
+        public_key = serialization.load_pem_public_key(pem.encode('utf-8'))
+        
+        # 加密
+        encrypted = public_key.encrypt(
+            text.encode('utf-8'),
+            padding.PKCS1v15()
+        )
+        
+        return base64.b64encode(encrypted).decode('utf-8')
 
     def _rand_str(self, length=16):
         chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         return "".join(random.choice(chars) for _ in range(length))
 
     def _md5_upper(self, text):
-        return hashlib.md5(text.encode('utf-8')).hexdigest().upper()
+        m = hashlib.md5()
+        m.update(text.encode('utf-8'))
+        return m.hexdigest().upper()
 
-    def _signature_hash(self, text):
-        md5_hash = self._md5_upper(text)
-        chars = list(md5_hash)
-        positions = [1, 13, 5, 17, 7, 23]
-        
-        # Swap positions
-        # TS: for (let i = 1; i < positions.length; i += 2)
-        for i in range(1, len(positions), 2):
-            p1 = positions[i-1]
-            p2 = positions[i]
-            if 0 <= p1 < len(chars) and 0 <= p2 < len(chars):
-                chars[p1], chars[p2] = chars[p2], chars[p1]
-        
+    def _shuffle_md5(self, md5_hex):
+        if len(md5_hex) <= 23:
+            return md5_hex
+        chars = list(md5_hex)
+        swaps = [(1, 13), (5, 17), (7, 23)]
+        for i, j in swaps:
+            chars[i], chars[j] = chars[j], chars[i]
         return "".join(chars)
 
-    def _sign_fI(self, data, secret):
-        # Sort keys
-        sorted_keys = sorted(data.keys())
-        pairs = []
-        for k in sorted_keys:
-            v = data[k]
-            # TS: if (v !== null && v !== undefined && v !== "")
-            if v is not None and v != "":
-                pairs.append(f"{k}={v}")
+    def _generate_sa(self):
+        random_part = self._rand_str(17)
+        timestamp = str(int(time.time() * 1000)) # JS Date.now()
         
-        qs = "&".join(pairs)
-        return self._signature_hash(f"{qs}&{secret}")
+        result = []
+        rand_idx = 0
+        time_idx = 0
+        
+        for i in range(30):
+            if 8 <= i <= 12:
+                result.append(timestamp[time_idx])
+                time_idx += 1
+            elif 16 <= i <= 20:
+                result.append(timestamp[time_idx])
+                time_idx += 1
+            elif 22 <= i <= 24:
+                result.append(timestamp[time_idx])
+                time_idx += 1
+            else:
+                result.append(random_part[rand_idx])
+                rand_idx += 1
+                
+        raw_sa = "".join(result)
+        
+        chars = list(raw_sa)
+        swaps = [(2, 23), (9, 17), (13, 25)]
+        for i, j in swaps:
+            chars[i], chars[j] = chars[j], chars[i]
+        shuffled_sa = "".join(chars)
+        
+        return raw_sa, shuffled_sa
+
+    def _build_sign_string(self, params, app_key):
+        sorted_keys = sorted(params.keys())
+        pairs = []
+        for key in sorted_keys:
+            value = params[key]
+            if value is not None and value != "":
+                pairs.append(f"{key}={value}")
+        pairs.append(app_key)
+        return "&".join(pairs)
+
+    def _sign_shuffled(self, params, app_key):
+        sign_str = self._build_sign_string(params, app_key)
+        md5_res = self._md5_upper(sign_str)
+        return self._shuffle_md5(md5_res)
 
     def _xor_encode(self, text, key):
+        # 注意：原 JS 代码并非真正的 XOR，而是加法
+        # const e = (tb[i] & 255) + (kb[i % kb.length] & 255)
+        # out.push(`@${e}`)
         tb = text.encode('utf-8')
         kb = key.encode('utf-8')
         out = []
-        for i, b in enumerate(tb):
-            # TS: (b & 255) + (kb[i % kb.length] & 255)
-            # Python bytes are already ints 0-255
-            k_byte = kb[i % len(kb)]
-            e = b + k_byte
+        for i in range(len(tb)):
+            e = (tb[i] & 0xFF) + (kb[i % len(kb)] & 0xFF)
             out.append(f"@{e}")
         return "".join(out)
-
-    def _build_signature(self, data, token=""):
-        ts = int(time.time() * 1000)
-        sign_data = data.copy()
-        sign_data['timestamp'] = ts
-        if token:
-            sign_data['token'] = token
-        elif 'token' in sign_data:
-             # Ensure token is treated consistently if passed in data but we want to use empty string for signing if token arg is empty?
-             # TS: build_signature(payload, tokenSig ? token : "")
-             # If token is passed as argument, it overrides/sets 'token' in sign_data for calculation
-             pass
-        else:
-             # If token not passed, set to empty?
-             # TS: const sign_data = { ...data, timestamp: ts, token }
-             # If token is undefined in TS call, it's undefined in object.
-             # But here build_signature receives token from caller.
-             sign_data['token'] = token
-
-        sec = self._rand_str(16)
-        sig = self._sign_fI(sign_data, sec)
-        enc = self._xor_encode(sig, sec)
-        
-        return {'s': enc, 't': ts, 'k': sec}
-
-    def _get_headers(self, payload, options=None):
-        if options is None:
-            options = {}
-        
-        token = options.get('token', self.token)
-        tokenSig = options.get('tokenSig', False)
-        dev_code = options.get('dev_code', self.dev_code)
-        
-        content_type = "application/x-www-form-urlencoded; charset=utf-8"
-        headers = {
-            "version": "1.1.3",
-            "source": "ios",
-            "Content-Type": content_type,
-            "User-Agent": "DoubleHelix/4 CFNetwork/3860.100.1 Darwin/25.0.0"
-        }
-        
-        if dev_code:
-            headers['devCode'] = dev_code
-        if token:
-            headers['token'] = token
-            
-        if isinstance(payload, dict):
-            # Sign the payload
-            # TS: build_signature(payload, tokenSig ? token : "")
-            sign_token = token if tokenSig else ""
-            si = self._build_signature(payload, sign_token)
-            
-            payload['sign'] = si['s']
-            payload['timestamp'] = si['t']
-            
-            # Encrypt key
-            rk = si['k']
-            ek = self._rsa_encrypt(rk)
-            
-            headers['rk'] = rk
-            headers['key'] = ek
-            
-            # Convert payload to urlencoded string
-            # TS: params.append(key, String(value))
-            # We need to ensure values are strings
-            payload_str_dict = {k: str(v) for k, v in payload.items()}
-            payload_encoded = urlencode(payload_str_dict)
-            
-            return headers, payload_encoded
-            
-        return headers, payload
-
-    def _dna_request(self, endpoint, data=None, options=None):
-        if options is None:
-            options = {}
-            
-        method = options.get('method', 'POST')
-        sign = options.get('sign', False)
-        token_sig = options.get('tokenSig', False)
-        
-        url = f"{self.BASE_URL}{endpoint}"
-        
-        if data is None:
-            data = {}
-            
-        headers = {}
-        request_body = data
-        
-        if sign:
-            h, p = self._get_headers(
-                payload=data, 
-                options={'token': self.token, 'tokenSig': token_sig}
-            )
-            headers = h
-            request_body = p
-        else:
-            # If not signing, just basic headers
-            h, _ = self._get_headers(payload=None, options={'token': self.token})
-            headers = h
-            if isinstance(data, dict):
-                request_body = urlencode(data)
-
-        try:
-            response = self.session.request(
-                method=method,
-                url=url,
-                headers=headers,
-                data=request_body,
-                timeout=10
-            )
-            
-            # Handle response
-            if "text/" in response.headers.get('Content-Type', ''):
-                return {'code': -1, 'data': response.text}
-            
-            res_json = response.json()
-            
-            # TS: if (typeof raw_res.data === "string") { raw_res.data = JSON.parse(raw_res.data) }
-            if isinstance(res_json.get('data'), str):
-                try:
-                    res_json['data'] = json.loads(res_json['data'])
-                except:
-                    pass
-                    
-            return res_json
-            
-        except Exception as e:
-            print(f"Request failed: {str(e)}")
-            return {'code': -1, 'msg': str(e)}
-
-class GameAPI(DNABaseAPI):
-    def default_role_for_tool(self, type_val=1, other_user_id=None):
-        data = {'type': type_val}
-        if other_user_id:
-            data['otherUserId'] = other_user_id
-            
-        return self._dna_request(
-            "role/defaultRoleForTool",
-            data,
-            {'sign': True, 'token': True, 'tokenSig': True}
-        )

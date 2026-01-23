@@ -48,6 +48,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             "副本等级【普通任务】": "lv.70",
             "副本名称【夜航任务】": "霜狱野蜂暗箭",
             "token": "",
+            "dev_code": ""
         }
            # 默认任务映射
         self.DEFAULT_TASK_MAPPING = {
@@ -183,6 +184,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         self._log_info(f"调度任务已启动")
         # 使用 submit_periodic_task 提交任务，间隔 1 秒
         self.submit_periodic_task(1, self._scheduler_loop)
+        self.notification("调度任务开启",'自动密函')
 
     def disable(self):
         super().disable()
@@ -190,6 +192,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             self.executor.stop_current_task()
         self.finished_tasks.clear()
         self._log_info("调度任务已停止")
+        self.notification("调度任务已停止",'自动密函')
 
     def is_enable_running(self):
         """检查当前是否可以运行"""
@@ -209,12 +212,14 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             "默认任务",
             "密函委托优先级",
             "关卡类型优先级",
-            "token"
+            "token",
+            "dev_code"
         ]
         
         for config_key in required_configs:
             if not self.config.get(config_key):
                 self.info_set(f"自动密函：{config_key}", "未配置")
+                self.notification(f"自动密函：{config_key} 未配置, 请检查配置后重新启动",'自动密函')
                 return False
         
         return True
@@ -314,7 +319,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             for retries in range(1, max_retries + 1):
                 if not self.is_enable_running(): break
                 try:
-                    result = DNAAPI(token=self.config.get("token")).default_role_for_tool()
+                    result = DNAAPI(token=self.config.get("token"), dev_code=self.config.get("dev_code")).default_role_for_tool()
                     # logger.info(f"API返回数据: {result}")
                     if result.get('code') != 200:
                         self._log_info(f"API请求错误，60s后重试 ({retries}/{max_retries})...")

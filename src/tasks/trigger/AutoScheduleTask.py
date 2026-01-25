@@ -47,8 +47,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             "默认任务副本类型": "角色技能材料:扼守/无尽",
             "副本等级【普通任务】": "lv.70",
             "副本名称【夜航任务】": "霜狱野蜂暗箭",
-            "token": "",
-            "dev_code": ""
+            "user": "",
         }
            # 默认任务映射
         self.DEFAULT_TASK_MAPPING = {
@@ -105,7 +104,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             "默认任务副本类型": "可选普通任务和夜航任务\n根据选择的默认任务进行设置即可",
             "副本等级【普通任务】": "副本类型为正常委托时生效\n选择需要刷取的副本等级，根据选择的默认任务和副本类型进行设置",
             "副本名称【夜航任务】": "副本类型为夜航手册时生效\n填写需要刷取的夜航手册名称，根据选择的默认任务和副本类型进行设置\n列如：霜狱野蜂暗箭(不需要空格)，如果匹配不到，可以填写部分名称",
-            "token":"接口请求密钥"
+            "user":"用户登录信息，需从dna builder中登录后获取，json格式"
         }
 
         # 任务映射关系
@@ -176,11 +175,18 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
         self.prev_task_is_force_stop = False  # 上一个任务是否被强制停止
 
+        self.node_service = None  # 接口服务
+
     def enable(self):
         if self.enabled:
             return
         super().enable()
         self.init_param()
+        self.node_service = NodeService()
+        atexit.register(self.node_service.stop)
+        if not self.node_service.start():
+            self._log_info(f"接口服务启动失败, 请重试")
+            return
         self._log_info(f"调度任务已启动")
         # 使用 submit_periodic_task 提交任务，间隔 1 秒
         self.submit_periodic_task(1, self._scheduler_loop)
@@ -191,6 +197,9 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         if self.last_scheduled_task:
             self.executor.stop_current_task()
         self.finished_tasks.clear()
+        # 停止接口服务
+        if self.process_id:
+            self.node_service.stop()
         self._log_info("调度任务已停止")
         self.notification("调度任务已停止",'自动密函')
 
@@ -212,8 +221,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             "默认任务",
             "密函委托优先级",
             "关卡类型优先级",
-            "token",
-            "dev_code"
+            "user",
         ]
         
         for config_key in required_configs:
@@ -293,7 +301,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             # 4. 整点检查
             if self._should_trigger_hourly_check(now):
                 self._log_info(f"整点触发检查: {now.hour}:00")
-                time.sleep(random.randint(5, 20))  # 随机延时5-20秒
+                time.sleep(random.randint(25, 40))  # 随机延时25-40秒
                 should_check = True
         
             # 5. 执行检查
@@ -319,11 +327,11 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             for retries in range(1, max_retries + 1):
                 if not self.is_enable_running(): break
                 try:
-                    result = DNAAPI(token=self.config.get("token"), dev_code=self.config.get("dev_code")).default_role_for_tool()
-                    # logger.info(f"API返回数据: {result}")
+                    result = DnaApi(user=self.config.get("user")).getInstanceInfo()
+                    logger.info(f"API返回数据: {result}")
                     if result.get('code') != 200:
                         self._log_info(f"API请求错误，60s后重试 ({retries}/{max_retries})...")
-                    elif not isinstance(data := result.get('data', {}).get('instanceInfo'), list):
+                    elif not isinstance(data := result.get('data'), list):
                         self._log_info(f"API返回数据异常，{60*retries}s后重试 ({retries}/{max_retries})...")
                     elif self.last_api_response_data == data:
                         self._log_info(f"API返回数据与上次相同，60s后重试 ({retries}/{max_retries})...")
@@ -339,7 +347,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             return False
 
         def _get_sorted_tasks(instance_info):
-            """获取排序后的任务列表"""
+            """获取排序后的任务列表 [['驱离', '调停', '避险'], ['迁移', '护送', '驱逐'], ['避险', '驱逐']]"""
             # 解析配置
             mod_order = [x.strip() for x in self.config.get("密函委托优先级", "角色>武器>MOD").split(">") if x.strip()]
             mod_map = {"角色": 0, "武器": 1, "MOD": 2}
@@ -355,19 +363,30 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             tasks = []
             for mod_key in valid_mods:
                 idx = mod_map[mod_key]
-                if idx >= len(instance_info): continue
                 
-                for task in instance_info[idx].get("instances", []):
-                    name = task.get("name")
-                    if name in self.TASK_MAPPING:
+                # 检查索引是否有效
+                if idx >= len(instance_info):
+                    continue
+                    
+                # instance_info[idx] 现在是任务名称列表，如 ['驱离', '调停', '避险']
+                task_names = instance_info[idx]
+                
+                for task_name in task_names:
+                    # 检查任务名称是否在映射表中
+                    if task_name in self.TASK_MAPPING:
                         tasks.append({
-                            "name": name,
-                            "class": self.TASK_MAPPING[name],
-                            "priority": lvl_map.get(name, 999),
+                            "name": task_name,
+                            "class": self.TASK_MAPPING[task_name],
+                            "priority": lvl_map.get(task_name, 999),
                             "module_key": mod_key,
-                            "module_priority": valid_mods.index(mod_key)
+                            "module_priority": valid_mods.index(mod_key),
+                            "module_index": idx  # 可选：添加模块索引信息
                         })
+                    else:
+                        # 如果任务名称不在映射表中，可以记录日志
+                        self._log_debug(f"任务名称 '{task_name}' 不在 TASK_MAPPING 中，跳过")
 
+            # 按优先级排序：先按模块优先级，再按任务优先级
             return sorted(tasks, key=lambda x: (x["module_priority"], x["priority"]))
 
         def _get_default_task():
@@ -703,238 +722,156 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         return None
 
 
-# import requests
-import time
-import random
-import hashlib
-import base64
 import json
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hashes
-from urllib.parse import urlencode
+class DnaApi:
+    def __init__(self, user: str):
+        self.user = user
+        self.url = f"http://localhost:5644/getInstanceInfo"
 
-# 需要安装依赖:
-# pip install requests cryptography
 
-class DNAAPI:
-    def __init__(self, token="", dev_code=""):
-        self.token = token
-        self.dev_code = dev_code
-        self.base_url = "https://dnabbs-api.yingxiong.com/"
-        self.rsa_public_key = (
-            "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDGpdbezK+eknQZQzPOjp8mr/dP+QHwk8CRkQh6C6qFnfLH3tiyl0pnt3dePuFDnM1PUXGhCkQ157ePJCQgkDU2+mimDmXh0oLFn9zuWSp+U8uLSLX3t3PpJ8TmNCROfUDWvzdbnShqg7JfDmnrOJz49qd234W84nrfTHbzdqeigQIDAQAB"
-        )
-        self.upload_key = ""
+    def getInstanceInfo(self):
+        """获取实例信息"""
+        print(self.user)
+        response = requests.post(self.url, json=json.loads(self.user))
+        return response.json()
 
-    def default_role_for_tool(self, type_val=1, other_user_id=None):
-        """
-        获取工具默认角色
-        """
-        data = {'type': type_val}
-        if other_user_id:
-            data['otherUserId'] = other_user_id
-        
-        # URL 自动去除了开头的 /
-        return self._dna_request("role/defaultRoleForTool", data, sign=True)
 
-    def _dna_request(self, url, data=None, sign=False):
-        if url.startswith("/"):
-            url = url[1:]
-        
-        # 构造 headers
-        headers = {}
-        payload = data if data else {}
 
-        if sign:
-            # 签名逻辑
-            headers_payload = self._get_headers(payload=payload, token=self.token)
-            headers.update(headers_payload['headers'])
-            payload = headers_payload['payload'] # 这里 payload 可能变成 string (URL encoded)
+
+
+
+import ok
+from src.config import config
+import subprocess
+import time
+import sys
+import os
+import signal
+import atexit
+import ctypes
+from ctypes import wintypes
+
+# Windows强制终止进程的工具
+def kill_windows_process(pid):
+    """Windows强制终止进程"""
+    try:
+        PROCESS_TERMINATE = 1
+        handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE, False, pid)
+        if handle:
+            ctypes.windll.kernel32.TerminateProcess(handle, 1)
+            ctypes.windll.kernel32.CloseHandle(handle)
+            return True
+    except:
+        pass
+    return False
+
+def kill_process_tree(pid):
+    """终止进程树（包括子进程）"""
+    try:
+        # Windows
+        if sys.platform == "win32":
+            import subprocess as sp
+            sp.run(f"taskkill /F /T /PID {pid}", shell=True, capture_output=True)
         else:
-             # 非签名请求的基础 header
-             h = self._get_base_headers()
-             headers.update(h)
+            # Linux/Mac
+            import psutil
+            parent = psutil.Process(pid)
+            for child in parent.children(recursive=True):
+                child.terminate()
+            parent.terminate()
+    except:
+        pass
 
-        # 发送请求
-        full_url = self.base_url + url
+class NodeService:
+    """Node服务管理器，确保一定会关闭"""
+    
+    def __init__(self):
+        self.process = None
+        self.process_id = None
+    
+    def start(self):
+        """启动Node服务"""
+        print("🚀 启动DNA API服务...")
         
-        # data 处理: 如果是 GET 请求通常放 params，POST 放 data
-        # 原代码中 _dna_request 似乎总是 POST (默认 method="POST")
-        # 且 body 处理逻辑:
-        # if (data && typeof data === "object" && !(data instanceof FormData)) {
-        #     const p = new URLSearchParams() ... body = p.toString()
-        # }
-        # 即 Content-Type 是 application/x-www-form-urlencoded
+        # 使用CREATE_NEW_PROCESS_GROUP创建新进程组，便于管理
+        self.process = subprocess.Popen(
+            "npm start",
+            cwd="dna-api",
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
+        )
+        
+        self.process_id = self.process.pid
+        print(f"DNA API服务PID: {self.process_id}")
+        
+        # 等待启动
+        time.sleep(3)
+        
+        # 检查启动状态
+        if self.process.poll() is not None:
+            print("❌ DNA API服务启动失败")
+            return False
+        
+        print("✅ DNA API服务已启动")
+        return True
+    
+    def stop(self):
+        """强制停止Node服务"""
+        if not self.process:
+            return
+        
+        print("🛑 正在停止DNA API服务...")
         
         try:
-            # 如果 payload 是字典，requests 的 data 参数会自动转为 form-urlencoded
-            # 但如果签名过程中 payload 已经被转为 string (sign=True 时)，则直接传 string
+            # 方法1: 尝试优雅关闭
+            if self.process.poll() is None:
+                if sys.platform == "win32":
+                    # Windows发送CTRL_BREAK_EVENT
+                    self.process.send_signal(signal.CTRL_BREAK_EVENT)
+                else:
+                    # Linux/Mac发送SIGTERM
+                    self.process.terminate()
+                
+                # 等待最多5秒
+                for i in range(5):
+                    if self.process.poll() is not None:
+                        print("✅ DNA API服务已正常停止")
+                        return
+                    time.sleep(1)
             
-            resp = requests.post(full_url, headers=headers, data=payload, timeout=10)
-            resp_json = resp.json()
+            # 方法2: 如果还在运行，强制终止
+            if self.process.poll() is None:
+                print("⚠️  尝试强制终止...")
+                self.process.kill()
+                self.process.wait(timeout=3)
+                print("✅ DNA API服务已被强制终止")
+                
+        except Exception as e:
+            print(f"⚠️  停止服务时出错: {e}")
             
-            # 处理可能的 JSON 字符串嵌套
-            if isinstance(resp_json, dict) and 'data' in resp_json and isinstance(resp_json['data'], str):
+            # 方法3: 使用系统命令强制终止
+            if self.process_id:
+                print("⚠️  使用系统命令强制终止...")
                 try:
-                    resp_json['data'] = json.loads(resp_json['data'])
+                    if sys.platform == "win32":
+                        # Windows使用taskkill
+                        subprocess.run(f"taskkill /F /T /PID {self.process_id}", 
+                                     shell=True, capture_output=True)
+                    else:
+                        # Linux/Mac
+                        subprocess.run(f"pkill -P {self.process_id}", 
+                                     shell=True, capture_output=True)
                 except:
                     pass
-            
-            return resp_json
-        except Exception as e:
-            return {"code": -1, "msg": f"请求失败: {str(e)}"}
+        
+        # 最后检查
+        if self.process.poll() is None:
+            print("❌ 警告: 可能仍有Node进程在运行")
+        else:
+            self.process_id = None
+            self.process = None
+            print("✅ DNA API服务已完全停止")
 
-    def _get_headers(self, payload, token):
-        # 基础 headers
-        headers = self._get_base_headers()
-        if token:
-            headers['token'] = token
-            
-        # 签名逻辑
-        # build_signature
-        rk, tn, sa = self._build_signature(self.rsa_public_key, payload, token)
-        
-        headers['rk'] = rk
-        headers['tn'] = tn
-        headers['sa'] = sa
-        
-        # payload 转字符串
-        # 类似于 new URLSearchParams(payload).toString()
-        # requests 库 data 传 dict 时会自动 encode，但这里我们需要手动 encode 吗？
-        # 原 JS 代码: if (typeof payload === "object") ... payload = params.toString()
-        # 并且返回了修改后的 payload。
-        # 签名的 payload 是包含 exparams 的，这里简化不考虑 exparams
-        
-        # 转换为 form-urlencoded 字符串
-        str_payload = urlencode(payload)
-        
-        return {'headers': headers, 'payload': str_payload}
-
-    def _get_base_headers(self):
-        return {
-            "version": "1.2.0",
-            "source": "ios",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "User-Agent": "DoubleHelix/3 CFNetwork/3860.300.31 Darwin/25.2.0",
-        }
-
-    def _build_signature(self, pk, payload, token):
-        rk = self._rand_str(16)
-        raw_sa, shuffled_sa = self._generate_sa()
-        
-        str_params = {}
-        for k, v in payload.items():
-            str_params[k] = str(v)
-            
-        sign_params = str_params.copy()
-        if token:
-            sign_params['token'] = token
-        sign_params['sa'] = raw_sa
-        
-        # 生成签名
-        sign_val = self._sign_shuffled(sign_params, rk)
-        sign_encoded = self._xor_encode(sign_val, rk)
-        
-        # 对 rk 进行 RSA 加密
-        rk_encrypted = self._rsa_encrypt(rk, pk)
-        
-        # 生成 tn
-        tn = f"{rk_encrypted},{sign_encoded}"
-        
-        return rk, tn, shuffled_sa
-
-    def _rsa_encrypt(self, text, public_key_b64):
-        # 格式化 PEM 公钥
-        lines = []
-        for i in range(0, len(public_key_b64), 64):
-            lines.append(public_key_b64[i:i+64])
-        pem = "-----BEGIN PUBLIC KEY-----\n" + "\n".join(lines) + "\n-----END PUBLIC KEY-----"
-        
-        # 加载公钥
-        public_key = serialization.load_pem_public_key(pem.encode('utf-8'))
-        
-        # 加密
-        encrypted = public_key.encrypt(
-            text.encode('utf-8'),
-            padding.PKCS1v15()
-        )
-        
-        return base64.b64encode(encrypted).decode('utf-8')
-
-    def _rand_str(self, length=16):
-        chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return "".join(random.choice(chars) for _ in range(length))
-
-    def _md5_upper(self, text):
-        m = hashlib.md5()
-        m.update(text.encode('utf-8'))
-        return m.hexdigest().upper()
-
-    def _shuffle_md5(self, md5_hex):
-        if len(md5_hex) <= 23:
-            return md5_hex
-        chars = list(md5_hex)
-        swaps = [(1, 13), (5, 17), (7, 23)]
-        for i, j in swaps:
-            chars[i], chars[j] = chars[j], chars[i]
-        return "".join(chars)
-
-    def _generate_sa(self):
-        random_part = self._rand_str(17)
-        timestamp = str(int(time.time() * 1000)) # JS Date.now()
-        
-        result = []
-        rand_idx = 0
-        time_idx = 0
-        
-        for i in range(30):
-            if 8 <= i <= 12:
-                result.append(timestamp[time_idx])
-                time_idx += 1
-            elif 16 <= i <= 20:
-                result.append(timestamp[time_idx])
-                time_idx += 1
-            elif 22 <= i <= 24:
-                result.append(timestamp[time_idx])
-                time_idx += 1
-            else:
-                result.append(random_part[rand_idx])
-                rand_idx += 1
-                
-        raw_sa = "".join(result)
-        
-        chars = list(raw_sa)
-        swaps = [(2, 23), (9, 17), (13, 25)]
-        for i, j in swaps:
-            chars[i], chars[j] = chars[j], chars[i]
-        shuffled_sa = "".join(chars)
-        
-        return raw_sa, shuffled_sa
-
-    def _build_sign_string(self, params, app_key):
-        sorted_keys = sorted(params.keys())
-        pairs = []
-        for key in sorted_keys:
-            value = params[key]
-            if value is not None and value != "":
-                pairs.append(f"{key}={value}")
-        pairs.append(app_key)
-        return "&".join(pairs)
-
-    def _sign_shuffled(self, params, app_key):
-        sign_str = self._build_sign_string(params, app_key)
-        md5_res = self._md5_upper(sign_str)
-        return self._shuffle_md5(md5_res)
-
-    def _xor_encode(self, text, key):
-        # 注意：原 JS 代码并非真正的 XOR，而是加法
-        # const e = (tb[i] & 255) + (kb[i % kb.length] & 255)
-        # out.push(`@${e}`)
-        tb = text.encode('utf-8')
-        kb = key.encode('utf-8')
-        out = []
-        for i in range(len(tb)):
-            e = (tb[i] & 0xFF) + (kb[i % len(kb)] & 0xFF)
-            out.append(f"@{e}")
-        return "".join(out)

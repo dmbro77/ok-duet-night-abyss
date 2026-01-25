@@ -198,7 +198,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             self.executor.stop_current_task()
         self.finished_tasks.clear()
         # 停止接口服务
-        if self.process_id:
+        if self.node_service.process_id:
             self.node_service.stop()
         self._log_info("调度任务已停止")
         self.notification("调度任务已停止",'自动密函')
@@ -731,8 +731,7 @@ class DnaApi:
 
     def getInstanceInfo(self):
         """获取实例信息"""
-        print(self.user)
-        response = requests.post(self.url, json=json.loads(self.user))
+        response = requests.post(self.url, json=json.loads(self.user), timeout=60)
         return response.json()
 
 

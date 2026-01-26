@@ -120,8 +120,8 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
     def _log_info(self, msg):
         if self.last_scheduled_task:
             self.last_scheduled_task.info_set('自动密函log',msg)
-        else:    
-            self.log_info(msg) 
+        else:
+            logger.info(msg)
 
     def scroll_relative(self, x, y, delta):
         # 保持原有的滚动逻辑
@@ -182,11 +182,11 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
             return
         super().enable()
         self.init_param()
-        self.node_service = NodeService()
-        atexit.register(self.node_service.stop)
-        if not self.node_service.start():
-            self._log_info(f"接口服务启动失败, 请重试")
-            return
+        # self.node_service = NodeService()
+        # atexit.register(self.node_service.stop)
+        # if not self.node_service.start():
+        #     self._log_info(f"接口服务启动失败, 请重试")
+        #     return
         self._log_info(f"调度任务已启动")
         # 使用 submit_periodic_task 提交任务，间隔 1 秒
         self.submit_periodic_task(1, self._scheduler_loop)
@@ -197,9 +197,9 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
         if self.last_scheduled_task:
             self.executor.stop_current_task()
         self.finished_tasks.clear()
-        # 停止接口服务
-        if self.node_service.process_id:
-            self.node_service.stop()
+        # # 停止接口服务
+        # if self.node_service.process_id:
+        #     self.node_service.stop()
         self._log_info("调度任务已停止")
         self.notification("调度任务已停止",'自动密函')
 
@@ -330,11 +330,11 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                     result = DnaApi(user=self.config.get("user")).getInstanceInfo()
                     logger.info(f"API返回数据: {result}")
                     if result.get('code') != 200:
-                        self._log_info(f"API请求错误，60s后重试 ({retries}/{max_retries})...")
+                        self._log_info(f"API请求错误，30s后重试 ({retries}/{max_retries})...")
                     elif not isinstance(data := result.get('data'), list):
-                        self._log_info(f"API返回数据异常，{60*retries}s后重试 ({retries}/{max_retries})...")
+                        self._log_info(f"API返回数据异常，{30*retries}s后重试 ({retries}/{max_retries})...")
                     elif self.last_api_response_data == data:
-                        self._log_info(f"API返回数据与上次相同，60s后重试 ({retries}/{max_retries})...")
+                        self._log_info(f"API返回数据与上次相同，30s后重试 ({retries}/{max_retries})...")
                     else:
                         self._log_info(f"API返回数据: {data}")
                         if self.last_api_response_data: self._log_info("API数据已更新")
@@ -343,7 +343,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                 except Exception as e:
                     self._log_info(f"请求API失败 ({retries}): {e}")
                 
-                if retries < max_retries: time.sleep(60)
+                if retries < max_retries: time.sleep(30)
             return False
 
         def _get_sorted_tasks(instance_info):
@@ -384,7 +384,7 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
                         })
                     else:
                         # 如果任务名称不在映射表中，可以记录日志
-                        self._log_debug(f"任务名称 '{task_name}' 不在 TASK_MAPPING 中，跳过")
+                        self._log_info(f"任务名称 '{task_name}' 不在 TASK_MAPPING 中，跳过")
 
             # 按优先级排序：先按模块优先级，再按任务优先级
             return sorted(tasks, key=lambda x: (x["module_priority"], x["priority"]))
@@ -660,7 +660,10 @@ class AutoScheduleTask(CommissionsTask, BaseCombatTask, TriggerTask):
 
     def switch_to_letter(self):
         """选择密函任务"""
-        self.click_relative_random(0.34, 0.15, 0.41, 0.18)
+        for _ in range(2): 
+            self.click_relative_random(0.34, 0.15, 0.41, 0.18)
+            self.sleep(0.02)
+        
         self.sleep(1) 
         
         module_points = { '角色': (0.07, 0.16), '武器': (0.28, 0.38), 'MOD': (0.48, 0.59) }

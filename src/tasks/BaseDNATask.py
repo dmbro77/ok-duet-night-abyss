@@ -12,7 +12,9 @@ from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
 from functools import cached_property
 
-from ok import BaseTask, Box, Logger, color_range_to_bound, run_in_new_thread, og, GenshinInteraction, PyDirectInteraction
+from ok import BaseTask, Box, Logger, color_range_to_bound, og
+from ok.device.intercation import GenshinInteraction, PyDirectInteraction
+from ok.util.process import run_in_new_thread
 
 logger = Logger.get_logger(__name__)
 f_black_color = {
@@ -151,7 +153,7 @@ class BaseDNATask(BaseTask):
             return True
         # start_time = time.perf_counter()
         mat = self.get_feature_by_name("ultimate_key_icon").mat
-        mat2 = self.get_box_by_name("ultimate_key_icon").crop_frame(_frame)
+        mat2 = self.box_of_screen(0.8832, 0.9132, 0.8977, 0.9389, name="ultimate_key_icon", hcenter=True).crop_frame(_frame)
         max_area1 = invert_max_area_only(mat)[2]
         max_area2 = invert_max_area_only(mat2)[2]
         result = False
@@ -642,7 +644,6 @@ class BaseDNATask(BaseTask):
 
         lalt_pressed = False
         needs_resync = False
-        _in_team = None
 
         def send_key_raw(key, is_down):
             interaction = self.executor.interaction
@@ -665,16 +666,12 @@ class BaseDNATask(BaseTask):
             ])
 
         def in_team():
-            nonlocal _in_team
-            local_frame = self.shared_frame 
-            if _in_team is None and local_frame is not None:
-                _in_team = self.in_team(local_frame)
-            elif local_frame is None:
-                _in_team = True
-            return _in_team
+            if self.shared_frame is None:
+                return True
+            return self.in_team(self.shared_frame)
 
         def check_alt_logic():
-            nonlocal lalt_pressed, needs_resync, _in_team
+            nonlocal lalt_pressed, needs_resync
             
             if not self.afk_config.get("鼠标抖动", True):
                 return
@@ -694,8 +691,8 @@ class BaseDNATask(BaseTask):
                 elif needs_resync and in_team():
                     self.log_info("[LAlt保持] 恢复: 检测到重回队伍，重新按下 LAlt")
                     needs_resync = False
+                    time.sleep(0.2)
                     send_key_raw("lalt", True)
-                _in_team = None
             else:
                 if lalt_pressed:
                     self.log_info("[LAlt保持] 停止: 功能关闭，彻底释放 LAlt")

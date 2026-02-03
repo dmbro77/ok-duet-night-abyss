@@ -85,8 +85,8 @@ class AutoAimTask(BaseListenerTask, BaseCombatTask, TriggerTask):
     def do_aim(self):
         try:
             with self.right_click_scope():
-                self.sleep_check(self.config.get('按下时间', 0.50))
-            self.sleep_check(self.config.get("间隔时间", 0.50))
+                self.trig_sleep_check(self.config.get('按下时间', 0.50))
+            self.trig_sleep_check(self.config.get("间隔时间", 0.50))
         except CharDeadException:
             self.log_error("Characters dead", notify=True)
             self.running = False
@@ -96,7 +96,7 @@ class AutoAimTask(BaseListenerTask, BaseCombatTask, TriggerTask):
             self.running = False
             return False
 
-    def sleep_check(self, sec, check_signal_flag=True):
+    def trig_sleep_check(self, sec, check_signal_flag=True):
         if sec <= 0:
             return
         end_time = time.perf_counter() + sec

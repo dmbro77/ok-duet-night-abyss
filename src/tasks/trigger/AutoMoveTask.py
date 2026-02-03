@@ -78,14 +78,14 @@ class AutoMoveTask(BaseListenerTask, BaseDNATask, TriggerTask):
     def do_move(self):
         try:
             with self.left_click_scope():
-                self.sleep_check(self.config.get('按下时间', 0.50))
-            self.sleep_check(self.config.get("间隔时间", 0.50))
+                self.trig_sleep_check(self.config.get('按下时间', 0.50))
+            self.trig_sleep_check(self.config.get("间隔时间", 0.50))
         except TriggerDeactivateException as e:
             logger.info(f"auto_aim_task_deactivate {e}")
             self.running = False
             return False
 
-    def sleep_check(self, sec, check_signal_flag=True):
+    def trig_sleep_check(self, sec, check_signal_flag=True):
         if sec <= 0:
             return
         end_time = time.perf_counter() + sec

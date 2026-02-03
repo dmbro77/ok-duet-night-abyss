@@ -37,8 +37,8 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             "我已在 OK-DNA 游戏快捷键设置里配置【螺旋飞跃按键】": False,
             "帧数敏感，如果不能稳120帧，大概率坠机": False,
             "设置: 镜头距离1.3，120帧，最低画质，垂直同步关， 插帧关": False,
-            "阵容: 黎瑟 + 0精春玦戟 + 弧光百劫/裂魂 + 任意协战": False,
-            "近战魔之楔:【金色迅捷+10】 / 紫色穿引共鸣 / 紫色迅捷蓄势+5 / 紫色迅捷坠击+5（面板攻速2.0）": False,
+            "阵容: 黎瑟 + 春玦戟（0熔/5熔）+ 弧光百劫/裂魂 + 任意协战": False,
+            "近战魔之楔:【金色迅捷 0熔 +10 / 5熔 +6】/ 穿引共鸣 / 迅捷蓄势+5 / 迅捷坠击+5（面板攻速2.00/1.99）": False,
             "远程魔之楔:【请勿携带“专注·厚重”】推荐装备金色迅捷+10或任意迅捷（面板攻速1.3~2.0）": False,
             "路线1·4撤离撞门超级跳延迟Offset": 0,
             "路线1·4撤离撞门超级跳延迟-/+": "-",
@@ -69,8 +69,8 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             "我已在 OK-DNA 游戏快捷键设置里配置【螺旋飞跃按键】": "必须勾选才能执行任务！",
             "帧数敏感，如果不能稳120帧，大概率坠机": "必须勾选才能执行任务！",
             "设置: 镜头距离1.3，120帧，最低画质，垂直同步关， 插帧关": "必须勾选才能执行任务！",
-            "阵容: 黎瑟 + 0精春玦戟 + 弧光百劫/裂魂 + 任意协战": "必须勾选才能执行任务！",
-            "近战魔之楔:【金色迅捷+10】 / 紫色穿引共鸣 / 紫色迅捷蓄势+5 / 紫色迅捷坠击+5（面板攻速2.0）":"必须勾选才能执行任务！",
+            "阵容: 黎瑟 + 春玦戟（0熔/5熔）+ 弧光百劫/裂魂 + 任意协战": "必须勾选才能执行任务！",
+            "近战魔之楔:【金色迅捷 0熔 +10 / 5熔 +6】/ 穿引共鸣 / 迅捷蓄势+5 / 迅捷坠击+5（面板攻速2.00/1.99）":"必须勾选才能执行任务！",
             "远程魔之楔:【请勿携带“专注·厚重”】推荐装备金色迅捷+10或任意迅捷（面板攻速1.3~2.0）": "必须勾选才能执行任务！",
             "路线1·4撤离撞门超级跳延迟Offset": "-/+ 1",
             "路线1·4撤离撞门超级跳延迟-/+": "撤离点自动门前撞墙-不开门+",
@@ -177,8 +177,8 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             or not self.config.get("我已在 OK-DNA 游戏快捷键设置里配置【螺旋飞跃按键】", False)
             or not self.config.get("帧数敏感，如果不能稳120帧，大概率坠机", False)
             or not self.config.get("设置: 镜头距离1.3，120帧，最低画质，垂直同步关， 插帧关", False)
-            or not self.config.get("阵容: 黎瑟 + 0精春玦戟 + 弧光百劫/裂魂 + 任意协战", False)
-            or not self.config.get("近战魔之楔:【金色迅捷+10】 / 紫色穿引共鸣 / 紫色迅捷蓄势+5 / 紫色迅捷坠击+5（面板攻速2.0）", False)
+            or not self.config.get("阵容: 黎瑟 + 春玦戟（0熔/5熔）+ 弧光百劫/裂魂 + 任意协战", False)
+            or not self.config.get("近战魔之楔:【金色迅捷 0熔 +10 / 5熔 +6】/ 穿引共鸣 / 迅捷蓄势+5 / 迅捷坠击+5（面板攻速2.00/1.99）", False)
             or not self.config.get("远程魔之楔:【请勿携带“专注·厚重”】推荐装备金色迅捷+10或任意迅捷（面板攻速1.3~2.0）", False)
         ):
             logger.error("⚠️ 请先阅读注意事项并确认配置！")
@@ -341,8 +341,6 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                                         self.stats["current_phase"] = "重新开始"
                                         if self.stats.get("selected_path", None) is not None:
                                             self.stats["path_fail"][self.stats.get("selected_path", 1)-1] += 1
-                                            if self.door_count > 0:
-                                                self.stats["door_fail"][self.door_count-1] += 1
                                         self.info_set("上轮路径", f"路径{selected_path} 机关{self.door_count}")
                                         self.info_set("当前阶段", "重新开始")
                                         self.wait_until(
@@ -618,6 +616,7 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
                 self.sleep(DEFAULT_PA_DELAY)
                 self.execute_pa()
                 self.sleep(DEFAULT_PA_DELAY)
+                self.sleep(0.100)
                 self.mouse_down(key="left")
                 self.sleep(0.050)
                 self.mouse_up(key="left")
@@ -721,7 +720,7 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.sleep(0.200)
 
     def execute_escort_path_door_D(self):
-        self.execute_mouse_rot_deg(deg_x=-51.5, deg_y=-30)
+        self.execute_mouse_rot_deg(deg_x=-52, deg_y=-30)
         self.sleep(0.050)
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
@@ -741,7 +740,7 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.wait_for_interaction()
              
     def execute_escort_path_door_D_exit(self):
-        self.execute_mouse_rot_deg(deg_x=115, deg_y=15)
+        self.execute_mouse_rot_deg(deg_x=115.5, deg_y=15)
         self.execute_pa()
         self.sleep(DEFAULT_PA_DELAY)
         self.execute_pa(deg_x=-30,deg_y=-15)
@@ -752,11 +751,11 @@ class AutoEscortTask_Fast(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.sleep(DEFAULT_PA_DELAY)
         self.execute_pa(deg_x=-5)
         self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa(deg_x=-15)
+        self.execute_pa(deg_x=-15, deg_y=10)
         self.sleep(DEFAULT_PA_DELAY)
         self.execute_pa(deg_x=-10)
         self.sleep(DEFAULT_PA_DELAY)
-        self.execute_pa(deg_x=20)
+        self.execute_pa(deg_x=20, deg_y=-10)
         self.sleep(DEFAULT_PA_DELAY)
         self.sleep(0.200)
 

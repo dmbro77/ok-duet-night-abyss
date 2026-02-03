@@ -232,15 +232,18 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
     def walk_to_aim(self, former_index=None, delay=0):
         try:
+            self.shared_frame = None
             self.fidget_params.update({"skip_jitter": True})
-            self.sleep(1)
+            self.sleep(1.5)
             self.fidget_params.update({"hold_lalt": True})
-            self.sleep(0.5)
+            self.sleep(0.1)
             self.fidget_params.update({"skip_jitter": False})
-            self.sleep(delay-1.5)
+            self.sleep(delay-1.6)
+            self.sleep_check_interval = 0.1
             ret = self._walk_to_aim(former_index)
         finally:
             self.fidget_params.update({"hold_lalt": False})
+            self.sleep_check_interval = -1
         return ret
 
     def _walk_to_aim(self, former_index=None):
@@ -343,7 +346,6 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
 
         # 只裁剪和转换一次屏幕
         frame = self.frame
-        self.shared_frame = frame
         cropped_screen = box.crop_frame(frame)
         screen_gray = cv2.cvtColor(cropped_screen, cv2.COLOR_BGR2GRAY)
 
@@ -447,17 +449,16 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
             if self.check_for_monthly_card()[0]:
                 raise MacroFailedException
 
-            self.next_frame()
-            self.shared_frame = self.frame
-
             current_offset = time.perf_counter() - start_time
             delay = target_time - current_offset
             target = time.perf_counter() + delay
             if delay > 0.02:
                 self.sleep(delay - 0.02)
 
-            while time.perf_counter() < target:
-                pass
+            while True:
+                now = time.perf_counter()
+                if target - now <= 0 or target - now > 1:
+                    break
 
             if action['type'] == "delay":
                 self.delay_index = map_index
@@ -575,6 +576,8 @@ class ImportTask(DNAOneTimeTask, CommissionsTask, BaseCombatTask):
         self.move_mouse_relative(dx, dy, self.original_Xsensitivity, self.original_Ysensitivity)
         logger.debug(f"鼠标视角旋转: {direction}, 角度: {angle}, 像素: {pixels}")
 
+    def sleep_check(self):
+        self.shared_frame = self.frame
 
 def normalize_key(key: str) -> str:
     """

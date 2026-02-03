@@ -8,7 +8,7 @@ certifi==2026.1.4
     # via requests
 charset-normalizer==3.4.4
     # via requests
-comtypes==1.4.14
+comtypes==1.4.15
     # via pycaw
 darkdetect==0.8.0
     # via pyside6-fluent-widgets
@@ -16,16 +16,17 @@ idna==3.11
     # via requests
 mouse==0.7.1
     # via ok-script
-numpy==2.2.6
+numpy==2.3.5
     # via
     #   opencv-python
     #   openvino
     #   shapely
-ok-script==1.0.24
+ok-script==1.0.39
     # via -r requirements.in
+playwright==1.57.0
 onnxocr-ppocrv4==0.0.5
     # via -r requirements.in
-opencv-python==4.12.0.88
+opencv-python==4.13.0.90
     # via -r requirements.in
 openvino==2025.4.1
     # via -r requirements.in
@@ -59,7 +60,7 @@ pyside6-essentials==6.10.1
     #   pyside6-addons
 pyside6-fluent-widgets==1.8.3
     # via ok-script
-pysidesix-frameless-window==0.7.5
+pysidesix-frameless-window==0.7.7
     # via pyside6-fluent-widgets
 pywin32==311
     # via
